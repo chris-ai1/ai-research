@@ -1,0 +1,26 @@
+\section{A local zero law just below twice the address length}
+Here the gate budget is linear in the address length, outside the synthesis regime of Theorem~1. The center is the zero Boolean table. Let $s=2n-v$ with $v=o(n)$ and $\liminf\log v/\log n\ge1/2$. Define $J=\log_2(n/v)$. Then $J\to\infty$ and $J\le(1/2+o(1))\log_2 n$.
+
+\begin{theorem}\label{th:linear}
+At these budgets the zero-center polynomial $P_0(Jw/N)$ has the local limit potential, zero measure and nearest-zero location of Section~2, with $J$ in place of $K$. The logarithmic acceptance and rejection rates of Theorem~1 hold at flip probability $xJ/N$ on scale $J$. The conclusions hold for full binary gates with free complemented wires and also for binary AND, OR and counted unary NOT.
+\end{theorem}
+\begin{proof}
+For a nonempty set $S$ of $k$ addresses write $Z$ for the number of raw coordinates constant across its $k$ members. We use the sparse-support estimate
+\[
+       2n-Z-k-\log_2 k-1 \le C({\bf1}_S)
+                    \le 2n-Z+O(k2^k+1).                         \tag{4}
+\]
+For the lower bound, the companion sparse gate-elimination lemma in \emph{Unrestricted Boolean circuit lower bounds for linear-threshold MCSP}, Section~1, gives $C\ge n+b-r-\nu_2(k)-1$ for full binary gates, where $b=n-Z$ and $r=\dim\operatorname{aff}(S)\le k-1$. This implies the displayed lower bound for both bases. For the upper bound group the raw coordinates by their columns of values across the $k$ support points. A nonconstant column group of length $m$ needs at most $2m$ gates to test whether all its bits are one and whether all its bits are zero. One AND chain, one OR chain and one NOT suffice. A constant group needs only its required test, at cost at most $m$. For each support point conjoin the correct group tests, and take the OR of these $k$ terms. There are at most $2^k$ groups, giving (4). Red'kin's work on functions with few ones also groups variables according to their behavior on the support \cite{red}.
+
+Choose $k$ independent uniform addresses and then condition on distinctness. For $k=O(\log n)$ conditioning costs a factor $1+o(1)$ in any probability upper bound. Before conditioning, $Z$ is binomial with mean $\mu_k=2n\,2^{-k}$. For any fixed $0<\eta<1$, uniformly at $1\le k\le(1-\eta)J$ one has $\mu_k/v\to\infty$ and $\mu_k/(k2^k+1)\to\infty$. Indeed $2^{2k}\le n^{1-\eta+o(1)}$ there. Thus (4) and a binomial lower-tail bound show that the rejected fraction of each such shell is at most $\exp(-\Omega(v))$. Conversely for fixed $B>1+\eta$ and $(1+\eta)J\le k\le BJ$, $\mu_k/v\to0$ and $k=o(v)$. The lower bound in (4) forces $Z\ge v-O(k+\log k)$ for acceptance. The binomial upper tail bounds the accepted fraction by $\exp(-\Omega(v))$, uniformly on this range.
+
+Here the two shell-fraction estimates replace exact early shells and the global census. On each fixed disk $|w|\le b$, the sum of the errors in the early binomial coefficients, multiplied by $(bJ/N)^k$, is at most $\exp(-\Omega(v)+bJ)$. The same bound holds for the contribution from $(1+\eta)J$ to $BJ$. Since $v/J\to\infty$ these errors have logarithmic rate minus infinity on scale $J$. For $k>BJ$ use the full binomial majorant. Its tail has upper rate at most $B(1+\log(b/B))$ when $B>b$, by the geometric ratio and Stirling's formula. This tends to minus infinity as $B\to\infty$. The interior comparison and exterior saturation proof of Section~2 now apply with the same potential. The real-axis lower bound uses a layer with accepted fraction $1-o(1)$.
+
+For rejection below the noise threshold, bound failures among the early shells by $\exp(-\Omega(v))$ and the remaining probability by the binomial upper tail. A layer just above $(1+\eta)J$ is rejected with probability $1-o(1)$ conditional on its size. These upper and lower bounds give the rate as $\eta\downarrow0$. The acceptance rates come from the positive-axis potential.
+\end{proof}
+
+There is also an all-center statement far below this regime. If $s+1\le n$, the algebraic degree over $\mathbb F_2$ of every $F\in\mathcal A$ is at most $s+1$, because $F$ depends on at most $s+1$ address variables. Therefore the difference of two distinct easy tables has weight at least $2^{n-s-1}$, by the minimum-distance bound for degree-$(s+1)$ multilinear polynomials. One direct proof restricts a variable of a highest-degree monomial. The XOR of the two restrictions has degree one smaller, and its weight is at most the sum of their weights. Induction on the degree, starting with a nonzero constant, gives the bound. Where output complementation is free, for every accepted center all zeros consequently have
+\[
+                |\log|z||\le 2^{-(n-s-1)}\log |\mathcal A|.
+\]
+Inside the indicated inner radius the other terms have sum strictly less than the constant term, and reciprocity gives the outer radius. Thus whenever $2^{n-s}\gg (s+1)\log(n+s)$ all centers have every zero at modulus $1+o(1)$.

@@ -1,0 +1,46 @@
+\section{Individual distance coefficients on dense center layers}
+Keep \(c,\alpha,h,B,L=B\oplus U\) as in the preceding fixed-weight theorem and let \(b_d(L)=[z^d]P_L(z)\). Put
+\[
+ \beta_0=\frac{\alpha-h}{1-2h},\qquad
+ \beta_1=h+(1-2h)\alpha .
+\]
+For joint binary types with \(\Pr[U=1]=h,\ \Pr[F=1]=q,\ \Pr[F\ne U]=\beta\), the conditional entropy of \(F\) given \(U\) is
+\[
+ J(q,\beta)=(1-h)H\left(\frac{q+\beta-h}{2(1-h)}\right)
+  +hH\left(\frac{q-\beta+h}{2h}\right).
+\]
+Set \(J=-\infty\) for infeasible types. Define a continuous symmetric function \(\sigma(\beta)=\sigma(1-\beta)\) by
+\[
+ \sigma(\beta)=
+ \begin{cases}
+ H(\beta),&0\le\beta\le\beta_0,\\
+ J(\alpha,\beta),&\beta_0\le\beta\le\beta_1,\\
+ H(\alpha),&\beta_1\le\beta\le1/2 .
+ \end{cases}
+\]
+\begin{theorem}
+For every fixed \(\epsilon>0\),
+\[
+ \Pr_L\!\left[\max_{0\le d\le N}
+   \left|N^{-1}\log b_d(L)-\sigma(d/N)\right|>\epsilon\right]\longrightarrow0 ,
+\]
+with \(\log0=-\infty\). For every center in the layer, the three-branch profile is a uniform lower bound up to \(o(1)\). In particular the plateau \(\beta_1\le d/N\le1-\beta_1\) reaches the full circuit census exponent for every such center.
+\end{theorem}
+\begin{proof}
+By complementation it suffices to take \(d/N\to\beta\le1/2\). For the upper bound work with \(B\oplus\mathcal A\) about \(U\). A fixed word of weight \(qN\) lies at distance \(d\) with probability \(\exp(N[J(q,\beta)-H(q)+o(1)])\) by counting joint types, with \(h_N,d/N\) replacing \(h,\beta\) before taking limits. There are at most \(\exp(N\min(H(q),H(\alpha))+o(N))\) such words in the class. Hence the upper exponential rate for \(\mathbb E b_d\) is at most
+\[
+ \max_q\{J(q,\beta)-(H(q)-H(\alpha))_+\}.
+\]
+The function \(J(\cdot,\beta)\) is concave and is maximized at \(q_F=h+(1-2h)\beta\), with value \(H(\beta)\), by independence of \(U\) and the error \(F\oplus U\).
+Also \(J(q,\beta)-H(q)=-I(F;U)\) is concave in \(q\), by convexity of mutual information in the channel for a fixed input distribution (the log-sum inequality). If \(\beta\ge h\), it is maximized at \(q_I=(\beta-h)/(1-2h)\), where \(U,F\) are independent. If \(\beta<h\), it is maximized at \(q_I=(h-\beta)/(1-2\beta)\): here \(F\) and the error are independent, attaining the bound \(H(U\mid F)\le H(\beta)\). When \(\beta_0\le\beta\le\beta_1\), these identities give \(q_I\le\alpha\le q_F\le1/2\). Thus the maximum on the middle weight interval \([\alpha,1-\alpha]\) is at \(\alpha\). On \(q\le\alpha\) the conditional entropy is increasing, and on feasible \(q\ge1-\alpha\) it is decreasing. If the latter interval is feasible, its inner endpoint is bounded by the middle-interval comparison. This gives \(J(\alpha,\beta)\) as upper bound. For the first branch use \(J\le H(\beta)\) and for the last use the total census. Markov's inequality bounds the probability of exceeding the resulting rate by any fixed positive tolerance by \(\exp(-\Omega(N))\).
+
+On the first two branches, complete light layers already give the lower bound for every \(U\). Count the words of joint types with \(q<\alpha\) tending to \(\min(q_F,\alpha)\), first leaving fixed slack for synthesis and then shrinking it. Rounding the weight with the required parity changes it by at most two. For \(0<\beta\le\beta_0\) the independent-error type is interior; throughout \([\beta_0,\beta_1]\), \(\alpha\) is a feasible interior weight since \(\beta_0>\alpha-h\) and \(\beta_1<\alpha+h\), with all parameters below \(1/2\). At \(\beta=0\) every modification of \(o(N)\) entries stays below the complete low-weight cutoff for \(B\oplus\mathcal A\).
+
+For the plateau, choose integer weights \(w_N\) within one of
+\((d-h_NN)/(1-2h_N)\), so \(w_N/N\to q\in[\alpha,1/2]\).
+For any \(\epsilon>0\), at least \(\exp(N[H(\alpha)-\epsilon])\) distinct words of weight \(w_N\) have cost at most \((c-\epsilon')N/n\) for some \(\epsilon'>0\). We give the argument to specify the slice census being used. Partition by \(O(\log n)\) prefix bits into \(M\) dyadic blocks, with \(M\to\infty\) polynomial in \(n\). Fix \(\gamma<\alpha\) close to \(\alpha\). On \(M-1\) blocks use arbitrary words of relative weight \(\gamma\) or \(1-\gamma\), rounding symmetrically. Select the number of heavy blocks so a comparator on the remaining block achieves the exact total \(w_N\): successive totals differ by at most the block length and \(q\) is interior to \((\gamma,1-\gamma)\). Stirling gives \(\exp((H(\gamma)+o(1))N)\) choices. Lupanov's slice synthesis bound \cite{lup,kors} and an \(O(M)\)-gate multiplexer give cost at most \((H(\gamma)/\log2+o(1))N/n\). The classical synthesis theorem provides the block circuits; the weight adjustment and subsequent distance adjustment require the following separate argument.
+
+Reserve a fixed dyadic block of \(R=2^{\lfloor 2n/3\rfloor}\) addresses. Fix any \(U\) in the layer and apply one uniformly random invertible affine permutation of the raw addresses to the selected word family. For each fixed selected word its expected full distance to \(U\) is \(d+O(1)\), and its expected distance on the reserved block lies between \(\min(w_N/N,1-w_N/N)R\) and \(\max(w_N/N,1-w_N/N)R\). These bounds stay a fixed positive fraction of \(R\) away from both endpoints. Its outside distance has variance \(O(N)\): each membership indicator has variance at most one and the covariance of two distinct permuted indicators is \(O(1/N)\) by two-transitivity. Taking complements on prescribed sites changes only covariance signs. Chebyshev gives probability \(1-O(N/R^2)\) that the outside distance belongs to \([d-R,d]\). By averaging there is one permutation, common to at least half the selected words, for which they have outside distance in the desired range. Precomposing an address circuit with this permutation costs \(O(n^2)\) gates. For each such word rewrite the reserved block to give total distance exactly \(d\). This costs \(O(R+n)=o(N/n)\) by a binary decision tree and a prefix switch. Distinct outputs lose a factor of at most \(2^R\) in count. XOR with \(B\) places these modified words in \(\mathcal A\), preserving distance to \(L\). This proves the lower bound at each plateau distance.
+
+For simultaneity, the asymptotic bounds for the mean, the deterministic lower bounds, and the plateau word counts are uniform at fixed accuracy in their respective closed ranges: otherwise compactness gives a convergent subsequence of \(d/N\) contradicting the corresponding type estimates with fixed entropy slack. At either common endpoint both adjacent formulas agree. The lower bounds now hold for every \(U\). Markov and a union bound over \(N+1\) coefficients give the uniform upper with exponentially small exceptional fraction at each fixed tolerance.
+\end{proof}

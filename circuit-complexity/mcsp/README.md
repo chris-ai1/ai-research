@@ -2,21 +2,28 @@
 
 Summary of a research session that ended on 22 November 2026, together with a literature-priority search run the same day. MCSP asks whether a truth table of N = 2ⁿ entries can be computed by a circuit with at most s gates. Below, T = s log₂ s.
 
-**Status.** Every result here is an unrefereed, AI-written proof. The internal "referee" notes came from the same agent team. Three Lean files formalize only small combinatorial lemmas. The manuscripts are not in this repository yet. No result here is a breakthrough.
+**Status.** Every result here is an unrefereed, AI-written proof. The internal "referee" notes came from the same agent team. Three Lean files formalize only small combinatorial lemmas. The manuscripts are in this directory; see [Files](#files). No result here is a breakthrough.
+
+## Files
+
+- [`papers/`](papers/): the 17 manuscripts, each as LaTeX source and PDF.
+- [`formal/`](formal/): Lean files for the row-marginal, teaching-projection and pivot/overlap lemmas.
+- [`communication.md`](communication.md): the interactive-communication proof that the sign-rank manuscript cites.
+- [`FAILED-ATTEMPTS.md`](FAILED-ATTEMPTS.md): approaches that did not work, and why.
 
 ## Claimed results (written proofs, not independently checked)
 
 | # | Result | Manuscript |
 | --- | --- | --- |
-| 1 | A deterministic circuit that decides MCSP exactly needs (2−o(1))N gates over the full binary basis, for every s = o(N/n). The short proof reduces to Schnorr's lower bound for "all bits equal". | deterministic |
-| 1b | Circuits allowed error N^(−1−ε) need 2N−O(N/n) gates, for every s from n−2 up to cN/n. | probabilistic |
-| 2 | Quantum query complexity and approximate degree are Θ(√(NT/(1+log(N/T)))) for (2+η)n ≤ s ≤ (1−ε)N/n. They are Θ(√N) for very small s and, for AND/OR/NOT circuits, up to (1+c)n. | degree, queries, low-budget |
-| 3 | Gap MCSP (size ≤ s = N^a versus > t = N^b): Θ(Ns/t) classical queries and Θ(s√(N/t)) quantum queries. Threshold degree, rational degree and postselected queries are all Θ(s). | gap |
-| 4 | Read-k branching programs and DNNF circuits need size 2^Θ(s log s). One-tape machines with one-way input need Ω(N²) time; with a two-way input head, Ω(N log N) under one-sided error. | branching, tape, twoway |
-| 5 | At s = cN/n: parity decision trees need (c+o(1))N queries, circuits allowed error need 2.5N gates, and deterministic circuits need 2.5226N at one fixed threshold. | dense-circuits, tilted, affine |
-| 6 | Sign-rank 2^Ω(N), and sharp bounds on how well small-circuit tables can hide parities, with communication corollaries. | sign-rank, gap |
-| 7 | Parity constraints: n+2^Θ(r) gates are needed and suffice for r ≤ c log n. | parity-excess |
-| 8 | Counting results (joint-type counts, prescribed cell quotas and marginals) and complex zeros of the acceptance polynomial, which follow a Szegő curve. | types, witnesses, zeros |
+| 1 | A deterministic circuit that decides MCSP exactly needs (2−o(1))N gates over the full binary basis, for every s = o(N/n). The short proof reduces to Schnorr's lower bound for "all bits equal". | [deterministic](papers/deterministic/main.pdf) |
+| 1b | Circuits allowed error N^(−1−ε) need 2N−O(N/n) gates, for every s from n−2 up to cN/n. | [probabilistic](papers/probabilistic/main.pdf) |
+| 2 | Quantum query complexity and approximate degree are Θ(√(NT/(1+log(N/T)))) for (2+η)n ≤ s ≤ (1−ε)N/n. They are Θ(√N) for very small s and, for AND/OR/NOT circuits, up to (1+c)n. | [degree](papers/degree/main.pdf), [queries](papers/queries/main.pdf), [low-budget](papers/low-budget/main.pdf) |
+| 3 | Gap MCSP (size ≤ s = N^a versus > t = N^b): Θ(Ns/t) classical queries and Θ(s√(N/t)) quantum queries. Threshold degree, rational degree and postselected queries are all Θ(s). | [gap](papers/gap/main.pdf) |
+| 4 | Read-k branching programs and DNNF circuits need size 2^Θ(s log s). One-tape machines with one-way input need Ω(N²) time; with a two-way input head, Ω(N log N) under one-sided error. | [branching](papers/branching/branching.pdf), [tape](papers/tape/main.pdf), [twoway](papers/twoway/twoway.pdf) |
+| 5 | At s = cN/n: parity decision trees need (c+o(1))N queries, circuits allowed error need 2.5N gates, and deterministic circuits need 2.5226N at one fixed threshold. | [dense-circuits](papers/dense-circuits/main.pdf), [tilted](papers/tilted/main.pdf), [affine](papers/affine/main.pdf) |
+| 6 | Sign-rank 2^Ω(N), and sharp bounds on how well small-circuit tables can hide parities, with communication corollaries. | [sign-rank](papers/sign-rank/main.pdf), [gap](papers/gap/main.pdf) |
+| 7 | Parity constraints: n+2^Θ(r) gates are needed and suffice for r ≤ c log n. | [parity-excess](papers/parity-excess/main.pdf) |
+| 8 | Counting results (joint-type counts, prescribed cell quotas and marginals) and complex zeros of the acceptance polynomial, which follow a Szegő curve. | [types](papers/types/main.pdf), [witnesses](papers/witnesses/main.pdf), [zeros](papers/zeros/main.pdf) |
 
 **Still open:** query bounds in the window between (1+c)n and (2+η)n gates, approximate degree for gap MCSP, and the circuit lower bound that hardness magnification would need.
 

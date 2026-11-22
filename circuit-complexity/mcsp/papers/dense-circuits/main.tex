@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,microtype}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\rank}{\operatorname{rank}}
+\title{Small Boolean truth tables under adaptive parity tests}
+\author{Research manuscript}
+\date{22 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+For a fixed $0<c<1$, consider truth tables on $n$ variables computable with at most $c2^n/n$ gates. We determine the minimum worst-case number of adaptive parity queries needed to recognize these tables with constant error. It is $(c+o(1))2^n$. The same quantity is the base-two logarithm of the smallest bounded-error parity decision tree, up to an additive $o(2^n)$. The proof constructs one distribution of small truth tables whose probability in every affine subspace of codimension $r$ is at least $(1-o(1))2^{-r}$ at a circuit cost of $(r+o(2^n))/n$. A theorem of Chen and Kabanets then yields a $(2.5-o(1))2^n$ lower bound for bounded-error circuits over the full binary basis deciding Boolean MCSP with the size threshold supplied.
+\end{abstract}
+
+\section{Which circuit is being measured?}
+Let $N=2^n$. An \emph{inner} circuit computes one bit $x_i$ of an $N$-entry Boolean truth table from its $n$-bit address $i$. Write $C(x)$ for its minimum gate count and $A_s=\{x:C(x)\le s\}$. The proofs work for binary AND, OR and unary NOT, and for the full binary basis $B_2$. Fanout is unrestricted. An \emph{outer} circuit for MCSP receives the whole table $x$ and returns its membership bit. A parity decision tree can query any binary linear functional of $x$ at unit cost. Randomized complexity means the maximum size or depth of a tree in the distribution, with error at most $1/3$ on each input.
+
+\begin{theorem}\label{th:main}
+Fix $0<c<1$ and $s\sim cN/n$. For recognizing $A_s$, the bounded-error parity query complexity is $(c+o(1))N$. The logarithm of the bounded-error parity decision tree leaf count is also $(c+o(1))N$.
+\end{theorem}
+\begin{corollary}\label{cor:circuit}
+For each $\eta>0$ there exists $c_\eta<1$ such that at $s=\lfloor c_\eta N/n\rfloor$ every bounded-error outer $B_2$ circuit for Boolean MCSP requires at least $(2.5-\eta)N$ gates for all sufficiently large $n$. In particular the threshold-supplied problem requires $(2.5-o(1))N$ gates.
+\end{corollary}
+The error convention for this corollary allows a distribution of deterministic circuits, each respecting the stated gate budget. It includes the usual circuit model with random input bits, since fixing these bits leaves a circuit on the truth table alone. The threshold in the corollary approaches the Shannon scale as the desired coefficient approaches $2.5$. The small-threshold magnification hypotheses in Chen, Li and Yang \cite{cly} involve a different range of $s$.
+
+\section{A distribution for all affine tests}
+For a table $x$, a parity transcript of rank $r$ has the form $Ax=y$ for a fixed full-row-rank $r$ by $N$ binary matrix $A$. We construct a mixture of uniform linear spaces. For each individual $A$, most spaces in the mixture realize \emph{all} its $2^r$ possible answers uniformly. The same mixture is used for every $A$.
+
+\begin{theorem}\label{th:law}
+For $r/N$ in a fixed compact subinterval of $(0,1)$ there is a distribution $\mu$ supported on tables of circuit size at most $(r+o(N))/n$ such that, uniformly for all rank-$p$ matrices $A$ with $p\le r$ and every $y\in\F^p$,
+\[
+                   \Pr_\mu[Ax=y]\ \ge\ (1-o(1))\,2^{-p}.
+\]
+\end{theorem}
+We first encode nearly all tested directions using separate short blocks. We then add one table from a second distribution to recover any lost directions. Rank and orthogonality in this proof are over $\F$.
+
+\subsection{Nearly preserving the rank}
+Let $b$ be the least power of two at least $n^{20}$, and set $k=\lceil rb/N+2b^{3/4}\rceil$. For large $n$, $b\mid N$ and $k<b$. Fix a menu of at most $2b^5$ binary $b$ by $k$ matrices with the following property. For each $p\le rb/N+b^{3/4}$ and each rank-$p$ matrix $L$ with $b$ columns, a uniform menu entry $G$ satisfies
+\[
+                        \Pr[\rank LG<p]\le 1/b .
+\]
+To see this, a truly random matrix fails for a fixed $L$ with probability at most $2^{p-k}$, by summing over nonzero linear combinations of its rows. Choose $b^5$ independent entries. The binomial upper-tail bound gives failure of the menu property for a fixed $L$ with probability $\exp(-\Omega(b^4))$ for large $b$. This accommodates all at most $(b+1)2^{b^2}$ possible tests. The menu is fixed once per length and its entire description has polynomial length in $n$.
+
+Randomly permute addresses by a uniform invertible affine transformation on $\F^n$. Split the permuted addresses into blocks of $b$ consecutive positions. On each block independently choose a menu entry $G_J$ and a uniform $k$-bit message $z_J$ and write $G_Jz_J$ there. Denote the resulting table in original address order by $x^{(1)}$. Conditional on the permutation and the chosen matrices, this table is uniform in the image of a linear encoder $G$.
+
+\begin{lemma}\label{lem:local}
+For every fixed rank-$r$ matrix $A$ the expected deficit $r-\rank AG$ is $O(N/\sqrt b)$.
+\end{lemma}
+\begin{proof}
+Mark a basis of $r$ columns of $A$. The number $p_J$ of marked positions in a permuted block has mean $rb/N$ and variance at most $b$. Indeed the affine permutation is transitive on ordered pairs of distinct addresses, so its first two moments agree with those of sampling without replacement. Call a block crowded when $p_J>rb/N+b^{3/4}$. Chebyshev's inequality bounds its probability by $b^{-1/2}$. Thus the expected total number of positions in crowded blocks is at most $N/\sqrt b$.
+
+Process the blocks one by one while retaining linearly independent columns. At the start they are all original marked columns. At a later step they consist of earlier encoded columns and original marked columns of the remaining blocks. In a crowded block discard its marked columns. In any other block $J$, put $p=p_J$. The retained columns outside the block are independent together with its $p$ marked columns. Hence there exist $p$ linear forms on the syndrome space that vanish on those other retained columns and give the $p$ standard basis vectors on the marked columns of $J$. Applying the forms to all $b$ columns of $A$ in $J$ yields a rank-$p$ matrix $L$.
+
+The next menu choice is independent of the choices already used. If $LG_J$ has rank $p$, select $p$ of its independent columns and retain the corresponding encoded columns in place of the marked ones. They are independent of all other retained columns because the chosen forms annihilate those others. Otherwise discard the $p$ marked columns. The conditional expected loss in a noncrowded block is at most $b/b=1$. At the end every retained column lies in the image of $AG$. Adding the expected losses proves the lemma.
+\end{proof}
+
+\subsection{Recovering the missing directions}
+Put $t=\lceil N/n^6\rceil$ and $d=\lceil 2t/n\rceil+1$. Markov's inequality and Lemma~\ref{lem:local} show that $r-\rank AG\le t$ with probability $1-O(n^{-4})$. Independently choose $d$ uniform $v_j$ in $F=\mathbb F_{2^{2n}}$ and $d$ uniform $w_j$ in the same field. Define
+\[
+              x^{(2)}_i=\operatorname{Tr}_{F/\F}
+                               \left(\sum_{j=1}^d w_jv_j^i\right)
+              \qquad(0\le i<N)
+\]
+with $v^0=1$. Our output is $x=x^{(1)}+x^{(2)}$.
+
+To verify surjectivity for a fixed $A$, condition on a local encoder of deficit at most $t$. A nonzero row combination $a=uA$ that annihilates $G$ gives a nonzero polynomial $P_a(Z)=\sum_{i<N}a_i Z^i$ of degree less than $N$. It vanishes at a random $v_j$ with probability at most $N/|F|=2^{-n}$. There are at most $2^t-1$ such combinations. With failure probability at most $2^{t-nd}$, every one has some $P_a(v_j)\ne0$. For each surviving combination the nondegenerate trace pairing now makes its answer a nonzero linear form in the $w_j$. Thus no nonzero row combination of $A$ annihilates the joint encoder. Conditional on these good generator choices, the independent uniform messages $z_J,w_j$ give uniform $Ax$. A rank below $r$ can be extended to $r$ before applying the proof.
+
+\subsection{The cost of reading a sampled table}
+The fixed affine address permutation costs $O(n^2)$ gates. Write the permuted address as its block number and its in-block position. Store the messages as $k$ independent Boolean tables of length $N/b$ indexed by block number. Lupanov's synthesis theorem \cite{lup} bounds their total cost by
+\[
+       (1+o(1))\,\frac{kN/b}{\log_2(N/b)}=\frac{r+o(N)}{n}.
+\]
+Store the menu index using $O(\log b)$ further tables of the same length, costing $o(N/n)$ gates. The entire fixed menu and a circuit to select one matrix row and compute its dot product with $z_J$ have size polynomial in $b$, hence polynomial in $n$. These are nonuniform upper bounds on the circuit for each sampled table.
+
+For $x^{(2)}_i$, each field power $v_j^i$ uses at most $n$ controlled multiplications by hardwired field elements $v_j^{2^h}$. Schoolbook field operations and selection cost $O(n^2)$ Boolean gates per step. The trace and multiplication by $w_j$ fit the same bound. The total repair cost is $O(d n^3)=O(N/n^4)$, and one final XOR has constant cost. This proves Theorem~\ref{th:law}.
+
+\section{From individual tests to entire computations}
+A rooted traversal of a size-$s$ Boolean circuit needs at most $(s+1)\log_2(n+s+2)+O(s+\log n)$ bits. There are $2s$ predecessor slots, of which at least $s-1$ introduce a gate at its first visit when traversing from the output. The traversal pattern, gate types and constant choices take $O(s)$ bits; each remaining predecessor is a reference. Gates irrelevant to the output can be discarded. Thus at $s\sim cN/n$ the easy set has size at most $2^{(c+o(1))N}$, and a uniform table belongs to it with probability $o(1)$.
+
+Fix $\sigma<\alpha<c$ and use Theorem~\ref{th:law} with $r=\lfloor\alpha N\rfloor$. Its samples all lie in $A_s$ for sufficiently large $n$. Consider any parity decision tree with at most $2^{\sigma N}$ leaves. Each reachable leaf is an affine space. The total uniform mass of leaves of codimension greater than $r$ is at most $2^{\sigma N-r}$. At every remaining leaf, the easy law assigns at least $1-o(1)$ times its uniform probability, with a uniform error estimate. The sum of the smaller of the two leaf probabilities is consequently $1-o(1)$. The two leaf laws have total variation distance $o(1)$. The same holds after averaging over the independent coins of a randomized tree. A correct recognizer must have an acceptance gap of at least $1/3-o(1)$. This proves the leaf-count lower bound, and a tree of depth $q$ has at most $2^q$ leaves.
+
+For the upper bound query $\lceil\log_2|A_s|\rceil+2$ independent uniform parity rows, then accept exactly those answer strings compatible with an easy table. A yes input always passes. By a union bound a fixed no input collides with a possible yes input with probability at most $1/4$. The depth and leaf-count estimates prove Theorem~\ref{th:main}.
+
+Finally Chen and Kabanets \cite[Lemma 4.6]{ck} convert every outer $B_2$ circuit of size at most $(2.5-\eta)N$ into an exact parity decision tree with at most $2^{(1-\kappa_\eta)N}$ leaves, for some $\kappa_\eta>0$. Choose $1-\kappa_\eta<\sigma<c_\eta<1$ and apply the leaf lower bound above. The same distribution of easy inputs works for every fixed choice of the circuit's coins. A threshold-supplied circuit can be restricted to the fixed threshold for each $\eta$. This proves Corollary~\ref{cor:circuit}.
+
+The same parity complexity holds if the only required no inputs have circuit size greater than $t$, for any $s\le t\le(1-\epsilon)N/n$ and fixed $\epsilon>0$. The proof only used that almost every uniform input is a required no instance. The hash upper bound may still reject every table outside $A_s$.
+
+\input{other-bases}
+\input{generator}
+\section{Related work and scope}
+Cheraghchi, Kabanets, Lu and Myrisiotis \cite{cklm} developed the use of generators with small per-word address circuits to prove Boolean MCSP lower bounds for formulas, branching programs and bounded-depth circuits. Chen and Kabanets obtain the coefficient $2.5$ through gate elimination and the parity tree representation \cite{ck}. Hoza and Lv use that representation with hitting sets for systems of linear equations \cite{hl}; their Corollary 32 uses rank increments across blocks. Their pseudorandom generator for ordinary decision trees attains near-optimal seed length. Linear lossless condensers and their transposes already provide ways to preserve a prescribed row space with high probability \cite{cher}. Our parameter is the size of the Boolean \emph{address circuit for each generated word}. The leading constant in that cost allows the MCSP threshold $c$ to be fixed arbitrarily close to one. All circuit-size conclusions here use worst-case pointwise correctness and the specified basis.
+\begin{thebibliography}{9}
+\bibitem{cklm} M. Cheraghchi, V. Kabanets, Z. Lu and D. Myrisiotis. \href{https://doi.org/10.4230/LIPIcs.ICALP.2019.39}{Circuit lower bounds for MCSP from local pseudorandom generators}. ICALP 2019.
+\bibitem{ck} R. Chen and V. Kabanets. \href{https://www2.cs.sfu.ca/~kabanets/papers/linsize-eccc.pdf}{Correlation bounds and \#SAT algorithms for small linear-size circuits}. Theoretical Computer Science, 2016. Lemma 4.6 in the linked full version.
+\bibitem{hl} W. M. Hoza and Z. Lv. \href{https://doi.org/10.4230/LIPIcs.APPROX/RANDOM.2025.35}{Fooling near-maximal decision trees}. RANDOM 2025.
+\bibitem{cher} M. Cheraghchi. \href{https://eccc.weizmann.ac.il/resources/pdf/astaneh.pdf}{Applications of derandomization theory in coding}. Doctoral dissertation, 2010. Corollary 2.23.
+\bibitem{cly} L. Chen, J. Li and T. Yang. \href{https://doi.org/10.4230/LIPIcs.CCC.2022.23}{Extremely efficient constructions of hash functions, with applications to hardness magnification and PRFs}. CCC 2022.
+\bibitem{lup} O. B. Lupanov. A method of circuit synthesis. Izvestiya VUZ, Radiofizika 1 (1958), 120--140.
+\end{thebibliography}
+\end{document}

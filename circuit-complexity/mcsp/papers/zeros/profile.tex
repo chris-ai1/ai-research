@@ -1,0 +1,37 @@
+\section{How the budget spent on the center changes the first zero}
+Put $T=s\log_2 s$ and $r_*=W(e^{-1})$. In this section $n=o(s)$ and $s=o(N/n)$.
+For each fixed $0<\theta<1$, define $J$ on the smaller branch by
+\[
+                J\log_2(N/J)=(1-\theta)T .
+\]
+Since $\log(N/K)\to\infty$, evaluation at fixed multiples of $K$ gives $J\sim(1-\theta)K$.
+\begin{theorem}\label{th:profile}
+Write $R_L$ for the least zero modulus of the distance enumerator centered at $L$. Then
+\[
+ \min_{C(L)\le\lfloor\theta s\rfloor}R_L
+      =(r_*+o(1))\frac{J}{N}.
+\]
+For every sequence with $\limsup C(L)/s\le\theta$, the rescaled polynomial $P_L(Jw/N)$ has no zeros on any prescribed compact subset of $D$ for all sufficiently large $n$. Moreover, at least $2^{(\theta-o(1))T}$ distinct centers of complexity between $(\theta-o(1))s$ and $\lfloor\theta s\rfloor$ attain the local zero measure and the closest-zero location of Section~2 with $J$ in place of $K$. They also have all the noise rates in Theorem~1 with this substitution.
+\end{theorem}
+\begin{proof}
+For every center in the universal statement and fixed $\delta>0$, each layer up to $(1-\delta)J$ is complete. Indeed the synthesis bound of Section~3 builds any such error pattern for at most $((1-\delta)(1-\theta)+o(1))s$ gates. XOR with the center fits the budget. The interior estimate in Section~2 only used these complete layers and the binomial majorant. This gives the zero exclusion and a uniform lower bound for the minimum by passage to an arbitrary minimizing sequence.
+
+
+A stronger probabilistic statement supplies the upper bound. Fix any baseline $G$ of complexity $o(s)$. Take $H$ uniformly among sets of $m=(\theta+o(1))K$ positions and set $L=G\oplus {\bf1}_H$. With probability tending to one these centers obey all the asserted zero and noise laws, with convergence in probability for the numerical limits. The weight-$m$ synthesis estimate gives $C(L)\le(\theta+o(1))s$ uniformly. Its error and $C(G)$ can be absorbed by choosing $m=(\theta-\epsilon_n)K+O(1)$ for a sufficiently slowly decreasing $\epsilon_n>0$. This gives the literal gate cap in the theorem. There are $\binom Nm=2^{(\theta+o(1))T}$ distinct centers. The circuit census at budget $(\theta-\eta_n)s$ excludes a vanishing fraction for some $\eta_n\downarrow0$, chosen slowly enough to dominate the errors in both counts.
+
+To prove the probabilistic claim write $a_d(L)=[z^d]P_L(z)$. Independently choose a uniform $d$-set $E$. For fixed $\delta>0$ and $(1+\delta)J\le d\le 2K$, consider the shell fraction
+\[
+ \mathbb E_L\frac{a_d(L)}{\binom Nd}
+      =\Pr[G\oplus{\bf1}_{H\triangle E}\in\mathcal A].
+\]
+Here $J/K\to1-\theta$. Write $\gamma=\delta(1-\theta)/8$, shrinking $\delta$ if necessary. The chance that $|H\cap E|\ge\lceil\gamma K\rceil$ is at most $\binom{m}{\lceil\gamma K\rceil}(d/N)^{\lceil\gamma K\rceil}=2^{-\Omega_{\theta,\delta}(T)}$, with the value zero when $m$ is too small. On all other intersection sizes $|H\triangle E|\ge(1+2\gamma)K$ for large $n$. Conditional on its size, this symmetric difference is uniform on its layer. Its size is also $O(K)=o(N)$, so comparison of the rooted census with the layer size shows the same exponential bound for acceptance. These estimates are uniform in $d$ and $G$. By Markov's inequality and a union bound over the at most $2K+1$ layers, outside a vanishing fraction of $H$ all their accepted fractions are at most $2^{-c_{\theta,\delta}T}$ for a positive constant $c_{\theta,\delta}$.
+
+Consequently on any disk $|w|\le b$, $b>0$ fixed, the contribution to $P_L(Jw/N)$ above degree $(1+\delta)J$ is bounded by
+\[
+ 2^{-c_{\theta,\delta}T}(1+bJ/N)^N+
+                 |\mathcal A|(bJ/N)^{2K}.
+\]
+The logarithm of each summand divided by $J$ tends to minus infinity. The first term uses $T/K\to\infty$, the second uses $K\log_2(N/K)=T$. Choose $\delta$ decreasing to zero sufficiently slowly by a diagonal argument to obtain one set of $1-o(1)$ of all centers on which every fixed margin works. The complete early layers and the exterior proof of Section~2 now give the potential, zero measure, and nearest-zero location. The positive-axis values give the acceptance rates. For subcritical rejection, the accepted fraction of layer $\lceil(1+\delta)J\rceil$ tends to zero, as just proved. The single-layer argument from Section~3 completes the proof.
+\end{proof}
+
+The theorem gives an extremal law over all centers below a prescribed circuit budget. It also supplies many centers with that law. The next section concerns a uniform center among all distinct accepted tables, whose local law can be different.

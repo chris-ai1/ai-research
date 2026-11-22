@@ -1,0 +1,17 @@
+\section{Centering at a uniformly chosen accepted table}
+The low-complexity centers of Theorem~1 have a common local zero law. We now ask what happens at a center sampled uniformly from all distinct accepted truth tables. Write $R_L$ for the least modulus of a zero of $P_L$.
+\begin{theorem}\label{th:typical}
+Suppose $n=o(s)$ and $s=o(N/n)$, and choose $L$ uniformly in $\mathcal A$. For each positive $r=o(1/\sqrt{NK})$,
+\[
+ \Pr[R_L>r]\longrightarrow 1,\qquad P_L(r)\longrightarrow 1
+ \quad\text{in probability}.
+\]
+If $K^3=o(N)$, then $R_L/(K/N)\to\infty$ in probability. In the same regime, at flip probability $p=xK/N$ for fixed $x>0$, the acceptance probability conditioned on $L$, divided by $(1-p)^N$, tends to one in probability.
+\end{theorem}
+\begin{proof}
+We use the edge-isoperimetric inequalities for powers of the cube proved by Rashtchian and Raynaud \cite[Theorems~2 and~3]{rr}. In a general family $A$ of $M$ strings, let $B=\log_2 M=o(N)$ and $b=\min(\lceil2B/\log_2(N/B)\rceil,\lfloor B\rfloor)$. For $1\le t\le B$, the average number of other family members at distance $2t$ from a uniform member is at most $2(8e/t)^{2t}(Nb)^t$. At distance $2t+1$, an upper bound is $2(16e/(2t+1))^{2t+1}(Nb)^t B$. These results bound all pairs at distance up to the specified radius, hence bound each individual distance. The usual cube edge inequality bounds the average distance-one count by $B$.
+
+Write $u=r\sqrt{Nb}$. If $u=o(1)$, summation of the even terms through $2\lfloor B\rfloor$ contributes $O(u^2)$ to $\mathbb E_L(P_L(r)-1)$. The odd terms through $2\lfloor B\rfloor+1$ contribute $O(rB)$. The remaining terms sum to at most $M r^{2\lfloor B\rfloor+2}$. In our application the complete early shell and the circuit census imply $B\sim K\log_2(N/K)$, so $b\sim 2K$, $B=o(\sqrt{NK})$, and these bounds tend to zero. Markov's inequality gives $P_L(r)-1=o(1)$ in probability. Whenever $P_L(r)-1<1$, the triangle inequality excludes a zero on $|z|\le r$, since $P_L(0)=1$. Finally $K/N=o(1/\sqrt{NK})$ under the stated cubic condition. Apply the first assertion at any fixed multiple of $K/N$, including the flip odds $p/(1-p)$.
+\end{proof}
+
+The radius scale is sharp among general families with the same entropy. For the family of weight-$k$ strings with $k\to\infty$, $k=o(N)$, every center has polynomial $\sum_j\binom{k}{j}\binom{N-k}{j}z^{2j}$. With $z=w/\sqrt{k(N-k)}$ it converges locally uniformly to $\sum_{j\ge0}w^{2j}/(j!)^2=I_0(2w)$, by the same summable majorant on each compact disk. This limit has a zero at $w=i j_{0,1}/2$, where $j_{0,1}$ is the first positive zero of $J_0$. Local uniform convergence supplies zeros of the displayed order. Including the complementary sphere gives the same limit, because its contribution on compact disks is bounded by $\binom Nk |z|^{N-2k}=o(1)$. Determining the nearest-zero order at a typical MCSP center beyond our one-sided bound remains open.

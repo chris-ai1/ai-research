@@ -1,0 +1,58 @@
+\section{Verifying an externally specified hard table}
+
+Fix a table \(x\) of circuit size greater than \(t\). Its fractional certificate complexity \(\mathrm{FC}(x)\) is the minimum of \(\sum_i a_i\) over nonnegative weights on the \(N\) positions such that \(\sum_{i:y_i\ne x_i}a_i\ge1\) for every table \(y\) of size at most \(s\). Its block sensitivity on this promise is the maximum number of pairwise disjoint sets of positions such that flipping any one set in \(x\) yields a size-\(s\) table.
+
+\begin{theorem}
+Every hard table has block sensitivity exactly two if \(t\ge3s+O(1)\). Uniformly over all hard tables,
+\[
+   2\le \mathrm{FC}(x)\le 2+O\!\left(\sqrt{(s+1)\log N/t}\right)
+   \qquad\text{if }t/((s+1)\log N)\to\infty .
+\]
+\end{theorem}
+\begin{proof}
+The two constant tables give disjoint blocks whose union is all positions. This proves both lower bounds. If three disjoint flips produce easy \(y_1,y_2,y_3\), their coordinatewise majority is \(x\), giving it a circuit of size at most \(3s+O(1)\).
+
+Normalize fractional certificate weights to a distribution and apply finite minimax to the disagreement indicator. This gives
+\[
+ \frac1{\mathrm{FC}(x)}
+ =\max_{\mu\ \mathrm{on\ positions}}\min_{y\ \mathrm{easy}}
+         \Pr_{i\sim\mu}[y_i\ne x_i]
+ =\min_{\nu\ \mathrm{on\ easy\ tables}}\max_i
+         \Pr_{y\sim\nu}[y_i\ne x_i]=:p_* .
+\]
+The constants ensure \(p_*\le1/2\). Choose a minimizing \(\nu\) and sample an odd number \(r\) of independent easy tables from it. At each position the probability that their majority disagrees with \(x\) is at most
+\([4p_*(1-p_*)]^{r/2}\) by the binomial Chernoff bound. Their majority costs at most \(r(s+C)\) gates for an absolute constant \(C\). For example, full adders reduce triples of equal-significance bits to a sum and a carry until only two binary words remain. One final addition and comparison complete the majority in \(O(r)\) gates. If \(r(s+C)\le t\), every sampled majority must err somewhere. A union bound therefore yields
+\[
+ p_*\ge\tfrac12\left(1-\sqrt{1-N^{-2/r}}\right).
+\]
+Taking the largest admissible odd \(r\) proves the assertion.
+\end{proof}
+
+For the polynomially separated budgets of this paper, an optimal distribution \(\mu\) for a \emph{known} hard table \(x\) catches each easy competitor with probability at least \(1/2-o(1)\) in one comparison against the specified bit of \(x\). Repetition gives constant-query verification of equality to this \(x\) under the promise that the alternative is easy. The verifier, including its sampling distribution, depends on the whole reference \(x\). The decision bounds proved above use one algorithm for all promised input tables.
+
+\begin{theorem}
+For \(s=\Theta(N^a), t=\Theta(N^b)\), \(0<a<b<1\) fixed, the nonnegative quantum adversary bound is \(\Theta(\sqrt{N/t})\). The classical minimax adversary bound and the maximum easy-side block sensitivity and fractional certificate complexity are all \(\Theta(N/t)\).
+\end{theorem}
+\begin{proof}
+A smooth version of the preceding minimax argument gives each hard \(x\) a distribution \(\mu_x\) with
+\[
+ \max_i\mu_x(i)\le1/k,\qquad
+ \min_{y\ {\rm easy}}\Pr_{i\sim\mu_x}[x_i\ne y_i]\ge1/2-o(1),
+ \qquad k=\lfloor c_b t\rfloor .
+\]
+Here \(c_b\) is the small constant in the sparse synthesis estimate above. In the minimax game restrict the position player to distributions with the stated point-mass cap. Against a fixed mixture of easy tables its best payoff is the average of the \(k\) largest pointwise error probabilities. Call the minimum of this average over the mixtures \(p\). Outside the \(k\) worst positions every error probability of a minimizing mixture is at most \(p\). Take the largest odd \(r\) with \(r(s+C)\le t/3\). If \(p<1/2-O(\sqrt{n/r})\) for a sufficiently large absolute implied constant, some majority is exact everywhere outside those \(k\) positions by the same union bound. Correcting the remaining discrepancies by a circuit for a weight-at-most-\(k\) table costs less than \(t/2\), and an XOR would then compute \(x\) within \(t\) gates. This contradiction proves the claim. The smooth minimax argument is the hard-core distribution argument specialized to truth tables admitting cheap sparse corrections.
+
+In the \href{https://theoryofcomputing.org/articles/v002a001/}{nonnegative adversary minimax formula}, assign the uniform position law to every easy table \(y\), and \(\mu_x\) to hard \(x\). For every opposite pair,
+\[
+ \sum_{i:x_i\ne y_i}\sqrt{\mu_x(i)/N}
+ \ \ge\sqrt{k/N}\sum_{i:x_i\ne y_i}\mu_x(i)=\Omega(\sqrt{t/N}).
+\]
+The reciprocal bounds the nonnegative adversary from above. In the \href{https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.STACS.2018.8}{classical minimax formula}, the summand is the minimum of the two position masses. The uniform law on both inputs already gives denominator at least \(\Omega(t/N)\) since every easy--hard distance is \(\Omega(t)\). This separation of the two promised sets also bounds fractional certificate complexity at every easy table by \(O(N/t)\), using uniform weights.
+
+For the lower bounds, randomly permute the positions and cut out disjoint blocks of \(m=\lceil C_b t\rceil\) positions for a sufficiently large constant \(C_b\). Each block is a uniform \(m\)-subset, so its indicator is easy even at budget \(t\) with probability at most \(|A_t|/\binom Nm=\exp(-\Omega(t n))\), by the census and \(m\log(N/m)\sim C_b(1-b)tn\) in base-two logs. A union bound fixes \(\lfloor N/m\rfloor\) disjoint blocks all having hard indicators. Around the easy zero table these give that many disjoint sensitive blocks, and hence the same lower bound for its fractional certificates. For arbitrary input-specific position laws, one of the blocks has mass \(O(t/N)\) under the law for zero. Paired with that block's hard indicator, the classical minimax denominator is at most that mass and the quantum denominator at most its square root by Cauchy--Schwarz. These give the matching adversary lower bounds.
+\end{proof}
+
+\paragraph{Integral certificates.}
+In the same polynomially separated regime every hard input has minimum certificate size \((1+o(1))s\log_2s\). Here a certificate must exclude every promised input of the other type. Indeed, sample \(\lceil(1+\delta)s\log_2s\rceil\) positions independently from the above comparison law for the specified hard input. A fixed easy competitor survives with probability at most \((1/2+o(1))^{(1+\delta)s\log_2s}\). The census and a union bound leave no survivor for some sample, and repeated positions can be deleted. Conversely every partial table on at most \((1-\delta)s\log_2s\) positions extends to an easy table. Apply \href{https://keldysh.ru/papers/2024/mvk/mvk2024_152.pdf}{Chashkin's Theorem~6.1} on arbitrary prescribed domains, allowing up to half of the entries to have the minority label. For a domain of size \(d=\lfloor(1-\delta)s\log_2s\rfloor\) its extension cost is at most \((1+o(1))d/\log_2d+O(n)<s\); smaller domains can first be padded to \(d\).
+
+Every easy input has minimum certificate size \(N-(1+o(1))t\log_2t\). If a certificate leaves \(m\) positions unqueried, all \(2^m\) completions must have size at most \(t\), so \(m\le\log_2|A_t|\le(1+o(1))t\log_2t\). Conversely leave unqueried the first \(\lfloor(1-\delta)t\log_2t\rfloor\) addresses. Modifications on that interval are arbitrary binary vectors of this length and zero outside. Dyadic prefix decomposition and Shannon--Lupanov lookup on the resulting pieces give a circuit with at most \((1-\delta+o(1))t\) gates. To see the leading constant, pieces shorter than \(t/n^3\) have total length \(O(t/n^3)\), while all others have address arity \((1+o(1))\log_2t\). Prefix tests and multiplexing add \(O(n^2)\) gates. XOR with the given easy table then fits the hard threshold. Letting \(\delta\downarrow0\) gives both uniform assertions.

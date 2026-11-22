@@ -1,0 +1,100 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,microtype}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\Tr}{\operatorname{Tr}}
+\title{Satisfying parity constraints on a Boolean truth table with a small circuit}
+\author{Research manuscript}\date{22 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+Given $r$ consistent parity constraints on the entries of an $N=2^n$-bit truth table, how many gates suffice to compute a solution? At $r=\Theta(N)$ the answer in the worst case is $(r+o(N))/n$. For some absolute $K$ and all $n\log n(\log\log n)^K\le r\le N$, the answer is $(1+o(1))r/\log r$. The second construction provides one common distribution of small circuits whose outputs look uniform even under $r$ adaptive parity queries. A shared lookup across many blocks determines the leading constant for bounded-error parity queries to Boolean MCSP in this range. At a fixed fraction $c$ of Shannon's size threshold a companion proof gives the leading constant even for two-sided error. The largest affine spaces consisting wholly of accepted or wholly of rejected tables have dimensions $(c+o(1))N$ and $(1-c+o(1))N$, respectively.
+\end{abstract}
+
+\section{What a parity constraint specifies}
+Each row of an $r$ by $N$ binary matrix $A$ describes a parity query on a truth table $x$. We assume the rows are linearly independent. A right-hand side $y\in\F^r$ specifies the desired answers. A Boolean circuit for $x$ takes the $n$-bit address of an entry and returns its value. We count binary AND and OR and unary NOT gates with free constants and unrestricted fanout; arbitrary binary gates obey the same asymptotics. Write
+\[
+ L(n,r)=\max_{\operatorname{rank}A=r,\ y\in\F^r}
+             \min\{ C(x): Ax=y\}.
+\]
+Here $C(x)$ is the minimum number of gates in such an address circuit. The linear equations can involve any subsets of the truth table. All logarithms are base two.
+\begin{theorem}\label{th:sharp}
+If $r=\Theta(N)$, then $L(n,r)=(r+o(N))/n$. For a sufficiently large absolute $C$ and all $n^C\le r\le N$, one has $L(n,r)=\Theta(r/\log r)$.
+\end{theorem}
+Specifying individual entries is a special case of the problem. The classical theory of partial Boolean functions, including Chashkin's synthesis theorem \cite{chash}, controls that special case. A circuit satisfying specified entries can take arbitrary values elsewhere. For general parity constraints those values may change the answers. Hoza and Lv \cite[Corollary 32]{hl} previously used successive rank increments in blocks in their hitting set for general consistent parity constraints. Here each solution must itself have a small Boolean address circuit.
+
+A rooted binary circuit with $s$ gates has only $s+1$ predecessor slots beyond those that introduce a gate. Its description uses at most $(s+1)\log(n+s+2)+O(s+\log n)$ bits, including gate types and traversal structure. Since a fixed rank-$r$ matrix has $2^r$ possible answers, this count proves the lower bounds in the theorem. We next give two constructions for the upper bounds.
+
+\section{The leading constant for a dense set of constraints}
+Split the $N$ positions into consecutive blocks of $b$ positions, where $b$ is a power of two between $n^2$ and $2n^2$. For each block $J$, take the span of its columns modulo the span of all earlier blocks. Write $d_J$ for this dimension. Then $0\le d_J\le b$ and $\sum_J d_J=r$.
+
+For each $0\le d\le b$, fix a list of $O(b^2+1)$ binary $b$ by $d$ matrices with the following property. For every rank-$d$ matrix $L:\F^b\to\F^d$, some list element $G$ has $LG$ invertible. For $d>0$ a uniformly random $G$ works for fixed $L$ with probability $\prod_{i=1}^d(1-2^{-i})$, bounded below by an absolute positive constant. There are at most $2^{bd}$ possibilities for $L$, proving the list claim by the union bound; $d=0$ is immediate.
+
+On block $J$ choose a list element $G_J$ for the quotient map in any basis. Restrict $x|_J$ to the form $G_J u_J$ for a message $u_J$ of $d_J$ bits. By induction on the blocks the images of all restricted block generators through $A$ span precisely the same space as all original columns seen so far. Hence the $r$ message bits together can realize every syndrome $y$. The choice of generators depends on $A$ and can be shared across all its syndromes.
+
+It remains to charge for all data a circuit needs at an address. A directory indexed by the block stores its rank, list index and ordinal among blocks of the same rank. These require $O(n)$ output bits on $\log(N/b)$ address bits. Implementing each by Lupanov's ordinary synthesis bound \cite{lup} costs $O((N/b)/\log(N/b))$ gates, for total $O(N/b)=o(N/n)$. The common generator lists, their selectors and their matrix-vector products need only $\operatorname{poly}(b)$ gates, which is also $o(N/n)$.
+
+For each rank $d$ with $t_d$ blocks, store $d$ ordinary Boolean tables of length $t_d$, one per column of their messages in block-ordinal order. All these tables together contain exactly $r$ bits. Use at most $O(b^2)$ such tables, evaluated in parallel, and select the returned $d$ bits according to the directory. For clarity about the leading constant, split any table of length $t_d$ into dyadic blocks in its binary prefix decomposition. Across the polynomially many tables, pieces of length below $2^{n-\sqrt n}$ cost $N\,2^{-\sqrt n}\operatorname{poly}(n)=o(N/n)$ even by direct synthesis. A larger piece of length $2^m$ has $m\ge n-\sqrt n$ and costs at most $(1+o(1))2^m/n$, uniformly by Lupanov. Prefix comparisons and multiplexing over the polynomially many pieces have polynomial cost. Thus the total message circuit costs $(r+o(N))/n$. This proves the dense upper bound, including the overhead of locating each message.
+
+\section{A field construction for fewer constraints}
+The next proof has two uses. It reaches smaller $r$, and its distribution is independent of the matrix being queried. A related object in the literature is a \emph{lossless rank condenser}, a family of linear maps among which one preserves the dimension of any prescribed low-dimensional subspace. We include the rank argument and the Boolean address-circuit accounting. See Forbes and Guruswami \cite{fg} for algebraic rank condensers and their precedents. Cheraghchi \cite[Corollary 2.23]{cher} gives a binary linear lossless condenser based on Guruswami, Umans and Vadhan. Transposing a seeded binary linear condenser and selecting a uniform message gives the same general mechanism for affine tests: every good seed makes a prescribed rank-$r$ system jointly uniform. Our estimate includes the gate budget for a fixed output word.
+
+Regard a vector $a\in\F^N$ as the coefficient list of $P_a(X)=\sum_{i=0}^{N-1}a_iX^i$. Set
+\[
+ \ell=n^2,\qquad h=\ell-4\lceil n+\log(r+1)+2\rceil,
+ \qquad d=\lceil r/h\rceil,\qquad F=\mathbb F_{2^\ell}.
+\]
+Take $n$ sufficiently large so $h>0$. Pick $v$ uniformly in $F$, treating $v=0$ as a bad seed and defining $v^0=1$. Consider the binary-linear map taking $a$ to $(P_a(v^{2j-1}))_{1\le j\le d}\in F^d$.
+\begin{lemma}\label{lem:rank}
+For every fixed rank-$r$ binary row space $U$, the displayed map is injective on $U$ except with probability $O((1+rNd\,2^h)/2^\ell)=2^{-\Omega(n)}$ over $v$.
+\end{lemma}
+\begin{proof}
+Choose an echelon basis of $U$, giving polynomials $P_1,\ldots,P_r$ with distinct leading degrees. From the positive integers $(2j-1)2^a$ for $1\le j\le d$ and $0\le a<h$ choose any $r$, in increasing order. They are distinct by their odd parts. In the polynomial determinant with entries $P_i(Z^{e_j})$, pair the increasing leading degrees with the increasing exponents $e_j$. This permutation gives the unique term of largest degree by the strict rearrangement inequality. Every lower monomial in the product has strictly smaller degree. The determinant is nonzero even in characteristic two. Its degree is at most $rN(2d)2^h$. Counting $v=0$ as an additional failure and counting the other roots yields the failure bound by counting roots. A binary dependence among the vectors $(P_i(v^{2j-1}))_j$ would remain a dependence after raising every component to any of the $2^a$ powers, since the polynomials have binary coefficients. It would therefore annihilate the invertible specialized determinant.
+\end{proof}
+
+Independently choose uniform $w_1,\ldots,w_d$ in $F$ and form the Boolean table
+\[
+ x_i=\Tr_{F/\F}\!\left(\sum_{j=1}^d w_j(v^i)^{\,2j-1}\right).
+\]
+For a fixed query row $a$, its answer is $\Tr(\sum_j w_j P_a(v^{2j-1}))$. Thus if $v$ is good in Lemma~\ref{lem:rank}, the $r$ answers for the rows of $A$ are uniform jointly as $w$ varies. We use here the nondegeneracy of the trace pairing. In particular any consistent assignment is attained. Unconditionally, the statistical distance of $Ax$ from uniform is $o(1)$ for every fixed rank-$r$ matrix.
+
+\paragraph{Cost at a binary address.}
+Compute $v^i$ by successively multiplying by a fixed $v^{2^a}$ when address bit $a$ is one. This costs $\operatorname{poly}(n)$ since $\ell=n^2$, and all its field operations can be done by schoolbook binary operations. A fixed degree-$O(d)$ polynomial over $F$ has an evaluation circuit of size
+\[
+                    O(d\ell/\log(2d)+\sqrt d\,\operatorname{poly}(\ell)).
+\]
+Here are the details of the factor $\ell$ in its leading term. Write the coefficients in a square array of side $m=\lceil\sqrt{2d+1}\rceil$. Precompute $m$ small powers of the variable and $m$ powers of its $m$th power. Binary extension field multiplication has bilinear rank $R=O(\ell)$ \cite{rank}. For each of the $R$ terms, take the corresponding input linear form on all $m$ small powers. One fixed $m$ by $m$ binary map forms that term's $m$ inner sums of hardwired coefficients times these bits. Each binary map costs $O(m^2/\log(2m))$ XORs by grouping inputs into blocks of $\lfloor\log(m)/2\rfloor$ bits, precomputing subset sums and combining one result per block per output. Recombining all terms gives the block polynomials, which are multiplied by the powers of the $m$th power and summed. The initial and final linear transforms and the $O(m)$ ordinary field multiplications cost $O(m\operatorname{poly}(\ell))$. Finally the trace is a binary linear form. Consequently when $r\ge n^C$ for sufficiently large fixed $C$, the entire cost is $O(r/\log r)$, uniformly. This proves Theorem~\ref{th:sharp}.
+
+\section{Consequences for Boolean MCSP}
+Let $A_s=\{x:C(x)\le s\}$. At $s\sim cN/n$ for $0<c<1$, the greatest dimension of an affine subspace contained in $A_s$ is $(c+o(1))N$. Counting gives the upper bound. Conversely all tables supported on a prefix of $(c-\delta)N$ entries can be synthesized with $(c-\delta+o(1))N/n$ gates by the same dyadic lookup calculation, for each fixed $\delta>0$.
+
+The greatest dimension of an affine subspace in its complement is $(1-c+o(1))N$. The dense syndrome theorem forces every affine space defined by at most $(c-\delta)N$ independent queries to hit $A_s$. Conversely a fixed full-rank matrix with $(c+\delta)N$ rows has more syndromes than $|A_s|$; some coset misses $A_s$. Let $\delta\downarrow0$ in the two bounds. Thus the least rank of an affine certificate that a table is hard, minimized over such certificates and tables, has order $(c+o(1))N$.
+
+More generally consider a randomized decision tree whose queries are parities of arbitrary subsets of the truth-table entries, with unbounded computation. At $n^{C'}\le s\le(1-\epsilon)N/n$, for sufficiently large absolute $C'$ and any fixed $\epsilon>0$, its bounded-error query cost is $\Theta_\epsilon(s\log s)$, even when the choice of each parity depends on earlier answers.
+
+For the lower bound take $r=\lfloor c_0s\log s\rfloor$ for small $c_0>0$. Our common field construction has every output in $A_s$. Fix a deterministic depth-$r$ tree. Each reachable leaf prescribes a fixed consistent system of at most $r$ linear equations. With probability at least $1-\delta$ over $v$, where $\delta=2^{-\Omega(n)}$, the projection is surjective on the independent rows of this system. To see this one can extend their span to rank $r$ before applying Lemma~\ref{lem:rank}. At every such seed the probability, over the message, of that leaf equals its exact probability under a uniform input. Thus each leaf receives at least $(1-\delta)$ times its uniform probability under the common easy law. Summing the smaller probability of the two laws at each leaf gives an overlap of at least $1-\delta$ over all leaves, regardless of their number. Averaging over tree coins gives the same conclusion for a randomized tester. A uniform table lies outside $A_s$ with probability $1-o(1)$ by counting, so a correct tester must make more queries. For the upper bound draw $\lceil\log |A_s|\rceil+2$ independent random parity rows and accept if any easy table has the observed syndrome. Every member passes, and each fixed nonmember collides with any given member with probability $2^{-q}$ for $q$ rows.
+
+The same argument gives a generator for every depth-$r$ parity decision tree. With $v$ and $w$ drawn as above, its seed has $\ell+d\ell=(1+o(1))r$ bits for $r\ge n^C$ with $C$ large enough. The statistical error of the full transcript is exponentially small in $n=\log N$. A seed of $r-O(1)$ bits is necessary at constant error because an observer can read $r$ individual bits and check membership in their projected support. Standard small-bias generators already fool parity decision trees with seed length of optimal asymptotic order, as explained by Hoza and Klivans \cite[Section~1.5.4]{hk}. Here every output is also an address function with $O(r/\log r)$ Boolean gates.
+
+For adaptive randomized parity queries with perfect completeness, the same order holds, and at $s\sim cN/n$ the cost is $(c+o(1))N$. A deterministic rejecting transcript describes a nonempty affine space of codimension at most its query length. Perfect completeness disallows any such transcript intersecting $A_s$. This reasoning applies after fixing the random coins outside a common null set because $A_s$ is finite. The field construction gives the order lower bound and the dense construction gives the leading constant. The same random linear sketch supplies the upper bounds.
+A companion manuscript, \emph{Small Boolean truth tables under adaptive parity tests}, sharpens the coefficient at dense thresholds. A random affine permutation spreads a basis of the queried columns across the blocks. Independent small matrix choices retain all but a vanishing fraction of their rank and a second code restores the missing directions. The resulting common distribution proves the leading $(c+o(1))N$ lower bound even for two-sided error, with an application to unrestricted outer circuits.
+
+\input{fibers}
+\input{sparse-sharp}
+\input{digits}
+\begin{thebibliography}{9}
+\bibitem{intmult} D. Harvey and J. van der Hoeven. \href{https://doi.org/10.4007/annals.2021.193.2.4}{Integer multiplication in time $O(n\log n)$}. Annals of Mathematics, 2021. A quasi-linear Boolean circuit bound suffices here.
+\bibitem{polyprod} D. Cantor and E. Kaltofen. \href{https://kaltofen.math.ncsu.edu/bibliography/91/CaKa91.pdf}{On fast multiplication of polynomials over arbitrary algebras}. Acta Informatica, 1991.
+\bibitem{bsh} \href{https://eccc.weizmann.ac.il/report/2013/142/}{Property testing bounds for linear and quadratic functions via parity decision trees}. ECCC TR13-142, 2013.
+\bibitem{hl} W. M. Hoza and Z. Lv. \href{https://doi.org/10.4230/LIPIcs.APPROX/RANDOM.2025.35}{Fooling near-maximal decision trees}. RANDOM 2025.
+\bibitem{cher} M. Cheraghchi. \href{https://arxiv.org/abs/1107.4709}{Applications of derandomization theory in coding}. Doctoral dissertation, 2010.
+\bibitem{chash} A. V. Chashkin. \href{https://keldysh.ru/papers/2024/mvk/mvk2024_152.pdf}{On computing partial Boolean functions}, Theorem 6.1, 2024.
+\bibitem{lup} O. B. Lupanov. A method of circuit synthesis. Izvestiya VUZ, Radiofizika 1 (1958), 120--140.
+\bibitem{hk} W. Hoza and A. Klivans. \href{https://eccc.weizmann.ac.il/report/2016/172/}{Preserving randomness for adaptive algorithms}. ECCC TR16-172, revised version.
+\bibitem{fg} M. A. Forbes and V. Guruswami. \href{https://arxiv.org/abs/1411.7455}{Dimension expanders via rank condensers}. APPROX/RANDOM, 2015.
+\bibitem{rank} S. Ballet and J. Pieltant. \href{https://arxiv.org/abs/1003.1864}{On the tensor rank of multiplication in any extension of $\mathbb F_2$}. Finite Fields and Their Applications, 2011.
+\end{thebibliography}
+\end{document}

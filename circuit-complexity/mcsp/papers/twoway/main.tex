@@ -1,0 +1,148 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb,hyperref}
+\urlstyle{rm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prob}{\mathbb P}
+\newcommand{\MC}{\mathrm{MCSP}}
+\title{A time lower bound for Boolean minimum circuit size with two-way input}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+A Turing machine with one sequential work tape and a separate, freely reversible input head requires $\Omega(N\log N)$ time on a member of the language accepted with perfect soundness, for either the Boolean minimum circuit size problem or its complement, where $N$ is the truth-table length and the threshold is part of the instance. The lower bound holds for shortest nondeterministic accepting paths and for expected time with one-sided randomized error. For almost every fixed density below Shannon's bound, its prescribed threshold is hard at all sufficiently large lengths. The proof compares typical minimum circuit sizes of random tables at nearby prefix lengths. A short accepting computation on two transposed copies of a random matrix remains valid on a sufficiently large family of inputs with additional independent entries.
+\end{abstract}
+
+\section{The problem and the machine}
+
+Write $N=2^n$ and let $C(f)$ denote single-output Boolean circuit size over the full binary basis. We use a finite basis throughout. Circuit inputs and constants are free. The same argument applies to the usual AND, OR, NOT basis using its Shannon asymptotic. The input consists of a self-delimiting header specifying $n$ and the binary threshold $s$, followed by the $N$ truth-table entries in address order. The output is positive if $C(f)\le s$. The input head starts at the left end of this single read-only tape, may stay still or move one cell per step in either direction, and has endmarkers. A separate two-way work tape has a fixed alphabet and initially contains blanks. A read-only threshold supplied independently of the truth table may also be hardwired for each fixed $n,s$ in the proof. In particular an extra head confined to that header changes only the $O(\log T)$ amounts of metadata below. All lower bounds count machine transitions.
+
+\begin{theorem}\label{thm:main}
+Fix $0<c_0<c_1<1$. For each machine deciding $\MC$ and all sufficiently large $N=2^n$, there is a positive input with $c_0N/n\le s\le c_1N/n$ requiring $\Omega(N\log N)$ time. This holds under either of the following conventions.
+\begin{enumerate}
+\item On a positive input the running time is the length of the shortest accepting path; on a negative input there is no accepting path.
+\item The machine accepts each positive input with probability at least $2/3$ and each negative input with probability zero. The bound is on expected running time on the positive input.
+\end{enumerate}
+The constants may depend on the machine and the interval. For every $c\in(0,1)$ one can select hard thresholds $s_N\sim cN/n$ with a uniform implied constant in the time bound.
+\end{theorem}
+
+The same conclusion holds for machines recognizing the complement, with negative instances serving as their accepted instances; see Theorem~\ref{thm:reverse}. The threshold selection in this first theorem can depend on length and machine. Theorem~\ref{thm:most} later controls all but a small fraction of thresholds. We do not establish hardness for every exact prescribed integer $\lfloor cN/n\rfloor$. Deterministic exact time is covered by both conventions. The gap between one-way and two-way input in this model is material: Cheraghchi, Hirahara, Myrisiotis and Yoshida establish a randomized time lower bound with a one-way input tape \cite{chmy}. Maass, Schnitger, Szemer\'edi and Tur\'an separate offline models using sparse matrix-transpose verification \cite[Theorem~1.1 and Lemma~3.1]{msst}. We use their idea of separating rows in one copy from columns in its transpose. To obtain a lower bound for minimum circuit size, we compare concentrations of the true minimum size before and after splicing.
+
+\section{Random partial prefixes}
+
+Let $U_K$ be a uniform $K$-bit word followed by $N-K$ zero bits, interpreted as an $n$-variable truth table, and write $\mu_K=\E C(U_K)$.
+\begin{lemma}\label{lem:prefix}
+Uniformly when $K/N$ ranges in a compact subinterval of $(0,1)$,
+$\mu_K=(1+o(1))K/n$. For either sign and all $u\ge0$,
+\[
+ \Prob\bigl[\,\pm(C(U_K)-\mu_K)\ge u\,\bigr]
+ \le \exp\{-2u^2/(A^2 n^2 K)\}
+\]
+with an absolute $A$.
+\end{lemma}
+\begin{proof}
+The Shannon lower count bounds the base-two logarithm of the number of size-$s$ functions by $s\log_2s+O(s+n\log(n+s))$ for $s=\Theta(N/n)$ \cite[Chapter~1]{jukna}. It gives the lower estimate even when only the first $K$ entries vary. For the upper estimate split the active prefix into blocks of size $2^{n-\lceil2\log_2 n\rceil}$, padding the last to its full size. Synthesize each block using Lupanov's bound \cite{lupanov} and select its output by the high address bits. There are $O(n^2)$ selectors. The last block has length $o(K)$ and the arity of a block is $n-O(\log n)$. Finally, a single truth-table change can be implemented in either direction by XOR with a minterm, costing at most $An$ gates. Apply the independent bounded-difference inequality \cite{mcdiarmid}.
+\end{proof}
+
+\section{Separating two copies of a matrix}
+
+Choose constants $c_0<a_0<a_1<c_1$. Fix a power of two $m=\Theta(\sqrt N)$ with $m^2\le N\min(a_0,1-a_1)/4$. For each $a_0N\le K\le a_1N$ use the following physical table. The first $m^2$ bits are a random $m$ by $m$ matrix $U$ in row order. The next $m^2$ bits are $U^{\mathrm T}$ in row order. The next $K-m^2$ bits contain independent random data. Set the rest to zero. Starting from a circuit for $U_K$, calculate the address in this physical table by swapping row and column indices for the second square and subtracting $m^2$ in the tail. Equivalently, translate a requested physical address to a packed address, use the original circuit once, and mask inactive positions. This costs $O(n^2)$ extra gates. Thus at
+\[
+ s_K=\lceil\mu_K+B n\sqrt N\rceil
+\]
+at least $9/10$ of these tables are positive, by Lemma~\ref{lem:prefix} for an appropriate $B$. Their threshold bits are identical. All row boundaries below are relative to the start of the data, regardless of the length of this fixed header.
+
+Suppose for contradiction that at each such $s_K$ every positive input has running time less than $T/100$, with $T=\lfloor\alpha N\log_2 N\rfloor$ and $\alpha>0$ sufficiently small. A nondeterministic positive input then has an accepting path of length at most $T$; choose a shortest one with a fixed tie rule before selecting tape offsets. Other accepting paths and nonhalting branches are irrelevant. In the randomized case cap the run at $T$ and reject on timeout. On a positive input Markov's inequality loses at most $1/100$ acceptance.
+
+Partition each tape into length-$m$ blocks at an independent uniform offset modulo $m$. A path of length $T$ has expected total boundary-crossing count at most $2T/m$, summed over both heads. In the randomized case assign an independent stream of fresh random bits to each work block, drawing the next bit locally when the machine tosses a coin there. For each fixed input and offset the induced path law is the original one by deferred decisions, so the crossing estimate still holds jointly with the offsets. Keep accepting paths with at most $g=\lceil200T/m\rceil$ crossings, at a further loss of at most $1/100$ in probability. Fix offsets and, if needed, streams for which the surviving accepting paths cover a fixed positive fraction of the diagonal input law. For fixed $N,s$ there are finitely many inputs. Therefore almost surely the capped machine with those streams has no false acceptance on any negative input; the streams can be fixed with both properties.
+
+\paragraph{A cover by local tests.}
+For each crossing record the time, positions after the transition, heads crossing, and control state. Include the time, positions and state of an accepting halt. The input head's displacement includes any visit to the fixed header; the extra header head, if provided, is recorded at the same times. There are at most $\exp(O(g\log(T+2)))$ traces. In each segment between records the original work and data heads occupy one old work block and one old input block. Charge the crossing transition, including a simultaneous crossing, to its old blocks. For each work block replay all its visits in chronological order, starting with blanks and retaining its contents and local coin index between visits. Read its segment's whole input chunk in fixed order into a cache and simulate with that cache. Header, endmarker and padding positions are constants. Verify states, positions and times at the endpoints, that no earlier crossing occurs, and a true accepting halt by the time cap. A rejecting timeout never witnesses acceptance.
+
+The replay needs $O(m+\log(T+2))$ bits for its two cached blocks, states and counters. It can use unrestricted computation between input queries. In the nondeterministic case retain the local transitions as existential choices. To see that local witnesses join, order all segments by their original times. At the start of each segment its state and head positions agree with the preceding endpoint; the current work-block contents are those left by its most recent visit, since no intervening segment writes there. Thus the next local path is reachable from the actual configuration. Induction concatenates all local paths into the claimed accepting computation. The converse follows by taking the local segments of any real path.
+
+For a given trace, divide the resulting fixed schedule of at most $g+1$ chunk reads into $p$ consecutive windows with at most $\lceil(g+1)/p\rceil$ chunks each, padding empty windows if necessary. Guess the boundary states of the replay, including its caches and counters. The test that a window can realize its endpoints depends only on the inputs read in that window. The existential paths of different windows join at their prescribed full states in replay order. The number of trace and state records is at most $\exp(r)$ with
+\[
+ r=O\bigl(g\log(T+2)+p(m+\log(T+2))\bigr).
+\]
+Each accepting record describes a conjunction of window tests all of whose satisfying inputs are positive. The conjunctions cover a constant fraction of diagonal inputs, so one has probability $\exp(-O(r))$ or more. No disjointness of the cover is needed.
+
+\paragraph{A private submatrix.}
+Each original row intersects at most two shifted chunks, and any shifted length-$m$ chunk intersects at most two rows of each square. In either square at least $3m/4$ rows meet at most $D=\lceil8(g+1)/m\rceil$ windows, by counting incidences with chunk reads. Put
+\[
+ \beta=2^{-D-4},\qquad p=\lceil C(1+g/m)^2\beta^{-2}\rceil .
+\]
+For the parameter choice below, $p\le g$. Color the windows independently red or blue. Each of these light rows in the first square has probability at least $2^{-D}$ that every window touching it is red, and the analogous event for a light second-square row and blue has the same lower bound. An unqueried row meets the condition vacuously. Recoloring one window changes either private-row count by at most $2\lceil(g+1)/p\rceil$. The sum of squares of these changes is $O(g^2/p)$. The bounded-difference inequality for the colors gives, for sufficiently large $C$, a coloring with at least $h=\lfloor\beta m\rfloor$ private rows of each type. Choose $h$ such first-square rows $R$ and $h$ such second-square rows $J$.
+
+The $d=h^2$ sites in $R\times J$ of the first square are seen only by red windows. Their transposed copies in the second square are seen only by blue windows. All other entries depend on the remaining $K-d$ independent bits $W$. For fixed $W$ write the selected conjunction on diagonal inputs as $A_W(V)B_W(V)$, where $V$ is the repeated uniform $d$-bit vector and the two factors are the conjunctions of red and blue tests. Now place independent uniform vectors $V,V'$ at the two copies of these sites. Conditional on $W$, the acceptance probability of this same conjunction is
+\[
+ (\E_V A_W(V))(\E_V B_W(V))\ \ge (\E_V A_W(V)B_W(V))^2 .
+\]
+Jensen's inequality gives unconditional probability $\exp(-O(r))$ or more. Every resulting accepted table has size at most $s_K$.
+
+\section{Recovering the additional independent bits}
+
+Pack the independent entries of a spliced table into $U_{K+d}$ by retaining the original $K$ entries in order and appending the independent second copies in row order on $R\times J$. To compute a packed bit from a circuit for the physical table, use the first square and contiguous tail for the original entries. For an appended address divide its offset by $h$ and use the quotient and remainder to look up the corresponding selected row and column. Use the transposed physical address for the second copy. Two hardwired tables of $h$ indices, constant-integer arithmetic, and the final masking of inactive addresses cost $O(m\operatorname{poly}(n))$ gates. There is only one call to the physical circuit. Thus
+\[
+ \Prob[C(U_{K+d})\le s_K+O(m\operatorname{poly}(n))]\ge\exp(-O(r)).
+\]
+Using the lower tail in Lemma~\ref{lem:prefix} yields the step
+\[
+ \mu_{K+d}\le\mu_K + O\bigl(m\operatorname{poly}(n)+n\sqrt{N(r+1)}\bigr).
+\]
+
+Fix $0<\eta<1/12$ and take $\alpha$ small enough that $\beta\ge N^{-\eta}$. Then $p\le g$, $d\ge\Omega(N^{1-2\eta})$ and $r\le N^{1/2+2\eta+o(1)}$. The displayed increment is $o(d/n)$. Since $\alpha$ is fixed and positive, $D\to\infty$ and $d=o(N)$. The value of $d$ depends on $N$ but is identical for every $K$ in this argument. Start at $K_0=\lceil a_0N\rceil$ and add $d$ until the last $K_1\le a_1N$. Telescoping gives $\mu_{K_1}-\mu_{K_0}=o(N/n)$, whereas Lemma~\ref{lem:prefix} gives $(a_1-a_0+o(1))N/n$. This contradiction proves the fixed-interval assertion of Theorem~\ref{thm:main}.
+
+For the final assertion fix $m/\sqrt N$ within constant factors and fix $\alpha$ using a whole compact neighborhood of $c$. Only then shrink the interval endpoints toward $c$. They may shrink sufficiently slowly that their separation dominates $d/N$ and the uniform relative errors in Lemma~\ref{lem:prefix}. The same sum of stepwise $o(d/n)$ errors is $o((K_1-K_0)/n)$, with uniform constants. The contradiction therefore preserves the constant in $\Omega(N\log N)$ while $s_N/(N/n)\to c$.
+
+\section{The opposite acceptance convention}
+
+\begin{theorem}\label{thm:reverse}
+The lower bound and threshold selection in Theorem~\ref{thm:main} hold for a machine accepting inputs with $C(f)>s$ under either perfect-soundness convention, with the hard running-time instance belonging to its accepted class.
+\end{theorem}
+\begin{proof}
+We keep the physical layout of the two squares and a tail. Their entries are initially independent. Certain matrix entries at the transposed positions in the two squares will gradually be required to agree. At any stage all unconstrained entries, including one representative of each equal pair, are independent uniform bits. If $\mu$ denotes mean circuit size for the current law, changing one of these independent bits changes at most two truth-table entries. The concentration bound of Lemma~\ref{lem:prefix} holds with $2A$ in place of $A$ and with $N$ in the variance proxy. At threshold $s=\lfloor\mu-Bn\sqrt N\rfloor$, for a sufficiently large constant $B$, a fixed positive fraction of the current law must be accepted. Under the short-time assumption the replay therefore gives an accepting conjunction of window predicates of mass $p_0\ge\exp(-O(r))$; every satisfying input has $C(f)>s$.
+
+Write $M=m^2$. Fix a small constant $\zeta>0$. While at least $\zeta M$ transposed pairs remain independent, we can select $d\ge N^{1-O(\alpha)}$ currently independent pairs privately separated between red and blue windows. Here the constants may depend on $\zeta$ and $m/\sqrt N$. In fact, raising the light-row cutoff to $D'=\lceil 32(g+1)/(\zeta m)\rceil$ excludes at most $\zeta M/4$ pairs with a heavy endpoint. A window meeting at most $2\lceil(g+1)/p\rceil$ rows of either square can touch both row endpoints of at most $4\lceil(g+1)/p\rceil^2$ pairs. Taking $p=\lceil C(1+g/m)^2/\zeta\rceil$ gives fewer than $\zeta M/4$ such pairs across all windows. For each of the remaining independent pairs the two incident sets of windows are disjoint and of size at most $D'$. Under independent window colors that pair is private in the prescribed orientation with probability at least $2^{-2D'}$. One coloring gives at least $(\zeta M/2)2^{-2D'}$ private independent pairs. Here $r=O(g\log T+p(m+\log T))=N^{1/2+o(1)}$.
+
+Condition on all other independent entries. The private pairs have independent uniform copies $V,V'\in\{0,1\}^d$. Averaging instead over uniform $V$ and a uniform offset $H$ with $V'=V\oplus H$ gives the same acceptance probability $p_0$, also after averaging over exterior entries. The probability that $H$ has fewer than $d/3$ zeros is $\exp(-\Omega(d))$. For sufficiently small $\alpha$, $d\gg r$; choose an offset $h$ with at least $d/3$ zeros for which the unconditional probability of the conjunction is at least $p_0/2$. Keep the two copies equal at those zero coordinates. At the other selected coordinates, restore independent uniform copies. Conditional on the exterior and on all retained equal bits, this restoration can decrease acceptance only from $q$ to at least $q^2$, by the red--blue product inequality of the preceding section applied to the offset diagonal. Jensen's inequality gives mass at least $(p_0/2)^2$ on the new law. Thus the mean size after imposing at least $d/3$ new equalities is at least $\mu-O(n\sqrt{N(r+1)})$, by the upper-tail concentration bound. No offset is retained at any unequal coordinate.
+
+After at most $N^{O(\alpha)}$ steps fewer than $\zeta M$ free pairs remain. Choose $\alpha$ so small that the total permissible decrease is $o(N/n)$. For clarity, put the initial number of independent bits at $K_{\rm hi}$, with $(K_{\rm hi}-M)/N$ and $K_{\rm hi}/N$ in the interior of the prescribed density interval. This can be arranged by taking the square a sufficiently small fixed fraction of $N$ and adjusting the tail length. At the starting stage the mean is at least $(K_{\rm hi}-o(N))/n$ by counting. At the final stage the table is the original duplicated-square layout with $K_{\rm hi}-M$ free underlying entries, modified in at most $\zeta M$ positions of the second square. The base layout costs at most $(K_{\rm hi}-M+o(N))/n$. A correction of density $\zeta$ on a square can be synthesized using at most $o_{\zeta\to0}(1)M/n+o_N(N/n)$ gates. An elementary proof groups sites into blocks of dyadic length $b=\Theta(\log^2 n)$. A block is heavy if it has more than $\sqrt\zeta b$ ones. Light-pattern indices cost at most $bH_2(\sqrt\zeta)+O(\log b)$ bits per block, and a polynomial-size decoder unpacks a pattern by successive comparisons to binomial coefficients. Store the raw patterns of heavy blocks in a packed table of at most $\sqrt\zeta M$ bits. To locate a heavy block, put consecutive blocks in groups of size between $n^2$ and $2n^2$, store an $O(n)$-bit starting rank per group and an $O(\log n)$-bit within-group rank per block. These directories and flags require $o(M)$ bits. The directories, pattern indices and packed heavy data are a polynomial number of lookup columns with total stored bits at most $(H_2(\sqrt\zeta)+\sqrt\zeta+o(1))M$. Lupanov prefix lookup gives this quantity divided by $n$, up to $o(M/n)$: columns shorter than $M/n^B$ for sufficiently large fixed $B$ have negligible aggregate cost, and longer columns are padded in blocks of size $\Theta(M/n^{2B})$ before synthesis as in Lemma~\ref{lem:prefix}. Choose $\zeta$ so that the correction costs less than $M/(2n)$. This contradicts the telescoped mean lower bound.
+
+At intermediate stages the circuit census gives the lower density corresponding to $K_{\rm hi}-M$ and a circuit for an arbitrary full active prefix gives the upper density corresponding to $K_{\rm hi}$. Thus all thresholds used stay in the prescribed interval. For the length-dependent selection $s_N\sim cN/n$, fix the square size and $\zeta$ so that the initial lower bound exceeds $cN/n$ by a fixed fraction of $M/n$ and the final upper bound is smaller by such a fraction. Use the above many-pair step only when the current threshold lies within a band of width $w_NN/n$ about $cN/n$. Outside the band impose equality on one arbitrary free pair. A one-pair change moves the mean by at most $O(n)$ under the direct coupling. The sum of all possible downward changes from many-pair steps is $N^{O(\alpha)}O(n\sqrt{N(r+1)})=o(N/n)$. Choose $w_N\to0$ slowly enough to dominate this quantity divided by $N/n$ and also the one-pair overshoot. The mean must eventually cross this band. Between its last visit above the band and its first visit below it, one outside step can overshoot by $O(n)$ and the remaining changes are many-pair steps. Their total downward movement is smaller than the band width, a contradiction. This keeps the time constant uniform.
+\end{proof}
+
+\section{Most prescribed threshold densities}
+
+\begin{theorem}\label{thm:most}
+Fix a compact density interval $I\subset(0,1)$ and either perfect-soundness convention for either polarity. For some $\alpha,\gamma>0$ depending on $I$ and the machine, all but an $O(N^{-\gamma})$ proportion of the integer thresholds $s$ with $sn/N\in I$ require time at least $\alpha N\log N$ on some member. Consequently, for Lebesgue-almost-every fixed $c\in(0,1)$, the exact prescribed threshold $\lfloor cN/n\rfloor$ has this lower bound at every sufficiently large input length. The constant may depend on a compact neighborhood of $c$.
+\end{theorem}
+\begin{proof}
+First take positive acceptance. Enlarge a small target interval slightly so that its endpoints lie strictly between the starting and ending means on the $K$-grid of Section 4. The starting and ending means bracket the interval by Lemma~\ref{lem:prefix}. Let $u=Bn\sqrt N$ and let $E$ be a uniform upper bound for the splicing and tail loss $O(m\operatorname{poly}(n)+n\sqrt{N(r+1)})$, with $E\ge u+2$. Call an integer threshold fast if every member has running time less than the time in the short-computation assumption. For every grid interval from $K$ to $K+d$, any fast threshold $s\ge\mu_K+u$ satisfies $\mu_{K+d}\le s+E$. This follows from the very same fixed-threshold proof, since the diagonal inputs have constant positive mass whenever $s\ge\mu_K+u$. Every $s$ between the endpoint means is crossed upward by two consecutive means at least once. Any fast $s$ crossed in that way must lie within $E+2$ of one of the two means. The number of such integers is $O((1+N/d)(E+2))$. For the fixed parameters in Section 4 this is at most $N^{3/4+3\eta+o(1)}$.
+
+For negative acceptance take a sufficiently small target interval, and choose the initial and final bounds in Theorem~\ref{thm:reverse} to bracket its endpoints with fixed margins. Fix $u=Bn\sqrt N$ and $E=O(n\sqrt{N(r+1)})$ sufficiently large for the tail inference there and for $E\ge u+2$. At the current law use the real potential $v=\mu-u$. If any fast integer $s\in[v-E,v]$ exists, apply the many-pair step at that $s$. Its hard acceptance mass is constant before the trace is chosen; afterward the tail bound gives $\mu_{\rm next}\ge s-E$. Thus $v_{\rm next}\ge v-3E$. Call this a large step. If the interval contains no fast threshold, impose equality on a single free pair. The direct coupling gives $|v_{\rm next}-v|=O(n)<E$, so that this small step crosses no fast integer downward. The initial and final bounds hold independently of the choice of pairs. Every integer in the target interval is crossed downward somewhere, and at most $O(N/d)$ large steps occur, where now $d=N^{1-O(\alpha)}$ is a uniform lower bound on the number of privatized pairs in Section 5. Consequently all fast thresholds together number $O((1+N/d)(E+2))\le N^{3/4+O(\alpha)+o(1)}$. Choose $\alpha$ sufficiently small. A finite cover by small intervals proves the assertion on any compact $I$ with nonempty interior.
+
+For a fixed length, the set of $c$ whose threshold $\lfloor cN/n\rfloor$ is fast has measure at most $O(N^{-\gamma})$ on $I$, with a change of $\gamma$ absorbing the logarithmic normalization. As $N=2^n$ these measures are summable. The elementary Borel--Cantelli lemma gives the almost-everywhere assertion on $I$, and countably many compact intervals exhaust $(0,1)$.
+\end{proof}
+
+\section{A two-sided time--space consequence}
+
+For comparison, the common-discrepancy lower bound for balanced two-party partitions in the accompanying work \cite{companion} gives an elementary time--space tradeoff at the prescribed dense threshold $\lfloor cN/n\rfloor$. It applies to a bounded-error randomized machine with one freely reversible sequential input head. Assume that the entire internal work configuration can be transmitted in $S$ bits, including work-head positions, finite state and any bookkeeping necessary to restart a simulation. Arbitrary work-memory access is permitted under this hypothesis. If the maximal expected running time is $T$, then
+\[
+ (S+1)(T+N)=\Omega_c(N^2).
+\]
+Indeed draw the common hard mixture and independently pick a cut uniformly between the middle thirds of the input data. For the analysis cap total running time at a large constant times $T$. By averaging over cuts and counting head motion, the expected number of cut crossings is $O(T/N)$. One fixed balanced cut attains that bound. Discard runs with more than a large constant times $1+T/N$ crossings; truncation and the crossing cap preserve constant distributional advantage. Alice and Bob impose that same time allowance separately on each uninterrupted local visit, which can discard only runs beyond the total time allowance. They impose the crossing cap globally. They simulate locally with independent public coin streams for successive visits until the input head crosses, then transmit the work configuration; its input position at a crossing is determined by the cut and direction. This yields a protocol using $O((S+1)(1+T/N))$ bits, contradicting the common distributional $\Omega_c(N)$ communication bound if the asserted product is too small. Also $T=\Omega_c(N)$: below a sufficiently small multiple of $N$, cap the time at $N/4$ for the cut at the midpoint. No crossing is possible, contradicting the same distributional advantage with zero communication. Together these observations give $(S+1)T=\Omega_c(N^2)$. In particular $S\le N^{1-\epsilon}$ implies $T=\Omega_c(N^{1+\epsilon})$. This uses a space hypothesis; the first theorem's submatrix splicing uses zero false acceptance.
+
+\begin{thebibliography}{9}
+\bibitem{chmy} M. Cheraghchi, S. Hirahara, D. Myrisiotis, and Y. Yoshida. One-tape Turing machine and branching program lower bounds for MCSP. STACS 2021. \url{https://doi.org/10.4230/LIPIcs.STACS.2021.23}
+\bibitem{msst} W. Maass, G. Schnitger, E. Szemer\'edi, and G. Tur\'an. Two tapes versus one for off-line Turing machines. Computational Complexity 3 (1993), 392--401. \url{https://igi-web.tugraz.at/PDF/61.pdf}
+\bibitem{jukna} S. Jukna. Boolean Function Complexity. Springer, 2012. \url{https://doi.org/10.1007/978-3-642-24508-4}
+\bibitem{lupanov} O. B. Lupanov. A method of circuit synthesis. Izvestiya VUZ Radiofizika 1 (1958), 120--140.
+\bibitem{mcdiarmid} C. McDiarmid. On the method of bounded differences. Surveys in Combinatorics, 1989, pp. 148--188. \url{https://doi.org/10.1017/CBO9781107359949.008}
+\bibitem{companion} Common balanced-partition witnesses for Boolean minimum circuit size, companion manuscript in this workspace, \textrm{mcsp-notes/papers/branching/main.tex}.
+\end{thebibliography}
+\end{document}

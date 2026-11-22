@@ -1,0 +1,195 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,hyperref}
+\newtheorem{theorem}{Theorem}[section]\newtheorem{lemma}[theorem]{Lemma}\newtheorem{corollary}[theorem]{Corollary}
+\DeclareMathOperator{\Var}{Var}\newcommand{\F}{\mathbb F_2}\newcommand{\prob}{\mathbb P}\newcommand{\E}{\mathbb E}
+\title{Quadratic time for Boolean circuit minimization on a single work tape}
+\author{Research manuscript}\date{22 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+At every fixed positive fraction below Shannon's circuit-size bound, a randomized Turing machine with one two-way work tape and a one-way input tape needs expected time $\Omega(N^2)$ to decide the minimum circuit size problem on $N$ truth-table entries. The bound allows any fixed number of input-head reversals and holds on a distribution of inputs. We reduce a short computation to a sum of bounded-read branching programs by partitioning the work tape at a random offset. The record of input-head positions is short because each pass moves monotonically; independent random streams in the work-tape blocks preserve the law of the machine. A common discrepancy bound over balanced partitions applies after this reduction. For one-way input and $n+\omega(1)\le s\le(1-\epsilon)2^n/n$, padding gives the lower bound $\Omega_\epsilon(((s-n)\log(s-n))^2)$.
+\end{abstract}
+\section{The model and results}
+An input contains the $N=2^n$ entries of a Boolean truth table. Its circuit complexity is the least gate count over binary AND, binary OR and unary NOT, with constants, unrestricted fanout and one output. Define $\mathrm{MCSP}_{n,s}$ to accept precisely the tables of complexity at most $s$.
+The machine has fixed finite control, a fixed finite alphabet, a blank two-way work tape, a read-only input tape and independent random bits. Its work head moves at most one cell per step. The input head starts at the left and can stay; we count a pass as a maximal monotone portion, ignoring stationary steps. We use bounded input tapes with endmarkers for multiple passes. For one-way input an infinite blank extension after the endmarker is equivalent up to storing whether it has been passed. A one-way random tape with a head that can stay is simulated by retaining its current bit in the finite control until an advance draws the next one. There is no externally visible global clock. All running times count transitions.
+\begin{theorem}\label{main}
+Fix $p\ge1$ and $0<c<1$. For $s=\lfloor cN/n\rfloor$, every fixed machine with at most $p$ input passes on every run and pointwise error at most $1/3$ takes expected time $\Omega_{p,c,\mathrm{machine}}(N^2)$ on some input of each sufficiently large length $N=2^n$. In fact the expectation over the equally weighted mixture of the two distributions in the proof has this lower bound.
+\end{theorem}
+The benchmark of Cheraghchi, Hirahara, Myrisiotis and Yoshida (CHMY) is a randomized $N^{1.99}$ time exclusion at $s=N^\mu$ for some $\mu<1$ \cite[Thm.~2]{chmy}. Their model has a one-way input tape and a separate two-way work tape. Our square bound concerns a different, denser threshold. For other decision languages in this model, CHMY \cite[\S1.3]{chmy} distinguished the deterministic quadratic bound of Maass \cite{maass} from the randomized $\Omega(N^2/\log N)$ bound for Element Distinctness of Kalyanasundaram and Schnitger \cite{ks}. These results concern the extra-input-tape model; the classical single-tape palindrome bound concerns a different placement of the input.
+\section{A common discrepancy bound}
+For a partition $X\sqcup Y\sqcup Z$ of the $N$ input sites, a pseudo-rectangle has indicator $a(x_X,x_Z)b(x_Y,x_Z)$. It is $\beta$-balanced if $|X|,|Y|\ge\beta N$. The case $Z=\varnothing$ gives an ordinary rectangle.
+\begin{theorem}\label{t:rect}
+Fix $0<\beta\le1/2$ and $0<c_1<c_2<1$ with $(1-\beta)c_2<c_1$. There are distributions $\nu,\mu$ supported on complexity at most $c_1N/n$ and greater than $c_2N/n$, respectively, such that for all large $n$ and every $\beta$-balanced pseudo-rectangle $R$,
+\[
+ |\nu(R)-\mu(R)|\le\exp(-\kappa N)
+\]
+for a constant $\kappa=\kappa(\beta,c_1,c_2)>0$. The distributions are chosen before the cut.
+\end{theorem}
+The appendix gives the construction. For Theorem~\ref{main}, take $c_1<c<c_2$ sufficiently close to $c$ for the required balance. The $1/3$ error guarantee forces
+$\Pr_\nu[\mathrm{accept}]-\Pr_\mu[\mathrm{accept}]\ge1/3$.
+\section{An accepting crossing record}
+Let $\mathcal D=(\nu+\mu)/2$ and let $\bar T$ be the expected running time under $\mathcal D$ and the machine's coins. It suffices to rule out a subsequence with $\bar T=o(N^2)$. Put $T=\lceil100(\bar T+1)\rceil$, $b=\lceil\sqrt T\rceil$, and $g=\lceil100T/b\rceil$. Partition the work tape into blocks of $b$ consecutive cells with an offset $j$ uniform among $b$ choices; for a left-bounded work tape truncate the first block there. Independently give each block its own infinite sequence of fair coins. A step drawing a fresh coin uses the next bit in the stream of its source block. Conditional on $j$ and any input, each successive draw is an independent fair bit, because the index to be revealed is determined by the history and was never previously used. Thus the path law is independent of $j$.
+For each fixed path, every step crossing a work-cell edge contributes to exactly one offset. Averaging over paths and offsets, the expected number of crossings is at most $\bar T/b$. Discard runs taking more than $T$ steps or more than $g$ crossings. Markov's inequality bounds the discarded $\mathcal D$-mass by $1/100+1/100$. Under $\nu$ it is at most twice this amount, so the truncated acceptance advantage stays above $1/4$.
+
+Fix $j$ and all streams. Record the successive work-block crossings on an accepting truncated run. Each entry gives the work direction, the new finite control, and the input-head position immediately after that step. Record also the final accepting position and state. For multiple passes mark the at most $p-1$ steps that start a new direction, recording a cut immediately \emph{before} the first step moving in the new direction. These events store the input position, work offset inside the current block, and state. Simultaneous events have a prescribed order (after a work crossing, before a reversal). Record the input bits at all event positions, including start and halt where applicable. Repeated position entries must have consistent values. The initial block is known; successive work directions determine the block indices and the within-block entry cell at each work crossing. Each event separates two visits, with a reversal splitting an otherwise continuous stay in one block. Interleaving the $O(p)$ extra events costs $O_p(\log(T+N+2))$ bits.
+
+If $h\le g+O(p)$ is the number of recorded positions, the sum of their absolute successive differences is at most $p(N+1)$. Encode the nonnegative absolute differences by stars and bars and use one sign per difference. Including directions, states, specified bits and reversal overhead, the number of possible records is at most $2^\ell$ with
+\[
+ \ell=O_p\big(\log(T+N+2)+g+g\log_2(1+N/g)\big)=o(N).
+\]
+This bound uses that $g=o(N)$, even when $g$ approaches $N$ divided by a slowly growing function. No absolute time or global random-tape coordinate occurs in a crossing record.
+
+\section{Verification with bounded reads}
+For one proposed record, verify each visited work block separately in a fixed order. Store its $b$ cells, its local coin-stream index, and its successive visits as specified by the record. Initialize its cells to blanks and preserve them between its visits. At each visit initialize the head and state from its entry event. Check that the local simulation reaches exactly its specified exit: the actual crossing transition belongs to the departing block, and reads and writes only its source work cell. For a reversal, split before its first contrary move; the incoming visit ends when that move is first detected, and the outgoing visit executes it. Both checks occur at the same source work cell. The incoming visit can peek at its own next local coin without advancing the index; the outgoing visit subsequently consumes exactly that bit, even if the transition then crosses a work boundary. Require the prescribed direction on every moving transition within each monotone piece, including that the first moving transition after a reversal is the first transition of that piece. This prevents inserting spurious reversal marks. At the last event check halting. Bound local runs by $T$ and carry the sum of local transition counts across all visits, rejecting if it exceeds $T$. The fixed streams are available nonuniformly by indexing with the local draw counter. There is no hidden time parameter. Each valid local run concatenates chronologically by induction on events: the input, coin draw and work cell at each step agree with those of the unique global computation. Conversely its actual accepting record passes all checks.
+
+More explicitly, the preceding verifier is an oblivious syntactic read-$p$ branching program of size at most
+\[
+ S=2^{O_{p,\Gamma,Q}(b+\log(T+N+2))}.
+\]
+First check the distinct boundary-position literals once. Hardwire those symbols on every subsequent visit. In the open interval between its endpoint positions, a monotone visit reads the remaining inputs in a fixed order (its direction), caching the current symbol through stationary steps. A mismatch in position or an unexpected work crossing causes rejection. Many local steps can be compiled into the transition between two queries, since the total-step bound makes that computation finite. Fixed query layers may be padded on a rejecting branch. All pieces of any given pass have disjoint open intervals, so each nonboundary site is queried at most once per pass. The program needs $O(b\log|\Gamma|+\log(T+N+2))$ bits to store a block, counters, head positions and the finite control; there are at most $pN+O(N)$ input-query layers, which accounts for the displayed size. For a malformed record one may reject at once if the intervals violate this syntactic read bound. For fixed offset and streams the accepting sets of distinct valid records are disjoint.
+
+For $p=1$, pad each program into a fixed permutation of all input sites; the configurations at its middle layer give a disjoint union of at most $S$ balanced rectangles. For general fixed $p$ we use the trace theorem of Borodin, Razborov and Smolensky \cite[Thm.~1]{brs}. Given integer $a\ge1$, a size-$S$ syntactic read-$p$ program has a cover of its accepting set by $(2S)^{O(pa)}$ conjunctions of at most $pa$ local factors, each depending on at most $\lceil N/a\rceil$ sites and each variable appearing at most $p$ times per conjunction. The cover is disjoint for a deterministic program since an accepting path has a unique trace. Color factors independently red or blue; include dummy singleton factors for absent sites. Each color has at least $2^{-p}N$ expected exclusively private sites. The sum of squared changes on recoloring a factor is at most $pa\lceil N/a\rceil^2+N$. Bounded differences therefore give positive probability of having at least $\beta N$ exclusive sites of each color, for $\beta=2^{-p-1}$ and $a=\lceil Kp4^p\rceil$ with a sufficiently large absolute $K$ and $N$ sufficiently large for fixed $p$. Each conjunction becomes a $\beta$-balanced pseudo-rectangle. Accordingly the absolute discrepancy of a record is bounded by $(2S)^{O(p^24^p)} e^{-\kappa N}$. Summing over at most $2^\ell$ disjoint records gives $o(1)$ even though the partitions vary across records and fixed streams. Averaging over offsets and streams contradicts the truncated advantage. This proves Theorem~\ref{main}.
+
+\subsection{A growing number of passes}
+The quantitative version of the common pseudo-rectangle estimate gives,
+for each fixed threshold density $c\in(0,1)$, constants $A_c,C_c>0$
+such that every machine making at most $p=p(n)$ passes requires expected
+time $\Omega(N^2 2^{-A_c p})$ on some input, uniformly for
+\[
+ 1\le p\le\log_2 n-\log_2\log_2 n-C_c .
+\]
+Here we use the parameter estimates in the companion manuscript
+\emph{Bounded-read branching programs and decomposable circuits for the minimum circuit size problem},
+section on growing read multiplicity. In that range the two laws for
+threshold $cN/n$ have discrepancy at most
+$\exp(-\beta^{K_c}N)$, where $\beta=2^{-p-1}$ and $K_c$ is constant.
+The growing-parameter version uses the quantitative Lupanov bound
+when synthesizing lookup tables. The fixed-parameter theorem above only
+uses the asymptotic synthesis theorem.
+
+To check the time dependence, suppose the truncated budget is
+$T=\lfloor\epsilon N^2 2^{-A_c p}\rfloor$ and choose $b=\lceil\sqrt T\rceil$.
+The random boundary shift allows a cap $g=O(\sqrt T)$ with constant
+truncation probability as before. Stars and bars for the total input
+variation $p(N+1)$, together with $O(p)$ reversal marks, costs
+\[
+ O\left(p\log(T+N+2)+\sqrt T
+       \left(1+\log(1+pN/\sqrt T)\right)\right)
+\]
+record bits. The middle configurations of the read-$p$ verifier
+contribute another $O(p^24^p(\sqrt T+\log(T+N+2)))$ bits to the logarithm
+of the total pseudo-rectangle count. For $A_c$ sufficiently large and
+then $\epsilon$ sufficiently small, their sum is less than
+$\beta^{K_c}N/2$ in natural logarithms throughout the range.
+Indeed $\sqrt T\le\sqrt\epsilon\,N2^{-A_cp/2}$ and the terms involving
+$\log(T+N+2)$ alone grow at most polynomially in $n$. This contradicts
+bounded-error recognition after the same expected-time truncation.
+
+\section{A smaller active domain on a one-way input}
+Fix $\epsilon>0$, $u=s-n\to\infty$ and $s\le(1-\epsilon)N/n$. Choose the least sufficiently large integer $m\le n$ with $(u+m)m/2^m\le1-\epsilon/2$. By minimality and the ratio of two consecutive terms, the resulting fraction lies in a compact subinterval of $(0,1)$. Write $M=2^m=\Theta_\epsilon(u\log_2 u)$. The dense discrepancy constants may be chosen uniformly on this compact set by a finite cover of close pairs $c_1,c_2$. Take a hard distribution on $M$ variable sites with threshold $u+m$ and prepend $N-M$ zeros. The active subcube is last in lexicographic order, so its indicator is the positive conjunction of the high address bits. For nonconstant $f$ this guarded table costs exactly $C(f)+n-m$: the upper bound chains AND gates and restricting each essential high bit to one eliminates a gate. The constant zero stays easy and the guarded constant one costs at most $n-m$. Thus the easy and hard laws map to the desired thresholds.
+
+Fix the offset and local random streams. Before its first arrival at the active region, the machine reads only the known prefix and any initial endmarker. Simulate this prefix once, independently of every active input. If the machine halts there, its answer is constant; likewise a run truncated there is constant. Otherwise hardwire the entire configuration at first arrival: the initial contents of each work block, the location and state, each block's already used local coin count, and the total time and crossings already consumed. The nonuniform verifier needs to load only the contents and coin index of the block it is currently checking. All indices it uses are at most $T$, apart from fixed names hardwired into the verifier. This costs $O(b+\log(T+M+2))$ working bits. The independent future streams reproduce the original run; equivalently keep the same fixed streams and continue at the hardwired indices. No input crossing position in the inactive prefix needs to be encoded. On the active suffix the true endmarker follows exactly the $M$th entry, and a one-way head seeing subsequent blanks cannot return. Thus all active positions have range $M+O(1)$. The trace bound and width from the single-pass argument now use $M$ in place of $N$, proving $\Omega(M^2)$ expected time. Moreover the same hard mixture requires $\Omega(N-M)$ time: paths halted without reaching the active suffix have input-independent outcomes, so a constant probability of reaching it is necessary. Together these give $\Omega(\max\{N,M^2\})$ throughout the stated range.
+
+\section{Relation to crossing-sequence simulations}
+Viola \cite[\S\S3--4]{viola} verifies visits to each work block in chronological order using a guessed crossing sequence; his proof discusses a shift of regularly spaced boundaries and records tape-head coordinates. The simulation here samples a shift rather than canonically selecting a least-crossed boundary in each region. The distributional argument tolerates the discarded runs. Encoding the monotone input coordinates jointly and localizing fresh randomness eliminate the per-crossing $\log T$ charge in this parameter range. The bound for fixed passes uses common discrepancy across the different input cuts. It leaves unrestricted two-way input unresolved.
+\appendix
+\section{Proof of the common discrepancy bound}\subsection{Two circuit-size estimates}
+
+We use the following classical counting and synthesis estimates. For $a$ fixed in $(0,1)$, the number of $n$-variable functions of complexity at most $aN/n$ is at most $2^{(a+o(1))N}$. To see the leading constant, describe the circuit backwards from its output. A depth-first traversal discovers each reachable gate once and uses one of the two incoming pointers to discover each non-root gate. There are at most $s+1$ remaining pointers to previous gates or inputs, each described in $\lceil\log(s+n+2)\rceil$ bits. The traversal structure, basis labels, fan-ins and pointer types use $O(s)$ more bits. The same argument gives $\log|\{C(x)\le s\}|=O(s\log(s+n))$ generally. Lupanov's synthesis theorem gives, for every $d$-input Boolean lookup table, a circuit of at most $(1+o(1))2^d/d$ gates \cite{lup}. We apply it to individual tables; all numbers of lookup outputs below are fixed in $n$ except where explicit bounds are given.
+
+\begin{lemma}\label{l:prod}
+For every fixed $\rho>0$ sufficiently small there are linear spaces $V\subseteq\F^N$ and a constant $\delta=\delta(\rho)>0$ such that each nonzero word of $V^\perp$ has weight at least $\delta N$ and every word of $V$ is an $n$-variable function of circuit size at most $(9\rho+o(1))N/n$.
+\end{lemma}
+\begin{proof}
+Write $N=B_1 B_2$ with $B_1=2^{\lfloor n/2\rfloor}$ and $B_2=2^{\lceil n/2\rceil}$. For $i=1,2$, let $H_i$ be an $\lceil\rho B_i\rceil$ by $B_i$ binary matrix whose kernel has minimum nonzero weight at least $\Delta B_i$. A uniform matrix works with probability tending to one if the binary entropy of $\Delta$ is less than $\rho$. Indeed each candidate word lies in the kernel with probability $2^{-\lceil\rho B_i\rceil}$, and a union bound suffices. Denote its columns by $h_{i,j}$. Let $V$ consist of the arrays
+\[
+ v_{ij}=\langle U_i,h_{2,j}\rangle+\langle W_j,h_{1,i}\rangle,
+\]
+where the vectors $U_i,W_j$ range independently over the appropriate binary spaces. A nonzero annihilator has every row in $\ker H_2$ and every column in $\ker H_1$. One nonzero row gives at least $\Delta B_2$ nonzero columns, each of weight at least $\Delta B_1$.
+
+All four vector-valued lookups can be implemented bit by bit. Two lookup lists on the $B_1$ row addresses have $\lceil\rho B_2\rceil$ and $\lceil\rho B_1\rceil$ outputs; the analogous two on the $B_2$ column addresses have the same two output counts. The cost is at most
+\[
+ (2+o(1))\rho(B_1+B_2)^2/n +o(N/n)
+ \le(9\rho+o(1))N/n.
+\]
+The dot products require $O(B_1+B_2)$ more gates. Take $\delta=\Delta^2$.
+\end{proof}
+
+\subsection{A small random permutation that disperses cuts}
+
+Group the table addresses into $T=N/B_0$ chunks of $B_0$ consecutive sites. The within-chunk coordinate stays fixed under every permutation. The chunk size $B_0$ is a constant to be chosen after the number of switch layers.
+
+\begin{lemma}\label{l:switch}
+For each fixed $\xi>0$ a list of $L=O_\xi(1)$ perfect matchings of the chunks has the following properties. Independently swap each matched pair with probability $1/2$ in each layer. On mean-zero chunk vectors the expectation of the resulting permutation contracts Euclidean norm by a factor at most $\xi$. For every setting of the switches, computing the permuted address or its inverse costs at most $(L/(2B_0)+o(1))N/n$ gates. The power of two $B_0$ may be chosen arbitrarily large subject to $T=2m^2$ for an integer $m$; two choices of $B_0$ differing by a factor two accommodate both parities of $n$.
+\end{lemma}
+\begin{proof}
+Take the bipartite double cover of the degree-eight Gabber--Galil expander on $(\mathbb Z/m\mathbb Z)^2$ \cite{gg}. Its eight affine neighbor permutations and their inverses can be evaluated with $\operatorname{poly}(n)$ gates. They give eight perfect matchings. Include eight copies of the identity matching between the copies, making $d=16$ in the sweep below. The normalized adjacency of this cover has eigenvalues $\pm(1+\lambda_j)/2$ for the eigenvalues $\lambda_j$ of the original normalized graph. Its second largest eigenvalue is therefore bounded by a fixed $\lambda<1$ using the one-sided expansion of the original graph. For matching permutation $M_i$ write $P_i=(I+M_i)/2$. This is the expected action of a layer and an orthogonal projection. For $x\perp\mathsf{1}$,
+\[
+ d^{-1}\sum_i\|(I-P_i)x\|^2\ge(1-\lambda)\|x\|^2/2 .
+\]
+Set $x_0=x$, $x_i=P_i x_{i-1}$. The sum $E=\sum_i\|x_i-x_{i-1}\|^2$ equals $\|x\|^2-\|x_d\|^2$. The triangle inequality gives $\|(I-P_i)x\|\le(1+\sqrt d)\sqrt E$. Thus a full sweep contracts the squared norm by a fixed factor less than one. Repeat a constant number of sweeps. Independent layers make the expected permutation their product. Each layer stores one bit per left vertex. Given the current vertex, compute its left representative and partner, look up the swap bit among $T/2$ entries, and follow the chosen edge or stay. Lupanov synthesis gives the claimed size in either order of layers.
+\end{proof}
+
+Fix a cut with Alice's proportion $\alpha\in[\beta,1-\beta]$. The cut induces weights $a_j\in[0,1]$, its fraction in each chunk, of mean $\alpha$. In the shuffled order group $D$ consecutive chunks into one block of $b=DB_0$ sites, where $D$ is a large constant power of two.
+
+\begin{lemma}\label{l:disperse}
+Given fixed $\tau,\eta>0$, one can choose $\xi$ sufficiently small and then $D$ sufficiently large so that the expected fraction of sites in blocks whose Alice proportion differs from $\alpha$ by more than $\tau$ is at most $\eta$. These choices are uniform in the cut. The circuit-size choice of $B_0$ can be made between choosing $\xi$ and $D$.
+\end{lemma}
+\begin{proof}
+The expected shuffled vector differs from $\alpha\mathsf{1}$ by Euclidean norm at most $\xi\sqrt T$. Averaging over chunks of each block and squaring shows that at most $4\xi^2/\tau^2$ of the blocks have expected proportion outside $\alpha\pm\tau/2$.
+
+For a particular output block, run the switches backwards and write $I_j$ for the indicator that input chunk $j$ reaches that block. The $I_j$ are pairwise negatively correlated. Start with a fixed set and apply the independent swaps one at a time. Swapping entries $i,j$ with probability $p$ mixes their covariances with a third entry by nonnegative weights. Their mutual product remains unchanged, while the product of their expectations increases by $p(1-p)(\E I_i-\E I_j)^2$. This proves the assertion inductively. Since $\sum_j I_j=D$, the variance of $\sum_j a_j I_j$ is at most $\sum_j a_j^2\E I_j\le D$. The probability of an additional $\tau/2$ deviation is at most $4/(D\tau^2)$. Add the two bounds.
+\end{proof}
+
+\subsection{Constructing the two laws}
+
+Choose a dyadic $t>c_2$ and $r>1-\beta$ with $tr<c_1$. This is possible by the strict inequality in Theorem~\ref{t:rect}. Choose $\rho$ small so the term in Lemma~\ref{l:prod} uses less than one quarter of the margin $c_1-tr$. Let $\delta$ be as in that lemma. Fix $\tau>0$ such that $\beta-\tau>1-r$, and fix $\eta<\delta/4$. Choose $\xi$ from Lemma~\ref{l:disperse}, then $B_0$ to put the switch cost below one quarter of the margin. We may still increase $D$ by any constant factor.
+
+In shuffled coordinates the active domain $U$ consists of the first $t$ fraction of the blocks. In each active block we use a parity-check matrix with $h=\lfloor(1-r)b\rfloor$ rows and $b$ columns. Fix the private sets $X,Y$ of the pseudo-rectangle. A local pattern is balanced for this step when each of $X,Y$ has at least $(\beta-\tau)b$ entries in the block. For each such pattern a uniformly random binary matrix has full row rank on each private set of columns except with probability $2^{-\Omega(b)}$, by union-bounding nonzero row combinations. Conditioning on full row rank of the entire matrix changes this probability by a bounded factor. There is a list of $K=O_\eta(b)$ full-rank matrices, $K$ a power of two, such that on each balanced pattern at most an $\eta$ fraction of this list fails. To obtain the list, take $K$ independent samples: Chernoff's inequality and the union bound over $3^b$ possible patterns suffice when the constant in $K$ and then $b$ are large. Fix the same list for all blocks. Each active block independently draws its matrix uniformly from this list.
+
+Call an active block bad for the given cut if it has a local pattern outside the specified balance range or if its matrix lacks full row rank on either party's columns. Apply Lemma~\ref{l:disperse} to the indicators of $X$ and $Y$ separately, choosing its tolerance quota $\eta/2$ each time. Together with the list property this shows that the expected total bad volume is at most $2\eta N$. Flipping one switch transposes two final chunks and affects at most two block indicators. Changing one matrix choice affects at most one. The independent choices comprise $LT/2$ switch bits and at most $N/b$ matrix identifiers. The bounded-differences inequality therefore gives, uniformly over all cuts,
+\begin{equation}\label{eq:bad}
+ \prob[\text{bad volume}\ge\delta N]\le
+ \exp\!\left(-\frac{2(\delta-2\eta)^2N^2}{(LT/2)(2b)^2+(N/b)b^2}\right)
+ =\exp(-\Omega(N)).
+\end{equation}
+Here $b,D,B_0,L$ are fixed as $n$ grows. In particular a switching configuration need not succeed on all cuts at once.
+
+Condition on the permutation and the matrix choices. Take $G_0$ to be the direct sum on $U$ of the local kernels. Set $G=G_0+V|_U$ and extend all words by zero on $U^c$. Here $V|_U$ denotes puncturing. Independently of a uniform word of $G$, form noise in independent groups of $B$ consecutive shuffled sites, for a fixed large power of two $B$. Choose one uniform site per group and set it to an independent fair bit; remaining entries are zero. Mask the noise outside $U$. The easy law $\nu$ is the sum over $\F$ of the uniform word and this noise, returned to the original layout. For the reference law $\mu_0$, take independent fair bits on $U$ and zeros outside, returned by the same random layout. By circuit counting,
+\[
+ \prob_{\mu_0}[C(x)\le c_2N/n]\le2^{-(t-c_2+o(1))N}.
+\]
+This bound holds separately for each layout. Let $\mu$ be $\mu_0$ conditioned on the complementary event.
+
+\paragraph{Size of an easy sample.}
+A word of $G_0$ uses $b-h$ independent message bits per active block. Implement each message column by lookups on the block address. The active prefix of density $t$ is a fixed disjoint union of dyadic address subcubes, so the sum of their lookup lengths is $tN/b$. The total cost for the message tables is at most $(tr+1/b+o(1))N/n$. The matrix selector costs at most $(\log K/b+o(1))N/n$. For fixed $b,K$ the selected generator, within-block index, and all accesses to the decoded word have size bounded independently of $n$. Dyadic masks have polynomial address overhead. A fixed noise sample uses $\log B+1$ arbitrary lookups on $\log(N/B)$ address bits to recover its marked position and mark, costing $((\log B+1)/B+o(1))N/n$. The punctured $V$ word uses Lemma~\ref{l:prod} and a mask. Choose $D$ and $B$ sufficiently large that the sum of the rounding and selector terms and the noise term fits the remaining margin. Compute the permuted address once and feed it to these circuits. Every sample has size at most $c_1N/n$.
+
+\paragraph{Conditioning on the shared coordinates.}
+Suppose the bad volume is less than $\delta N$. Intersect $X,Y,Z$ with $U$, keeping the same names. $G$ projects surjectively onto both $XZ=X\cup Z$ and $YZ=Y\cup Z$. For instance, a dual word supported on $XZ$ and orthogonal to $G_0$ must vanish in every good block since its parity equations can be solved using $Y$ alone. It would then have weight less than $\delta N$. Extending by zeros to the full domain precludes its being a nonzero word orthogonal to $V|_U$. The same extension shows that every nonzero word of $G^\perp$ has weight at least $\delta N$.
+
+Write the easy word $W=g+D'$ with $g$ uniform on $G$ and $D'$ the independent noise. Its $Z$-part is uniform even conditional on the entire noise vector, by surjectivity of $G$ onto $Z$. For a character $(a,b')$ on $XY$, its expectation conditional on $W_Z=z$ is zero unless it has an extension $(a,b',e)\in G^\perp$. Indeed a uniform $g$ conditional on $g_Z$ is uniform on a coset of the zero-$Z$ kernel. The annihilator on $XY$ of that kernel consists precisely of the restrictions of $G^\perp$: a character constant on all such fibers induces a linear functional on the image of $G$ in $Z$. Surjectivity onto $Z$ makes its extension unique. If the extension exists, the conditional expectation equals
+\[
+ (-1)^{\langle e,z\rangle}\,\E(-1)^{\langle(a,b',e),D'\rangle}.
+\]
+This follows by substituting $g_Z=z+D'_Z$ and using that conditioning on $W_Z=z$ leaves the noise law unchanged. For an extended character with $w_j$ nonzero entries in its $j$th noise group, its noise bias is $\prod_j(1-w_j/B)\le e^{-\sum_jw_j/B}$. Every nonconstant extendible character therefore has bias at most $e^{-\delta N/B}$.
+
+The extendible pairs $(a,b')$ form a partial matching between $X$ and $Y$ characters. Subtracting two extensions with the same endpoint would produce a dual word wholly supported on $XZ$ or $YZ$, contrary to surjectivity. For fixed $z$ the pseudo-rectangle reduces to a product of two indicators $f_z,g_z$. Expand both in their uniform orthonormal Walsh bases. The independent uniform reference on the active coordinates removes the constant pair. Cauchy--Schwarz on the matching and Parseval bound the absolute difference of the conditional probabilities by
+\[
+ e^{-\delta N/B}\Big(\sum_a\widehat f_z(a)^2\Big)^{1/2}
+                    \Big(\sum_{b'}\widehat g_z(b')^2\Big)^{1/2}
+ \le e^{-\delta N/B}.
+\]
+Average over the same uniform $z$ in both conditional laws. An arbitrary fixed pseudo-rectangle pulls back under each layout to a pseudo-rectangle of the required form in the active coordinates, since inactive coordinates are fixed. Bad layouts contribute at most \eqref{eq:bad}; conditioning $\mu_0$ on hardness costs exponentially small total variation. This proves Theorem~\ref{t:rect}.
+
+
+\begin{thebibliography}{9}
+\bibitem{chmy} M. Cheraghchi, S. Hirahara, D. Myrisiotis and Y. Yoshida, \href{https://doi.org/10.4230/LIPIcs.STACS.2021.23}{One-Tape Turing Machine and Branching Program Lower Bounds for MCSP}, STACS 2021, article 23.
+\bibitem{viola} E. Viola, \href{https://theoryofcomputing.org/articles/v018a010/}{Pseudorandom bits and lower bounds for randomized Turing machines}, Theory of Computing 18 (2022), article 10.
+\bibitem{maass} W. Maass, \href{https://doi.org/10.1145/800057.808706}{Quadratic lower bounds for deterministic and nondeterministic one-tape Turing machines}, STOC 1984, 401--408.
+\bibitem{ks} B. Kalyanasundaram and G. Schnitger, Communication complexity and lower bounds for sequential computation, in \emph{Informatik: Festschrift zum 60. Geburtstag von G\"unter Hotz}, 1992, 253--268.
+\bibitem{brs} A. Borodin, A. Razborov and R. Smolensky, \href{https://www.cs.toronto.edu/~bor/Papers/lower-bounds-read-k-times-branching.pdf}{On lower bounds for read-$k$-times branching programs}, Computational Complexity 3 (1993), 1--18.
+\bibitem{lup} O. B. Lupanov, A method of circuit synthesis, Izvestiya VUZ, Radiofizika 1 (1958), 120--140.
+\bibitem{gg} O. Gabber and Z. Galil, Explicit constructions of linear-sized superconcentrators, J. Comput. System Sci. 22 (1981), 407--420.
+\end{thebibliography}
+\end{document}

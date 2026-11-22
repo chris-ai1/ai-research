@@ -1,0 +1,69 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,microtype}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\title{How many small Boolean circuits realize a prescribed joint type?}
+\author{Research manuscript}\date{22 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+Fix a reference labeling of the $N=2^n$ addresses and prescribe how often a Boolean output takes each value within each class of labels. We count distinct output tables with at most $cN/n$ gates. Let $I$ be the mutual information of the prescribed joint frequencies, and let $H$ be the entropy of the output bit. If $I<c$, almost every reference labeling with the specified frequencies admits $2^{(\min(c,H)-I+o(1))N}$ outputs. The lower bound holds for every such labeling. If $0<c<I$, the fraction of labelings admitting even one output is $2^{-(I-c+o(1))N}$. A deterministic algorithm takes nearly linear time in the reference length to construct a realization with at most $(N/n)(I_N+O(\log n/n))$ gates, where $I_N$ is the information in the exact finite-length counts. The scalar rate--distortion bound for approximate Boolean circuits has a classical predecessor in Pippenger's work.
+\end{abstract}
+
+\section{The question}
+A Boolean circuit takes the $n$-bit address $i$ and produces a bit $F_i$. We count binary AND and OR and unary NOT gates, with constants free and unrestricted reuse of wires. The same first-order results hold if every binary Boolean gate costs one. Write $C(F)$ for minimum gate count. All logarithms in this paper have base two.
+
+Let $X=(X_i)_{i=1}^N$ be an arbitrary string over a fixed finite alphabet $\mathcal X$. Take integer counts $N P_N(x,y)$, $x\in\mathcal X$ and $y\in\{0,1\}$, with total $N$. Assume $P_N\to P$. We consider only reference strings $X$ with the prescribed row totals. A binary table $F$ \emph{realizes} $P_N$ at $X$ if exactly $NP_N(x,y)$ addresses have $(X_i,F_i)=(x,y)$ for every $x,y$. Define
+\[
+ Z(X)=\#\{F:C(F)\le s,\ (X,F)\text{ realizes }P_N\},\qquad sn/N\to c\in(0,1).
+\]
+Multiple circuits computing the same table contribute once. The symbols $H_X,H_Y,H(Y\mid X)$ and $I=H_Y-H(Y\mid X)$ refer to $P$. Unless a probability is expressly conditional, it uses a reference string chosen uniformly from its prescribed type class.
+\begin{theorem}\label{t:main}
+If $I<c$, then
+\[
+  \min_X N^{-1}\log Z(X)\longrightarrow \min(c,H_Y)-I,
+  \qquad N^{-1}\log Z(X)\xrightarrow{\Pr}\min(c,H_Y)-I .
+\]
+If $0<c<I$, then
+\[
+                N^{-1}\log\Pr[Z(X)>0]\longrightarrow -(I-c).
+\]
+For any joint type sequence the largest, over all references, of the minimum circuit size realizing the type is $(I+o(1))N/n$. A uniform reference has the same normalized limit in probability.
+\end{theorem}
+The strict inequalities around $c=I$ are intentional. At equality the leading exponential estimate for the mean number of outputs can be zero even when a smaller-order change of the budget changes existence. The statements include reference strings with many labels and Boolean reference truth tables as a special case.
+
+\section{The counting upper bound}
+Traverse a useful circuit of $s$ gates in depth-first order from its unique output. At most $s+1$ predecessor slots refer back to a gate, an input or a constant, since $s-1$ of the at most $2s$ slots introduce new gates. The traversal and gate types use $O(s)$ further bits. Including smaller circuits gives at most $2^{(c+o(1))N}$ easy tables. There are at most $2^{(H_Y+o(1))N}$ tables of the required output weight. For each such fixed table the fraction of reference strings realizing the required joint type is $2^{-(I+o(1))N}$. Indeed within each output class one allocates the prescribed counts of reference symbols, and divides the resulting product of multinomial coefficients by the total input type class. Stirling's formula gives exponent $H(X\mid Y)-H_X=-I$, including zero frequencies. Consequently
+\[
+                \mathbb E Z(X)\le 2^{(\min(c,H_Y)-I+o(1))N}.
+\]
+Markov's inequality proves the typical upper and the subcritical probability upper bound.
+
+\input{constructive}
+
+\section{The fraction of references covered below the threshold}
+Suppose $0<c<I$ and fix $0<R<c$. The same short-dictionary idea applies to a different count. Now we lower-bound the number of reference strings that one dictionary can serve.
+
+Distribute the $N P_N(x,y)$ copies of every symbol pair among $N/b$ successive blocks so that each block has exactly $b$ positions and its count for each pair differs from $bP_N(x,y)$ by at most one. This can be done by dealing the list of all pairs cyclically into the blocks. Only the counts, not an ordering inside a block, are specified. For fixed $b$ there are constantly many resulting block types, and we may place blocks of the same type consecutively.
+
+For each such block type consider a uniform subset of $2^{\lfloor bR\rfloor}$ distinct reproduction strings of its output weight. The layer is large enough since $R<I\le H_Y$. For each reference word of the correct local marginal, a uniform reproduction has probability $v=2^{-b(I+o_b(1))}$ of the desired joint type, uniformly for all the block types as $b,n$ grow in this order of choices. The chance some dictionary entry realizes the type is at least
+\[
+    1-(1-v)^{2^{\lfloor bR\rfloor}}\ge 2^{-b(I-R+o_b(1))}.
+\]
+Independence would give the first expression exactly, and sampling without replacement can only reduce the miss probability. By averaging, fix one dictionary per block type covering at least $2^{b(H_X-I+R-o_b(1))}$ distinct reference words of its prescribed marginal. Take their Cartesian product across all blocks. Each resulting reference has exactly the required global marginal, and admits an exactly compatible reproduction using one local dictionary index per block. For each block type store one ordinary lookup vector over its consecutive blocks for each of the $\lfloor bR\rfloor$ index bits. The dyadic lookup bound of the previous section gives $(R+o_n(1))N/n$ gates for fixed $b$. Selecting the block type uses constantly many comparisons against fixed address cutoffs, taking $O_b(n)$ gates. The total reference class has $2^{(H_X+o(1))N}$ elements. Dividing, sending the block-length error to zero and then $R\uparrow c$ proves the probability lower bound.
+
+Finally, upper bounds at every normalized budget exceeding $I$ and the typical nonexistence at every budget below $I$ give the minimum-size assertions. If $I=1$, the trivial Shannon--Lupanov upper bound at $(1+o(1))N/n$ suffices; if $I=0$, nonnegativity supplies the lower bound.
+
+\section{Relation to approximation of Boolean functions}
+For binary $X$ and Hamming distortion at most $D$, minimizing $I$ over compatible joint distributions recovers the classical rate $H_2(\Pr[X=1])-H_2(D)$ for $D\le\min(\Pr[X=1],\Pr[X=0])$. Pippenger established the circuit analogue for partial Boolean functions, including the effect of source bias, unspecified inputs and allowed errors \cite{pipp}. Andreev, Clementi and Rolim obtained approximation bounds also covering small advantages and partial domains \cite{acr}. Our formulas retain the exact joint counts, compute the number of distinct low-gate outputs above the threshold, and compute the exponentially small covered fraction below it. The local covering and counting estimates come from the method of types \cite{types}. The Boolean issue is that short dictionaries and a directory for variable-width indices preserve the leading gate cost for an entire family of Boolean functions. The existence of optimal circuits here does not give a fast algorithm for MCSP.
+
+\begin{thebibliography}{9}
+\bibitem{pipp} N. Pippenger. \href{https://doi.org/10.1007/BF01683269}{Information theory and the complexity of Boolean functions}. Mathematical Systems Theory, vol. 10, 129--167.
+\bibitem{acr} A. E. Andreev, A. E. F. Clementi and J. D. P. Rolim. \href{https://eccc.weizmann.ac.il/eccc-reports/1995/TR95-041/index.html}{Optimal bounds for the approximation of Boolean functions and some applications}. Theoretical Computer Science, 1997.
+\bibitem{types} I. Csisz\'ar. \href{https://doi.org/10.1109/18.720546}{The method of types}. IEEE Transactions on Information Theory, 1998.
+\bibitem{lup} O. B. Lupanov. A method of circuit synthesis. Izvestiya VUZ, Radiofizika 1, 120--140, 1958.
+\bibitem{chash} A. V. Chashkin. \href{https://doi.org/10.20948/mvk-2024-152}{On circuit complexity of partial Boolean functions}. Mathematical Problems of Cybernetics 22, 152--222, 2024.
+\end{thebibliography}
+\end{document}

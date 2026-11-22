@@ -1,0 +1,28 @@
+\section{Testing with one clean qubit}\label{sec:clean}
+Recent work of Shao \cite{shao} studies quantum query algorithms with one initially pure qubit, any number of maximally mixed qubits, input-independent unitaries, controlled phase queries, and a final measurement. We use this model with unbounded mixed workspace. Its queries can be interleaved with arbitrary computation. Limiting the initial purity changes the answer to our testing problem.
+\begin{theorem}
+In the range of Theorem~\ref{th:nonadaptive}, the bounded-error one-clean-qubit query cost of testing Boolean MCSP is
+\[
+                  \Theta_{\eta,\epsilon,\theta}\bigl(\min\{N,T/\xi\}\bigr).
+\]
+The result holds for the exact yes side and for the tolerant yes side specified there.
+\end{theorem}
+
+\paragraph{A lower bound for inputs supported on a block.}
+Let $g$ be a partial Boolean function on $M$ bits. In an oracle of length $N$, suppose a known set $B$ contains copies of the $M$ bits according to a known map and all positions outside $B$ are fixed. Put $p=|B|/N$. If $g$ has ordinary bounded-error quantum query complexity $d$, evaluating this embedded problem with $k\ge1$ initially pure qubits and all remaining qubits maximally mixed takes
+\[
+                    \Omega\!\left(\frac{d}{\min\{1,2^k p\}}\right)
+                    \quad\text{queries}.                                      \tag{3}
+\]
+The final measurement can be arbitrary. To see the bound, use the general adversary characterization for partial Boolean functions \cite{adv}. Take a Hermitian adversary matrix $\Gamma$, zero on equal output labels, and normalize $\max_j\|\Gamma\circ\Delta_j\|=1$, where $\Delta_j(x,y)=\mathbf1[x_j\ne y_j]$. We can arrange $\|\Gamma\|=\Omega(d)$ and take a unit eigenvector $v$ for a positive largest eigenvalue, changing the sign if needed.
+
+Purify the same mixed initial state for every input. The ordinary adversary progress is the average Gram inner product of the resulting states weighted by $\overline v_x\Gamma_{xy}v_y$. Its initial value is $\|\Gamma\|$. A successful final measurement changes it by $\Omega(\|\Gamma\|)$ by the usual bounded-error adversary argument \cite{adv}. Write $\psi_{x,i}$ for the branch of a prequery state at address $i$ with phase control active. A controlled phase query changes progress in absolute value by at most
+\[
+       2\sum_{i\in B}\sum_x |v_x|^2\|\psi_{x,i}\|^2 .
+\]
+Indeed, at each $i$ the signed quadratic form has matrix $\Gamma\circ\Delta_{j(i)}$ tensored with the identity on the workspace, of norm at most one. Fixed addresses make zero contribution. On a computational space of dimension $D$, the state on any particular input still has operator norm $2^k/D$ after all preceding unitaries. The projector onto addresses in $B$ has rank $pD$, even if we ignore the phase-control condition. Its mass is at most $\min(1,2^kp)$ for each $x$. Telescoping proves (3).
+
+Use the hard base promise from Theorem~\ref{th:nonadaptive}: a codeword versus a word $\alpha M$-far from every size-$s$ table. Its ordinary $d=\Omega(M)$ follows because the easy law has $\Omega(M)$-wise uniform bits and a uniformly random word is far with probability $1-o(1)$. No polynomial of smaller degree can distinguish these unconditional laws by a constant. For (3) the active prefix may even be fixed in advance. Taking $k=1$ gives $\Omega(M/p)$, as required. The dense case gives $\Omega(N)$ already in the ordinary model.
+
+\paragraph{The matching upper bound.}
+Shao's Lemma~3.8 computes an arbitrary Boolean predicate of $q$ bits sampled at independent uniform addresses with $2q$ queries and one clean qubit \cite{shao}. The postprocessing predicate can also depend on the addresses. In the proof, all address registers are preserved on each computational branch, so the input-independent reversible postprocessing can select its predicate according to that branch. This implements the sample tester in Theorem~\ref{th:nonadaptive}. To read the entire table, start with one maximally mixed address $J$. For each $i\in\{0,1\}^n$, temporarily replace $J$ by $J\oplus i$, query it into the corresponding mixed mask bit, and undo the address change. Perform this loading and unloading in the same two places in Shao's construction. Conditional on $J$, the $N$ loaded bits give the whole input in a known order. Use the acceptance predicate in that order. This gives $2N$ queries. The workspace and intervening computation may be very large.

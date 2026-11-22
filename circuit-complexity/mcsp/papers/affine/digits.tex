@@ -1,0 +1,64 @@
+\section{Bringing the gate budget near the address length}
+We sharpen Theorem~\ref{th:sparse-sharp} at its lower endpoint. This section changes the representation of a row polynomial. It makes the cost of evaluating a field element depend almost linearly on the address length.
+
+\begin{theorem}\label{th:near}
+There is an absolute $K$ such that Theorem~\ref{th:sparse-sharp} holds whenever
+\[
+             n\log n\,(\log\log n)^K\ \le r\le N .
+\]
+In particular the leading constant for bounded-error parity queries and log leaf count is one in units of $s\log s$ for $2n(\log\log n)^K\le s\le(1-\epsilon)N/n$, for every fixed $\epsilon>0$.
+\end{theorem}
+The extra factor $2$ at the lower endpoint is only used to choose a fixed margin for the lower bound. The simple odd-weight equation already forces an $n$-variable solution to depend on all its variables. Every function ignoring one variable has an even number of ones. Thus the raw address length is a genuine scale in the interpolation problem.
+
+\subsection{Rows as polynomials in address digits}
+We need only consider $r\le n^{30}$ by the previous theorem. Set $L=\lceil\log n\rceil$, $J=\lceil\log(L+1)\rceil$, $\ell=LJ$, and $h=\ell-120L$, taking $n$ sufficiently large. Write each address as $m=\lceil n/L\rceil$ digits $i_g$ of $L$ bits, padding the final digit with zeros. For a binary row $a$ on the addresses define
+\[
+              P_a(Z_1,\ldots,Z_m)=\sum_i a_i\prod_{g=1}^m Z_g^{i_g}.
+\]
+The row is recoverable from the coefficients. Any subset of the addresses can be used by setting the other coefficients to zero. For target rank $q\le n^{30}$ let $d=\lceil q/h\rceil$ and take independent nonzero $v_g$ in $F=\mathbb F_{2^\ell}$. Evaluate at the $d$ points with coordinates $v_g^{2j-1}$ for $1\le j\le d$.
+
+\begin{lemma}\label{lem:digits}
+For every fixed binary row space of rank at most $q$ these evaluations are jointly injective, except with probability at most $n^{-40}$. The corresponding transposed encoder with uniform messages $w_j\in F$ has value
+\[
+      x_i=\operatorname{Tr}\sum_{j=1}^d w_j Y_i^{\,2j-1},
+                \qquad Y_i=\prod_{g=1}^m v_g^{i_g}.
+\]
+Its selector uses $m\ell=O(nJ)$ bits and its message uses $d\ell\le(1+O(1/J))q+O(\ell)$ bits. Given its selector, message and physical address as inputs, the output is computed by a single Boolean decoder of size $O((n+q)J^{K_0}+\ell^3)$ for some absolute $K_0$.
+\end{lemma}
+\begin{proof}
+Choose an echelon basis with distinct leading monomials in lexicographic order. Use the determinant argument from Lemma~\ref{lem:rank}, raising each coordinate of the indeterminate tuple to its indicated exponent $e=(2j-1)2^a$ for $a<h$. Among the determinant products, pairing increasing leading exponent vectors with increasing $e$ gives the unique largest lexicographic vector. Swapping an inversion improves the vector by a positive integer times the lexicographically positive difference of the two distinct vectors. Replacing any leading monomial by a lower monomial reduces the sum in lexicographic order. Thus the multivariate determinant is nonzero. For a rank below $q$ use as many distinct exponents as the actual row rank.
+
+Its total degree is at most $q\,m\,2^L(2d)2^h$. The Schwartz--Zippel bound on $(F^\times)^m$ puts the failure probability below $n^{-40}$, since $m\le n$, $2^L\le2n$, $d\le q+1$ and $\ell-h=120L$. Frobenius powers preserve a putative binary dependence. Hence a nonzero determinant forbids one, and the trace-pairing calculation gives the displayed encoder.
+
+Fix a primitive field element $g_0$ and store each nonzero selector $v_g$ by its discrete logarithm $z_g$. The selector is sampled in that representation. At an address compute $\sum_g i_g z_g$ modulo $2^\ell-1$ and exponentiate $g_0$ by this one $\ell$-bit exponent to get $Y_i$. Products of $\ell$-bit integers and products of binary polynomials of length $\ell$ take $O(\ell(\log\ell)^{O(1)})$ Boolean gates \cite{intmult,polyprod}. Reduction of an integer product modulo $2^\ell-1$ needs only a constant number of $\ell$-bit additions and a conditional subtraction. Reducing a binary polynomial product modulo the fixed field polynomial also has quasi-linear size: reverse its leading coefficients, multiply by the precomputed truncated reciprocal of the reversed modulus to get the quotient, and subtract its product with the modulus. Thus computing the modular sum costs $m\ell(\log\ell)^{O(1)}=nJ^{O(1)}$. Ordinary repeated squaring for the one exponent costs $O(\ell^3)$. Horner evaluation in $Y_i^2$ followed by multiplication by $Y_i$ and trace costs $O(d\ell(\log\ell)^{O(1)})$. This proves the stated bound, including the cost when the coefficients and the selector are retrieved from a block.
+\end{proof}
+
+\subsection{Sharing the digit decoder}
+Take $B$ the largest power of two at most $r/(nJ^4)$ and $\lambda=r/B$. Assign each physical address to a block using a pairwise independent affine binary hash with $\log B$ output bits. Only the block number is hashed. The local decoder uses the original physical address, so it needs neither a permutation nor an inverse. For any fixed pivot basis, the mark count in a block has mean $\lambda$ and variance at most $\lambda$. With $q=\lceil\lambda+\lambda^{3/4}\rceil$, use Lemma~\ref{lem:digits} with independent selectors and messages on each block. Its selector contributes $O(nJ)=o(\lambda)$ bits, and local messages have $(1+o(1))\lambda$ bits. The charging and pivot-replacement proof of Theorem~\ref{th:sparse-sharp} yields expected rank deficit $O(r/\sqrt\lambda)$, since the additional expected loss is at most $rn^{-40}$. With probability $1-O(\lambda^{-1/4})$ the deficit is at most $t=\lceil r/\lambda^{1/4}\rceil$. One further independent encoder of Lemma~\ref{lem:digits} with target $t$ on the entire physical table restores full rank except with probability $n^{-40}$.
+
+The lookup table for the local messages and selectors has $P=(1+o(1))r$ bits. In the grouping proof take $M$ the least power of two above $\log P\log\log P$ instead of $(\log P)^2$. This still gives the stated leading constant because $M/\log P\to\infty$. For $r\ge nLJ^K$ and $K$ sufficiently large, $B\ge M$. Indeed $\log P=O(L)$ in the present range and $B\ge LJ^{K-4}/2$. The two shared decoders cost
+\[
+  O\bigl((n+\lambda+t)J^{K_0}+\ell^3\bigr)=o(r/\log r)
+\]
+when $K>K_0+6$: here $\lambda\le2nJ^4$, $\log r=O(L)$ and $t\le 1+r/\lambda^{1/4}$. The hash costs $O(n\log B)$ gates. For $r\le nL^3$ this is $O(nJ)$, and for larger $r$ it is $O(nL)=o(r/\log r)$. Thus the cost, full-rank probability and counting lower bound still hold. The same leaf argument proves the parity-query statement.
+
+\subsection{A dimension reduction specific to recognition}
+For \emph{exact recognition}, the parity lower bound extends to every $s\to\infty$ with $s\le(1-\epsilon)N/n$. It does so even when the interpolation construction on the original $n$-variable domain is too costly. Let
+\[
+                  m=\min\{n,\lceil 2\log(s+2)\rceil\}.
+\]
+Embed an $m$-variable table by making it independent of the other $n-m$ inputs. Its minimum circuit size stays exactly the same: a circuit on $m$ inputs extends directly, and fixing the unused variables in an $n$-input circuit gives the reverse inequality. One parity of the extended table is one parity of the original table, by collecting repetitions modulo two. Since $m=O(\log s)$, eventually $s\ge m^{30}$. When $m<n$, $2^m/m\gg s$; when $m=n$ the assumed margin suffices. Applying the preceding lower bound in dimension $m$ proves
+\[
+ q_{\rm parity}\ \ge\ (1-o(1))s\log s,\qquad
+ \log_2(\text{parity-tree leaf count})\ \ge\ (1-o(1))s\log s.
+\]
+The fingerprint upper bound on the original domain is $(s+1)\log(n+s+2)+O(s+\log n)$. Consequently the leading constant is sharp throughout $\log(n+s)\sim\log s$, including all fixed positive linear gate budgets in $n$. For the genuine interpolation problem one must still meet the equations on their original domain, so the raw-address argument in Theorem~\ref{th:near} has independent content. A gap between the yes and no size thresholds also requires that the smaller domain still supports the promised no inputs.
+
+\subsection{A bound independent of the number of address variables}
+Even if there are arbitrarily many more raw variables than gates, exact MCSP has bounded-error parity query complexity $\Theta(s\log s)$ for $s\to\infty$ and $s\le(1-\epsilon)N/n$. The lower bound is the previous restriction. The following upper bound also has perfect completeness and uses one nonadaptive batch. The argument relies on the fact that a rooted $s$-gate circuit uses at most $k=s+1$ essential input variables.
+
+Hash all raw variable names independently into $M=100(k+1)^2$ buckets. A fixed list of at most $k+1$ names hashes injectively except with probability below $1/100$. We first check whether the number of buckets containing an essential variable exceeds $k$. For each bucket $b$ form a binary vector consisting of all derivatives $f(x)+f(x\mathbin{\oplus} e_i)$, for $i$ in the bucket and all addresses $x$. It is zero precisely for an inactive bucket. Independently apply a random binary linear map to turn each of these vectors into a field symbol $V_b$ in $\mathbb F_{2^j}$ for $j=\lceil\log_2(100(k+1))\rceil$. On active buckets the symbols are uniform and independent. All binary coordinates of $V$ are linear functionals of the original table.
+
+Choose $q=\lceil\log_2|\mathcal S|\rceil+7$ random binary parity rows on the concatenated vector $V$, where $\mathcal S$ consists of vectors with at most $k$ nonzero field symbols. Reject if the syndrome differs from all $q$-bit syndromes of $\mathcal S$. There are at most $(1+M2^j)^{k+1}$ such vectors, so $q=O(k\log k)$. After composition with the derivative maps, each syndrome bit uses one parity query to $f$. If at most $k$ raw variables are essential, this test always passes. If at least $k+1$ are essential, a fixed set of $k+1$ of them lands in different buckets with probability above $99/100$. All of the corresponding symbols remain nonzero with probability above $99/100$. Whenever $V$ has more than $k$ nonzero symbols, its independent parity sketch collides with $\mathcal S$ with probability at most $1/128$.
+
+For the second test identify every variable in a bucket with one new variable, giving an $M$-variable function $g$. Any parity of the truth table of $g$ is a parity of $f$, by collecting the signed multiplicities modulo two (all substitutions here use positive variables). A size-$s$ circuit for $f$ gives one for $g$, so yes inputs still pass with certainty. If $f$ has at most $k$ essential axes, then with probability above $99/100$ they hash injectively. On that event $g$ and $f$ have the same minimum size, by relabeling and fixing dummy variables. Fingerprint $g$ against all circuits of size $s$ on $M$ variables; with $O(s\log(M+s))=O(s\log s)$ binary parities, a fixed hard $g$ passes with probability at most $1/128$. This proves the upper bound in all cases. The number of addresses in a parity query and the computation between queries are unrestricted. Earlier parity decision tree work treats the related Hamming-weight and $k$-linearity testing problems \cite{bsh}.

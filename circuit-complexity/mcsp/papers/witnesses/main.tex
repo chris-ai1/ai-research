@@ -1,0 +1,68 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,microtype}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\title{Small Boolean circuits satisfying constraints on their truth tables}
+\author{Research manuscript}
+\date{22 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+Partition the $N=2^n$ entries of a Boolean truth table into cells and prescribe the number of ones in every cell. If a fraction $2^{-R}$ of all tables of the required weight meet the quotas, every placement of the cells admits a satisfying table computable with $R/n+O(N\log n/n^2)$ gates. A uniform permutation of the cells attains this bound to leading order when $R$ is a positive fraction of $N$. We count the different realizations available at larger budgets. We also identify the typical circuit size needed to realize a prescribed mean at every address by a distribution of Boolean circuits. When the largest cell has $o(N)$ entries, the leading bound holds for arbitrary relations among the entries of each cell. As a consequence, a decomposable predicate of subexponential size that accepts a fraction $2^{-rN}$ of a weight layer accepts some table of circuit size at most $(r+o(1))N/n$.
+\end{abstract}
+\section{How large is the smallest witness?}
+A Boolean circuit on $n$ address bits outputs one of the $N=2^n$ entries of a word $y$. Write $C(y)$ for its minimum gate count. The upper bounds use binary AND, OR and counted unary NOT; the lower bounds allow all binary Boolean gates and complemented wires. All logarithms have base two. We allow unrestricted fanout. The information cost of a property on a set $U$ of candidate tables is $\log(|U|/|\mathcal F|)$, where $\mathcal F\subseteq U$ comprises the feasible tables.
+
+For a partition into cells of sizes $M_i$, prescribe $a_i$ ones in each cell. Put
+\[
+ W=\sum_i a_i,\qquad H=\log\binom NW,\qquad
+ T=\prod_i\binom{M_i}{a_i},\qquad R=H-\log T.
+\]
+Here $0\le a_i\le M_i$. There is no restriction on the number of cells. Zero information can be misleading if measured only with limiting frequencies. With cells of even size $m$ and quota $m/2$, the prescribed common frequency is $1/2$, but the exact information per site tends to $1-m^{-1}\log\binom{m}{m/2}$. This positive constant contributes to the minimum circuit size.
+
+\begin{theorem}\label{th:quota}
+For every placement and every $0\le\lambda\le1$, at least $2^{\lambda\log T-O(N\log n/n)}$ distinct satisfying words have
+\[
+ C(y)\le \frac{R+\lambda\log T}{n}+O\!\left(\frac{N\log n}{n^2}\right).
+\]
+In particular, at $\lambda=0$ at least one such word exists. The constants are absolute. If $R/N\to r>0$, then both a uniform coordinate permutation of the specification, in probability, and a worst placement give minimum size $(r+o(1))N/n$.
+\end{theorem}
+Write $Z_s$ for the number of feasible words of circuit size at most $s$. At $s\sim cN/n$ with $R/N\to r<c$ and $H/N\to h$, the minimum over placements and the typical value of $N^{-1}\log Z_s$ both converge to $\min(c,h)-r$. The typical statement uses a uniformly random permutation of a fixed specification. Endpoints with $c=r$ require the additive-error formulation.
+
+\section{A dictionary for the next block}
+Read the addresses in natural order, in blocks of dyadic length $n/16\le b\le n/8$. At a prefix of whole blocks let $T_p$ be the number of feasible completions and let $T_{py}$ be the count after adding the next block $y$. Uniform conditional completion gives probabilities $p_y=T_{py}/T_p$. Group the possible $y$ by weight $w$ and by $\lfloor-\log p_y\rfloor$. A feasible block has probability at least $N^{-b}$, since each next feasible bit in its cell has conditional probability at least $1/N$. Among at most $(b+1)(bn+1)$ groups choose one of greatest mass, with support $S$ and $K=|S|$. Every $y\in S$ satisfies
+\begin{equation}\label{eq:credit}
+ \log K\ge\log T_p-\log T_{py}-O(\log n).
+\end{equation}
+For a given block, the local partition, the remaining sizes and quotas of its touched cells, its weight and bucket specify $S$. Untouched cells cancel in the conditional probability. There are at most $b^b(N+1)^{2b}(b+1)(bn+1)$ descriptions. The logarithm of this count is $O(bn)$, independent of the number of cells.
+
+Fix each weight layer of the block and write $M=\binom bw$. There is a common permutation of its $M$ words such that for every candidate $S$ and every $1\le L\le K$, the first $\min(M,\lceil CbnLM/K\rceil)$ words contain at least $L$ elements of $S$. Indeed, a random prefix that stops before $M$ has expected intersection size at least $CbnL$. The hypergeometric lower tail is $\exp(-\Omega(CbnL))$. Choose an absolute $C$ large enough for the union over descriptions and $L\le2^b$. A full-length prefix always succeeds. Choose $L=\max(1,\lfloor K^\lambda/2\rfloor)$ and retain just $L$ eligible words. Each has an index costing at most
+\[
+ \log M-(1-\lambda)\log K+O(\log n)\quad\text{bits}.
+\]
+Along a path, the sum of $\log M$ is at most $H$, since the product of its block weight layers embeds in the global weight layer. Equation~\eqref{eq:credit} telescopes from $T$ to one. Hence the sum of the index widths is at most $R+\lambda\log T+O(N\log n/n)$. If each allowed next word is chosen uniformly, every completed path has probability at most $2^{-\lambda\log T+O(N\log n/n)}$ by the same telescope. Paths are distinct tables, which gives the list count.
+
+\paragraph{From bits to gates.} Each block has a weight, an index width at most $b$, and an index. Group blocks by the first two quantities. For each group and bit of its index, store the bit values as a vector ordered by occurrence of the group. For addressing these vectors use consecutive superblocks of $\Theta(n^8)$ blocks. Each block needs $O(\log n)$ directory bits for its group and its ordinal within that group in its superblock. For each superblock and each group record the count of earlier occurrences, using $O(n)$ bits. The aggregate directory has $O(N\log n/n)$ bits. This design charges the different index widths by their sum. A single lookup on a common block address padded to the maximum width would lose the leading constant.
+
+There are polynomially many vectors. Split each length into at most $n+1$ aligned dyadic pieces. For an $m$-bit address, Lupanov lookup uses $(2^m/m)(1+O(\log m/m))$ gates. For completeness, split off $\lceil3\log m\rceil$ low address bits, precompute minterms on both sides and group the low minterms into batches of $\lfloor m-8\log m\rfloor$. Precompute every subset OR in each batch, then select the prescribed batch outputs for each high-address minterm and take their union. The leading cost is the number of input positions divided by the batch size. Direct lookup handles bounded $m$. Fix $A$ sufficiently large compared with the degree of the number of pieces. All pieces of length $<N/n^A$ cost $O(N/n^2)$ in total by direct lookup. The others have $m=n-O(\log n)$. The directory, multiplexers, and a common truth table of size $\operatorname{poly}(n)2^b$ decoding the block permutation fit the stated error. This proves the circuit upper bound.
+
+\paragraph{The lower bound.} A size-$s$ binary circuit has a depth-first backwards description with at most $s+1$ pointers to previously named gates, input variables, or constants. Other fields cost $O(s)$ bits. At $s=O(N/n)$ the number of different tables is thus at most $2^{sn+O(N\log n/n)}$. Every particular table of weight $W$ is feasible under a uniform coordinate permutation with probability exactly $T/\binom NW$. The first moment gives both the typical lower bound on size and the typical upper bound on the list length. The maximum possible number of distinct words in the layer supplies the other bound used in $\min(c,h)$.
+
+\input{marginals}
+\input{local}
+\input{joint}
+\input{representations}
+\section{Related work}
+Pippenger derived an information-theoretic circuit bound for approximate realization of partially specified Boolean functions. Andreev studied the entropy of a nondeterministic finite function with allowed multi-bit outputs associated to each row. Andreev, Clementi and Rolim treated approximation of total and partial Boolean functions, and Chashkin studied the complexity of partial functions. In the cell problem a circuit receives the original bit address. A map from that address to its cell and its position within the cell can itself require Shannon-order complexity. The dictionary proof above avoids evaluating that map. The density is measured inside the required weight layer. Exact channel simulation with common randomness also relates simulation cost to mutual information. Harsha, Jain, McAllester and Radhakrishnan measure expected communication; here every sampled address circuit has a gate budget \cite{hjmr}. The balanced-cover theorem for decomposable circuits used in the preceding section is due to Bova, Capelli, Mengel and Slivovsky. We do not claim a definitive priority determination for all variants.\par
+\begin{thebibliography}{9}
+\bibitem{p} N. Pippenger, \href{https://doi.org/10.1007/BF01683269}{Information theory and the complexity of Boolean functions}, Mathematical Systems Theory 10, 129--167.
+\bibitem{a} A. E. Andreev, \href{https://doi.org/10.7146/brics.v1i2.21668}{Complexity of nondeterministic functions}, BRICS Report Series, 1994.
+\bibitem{acr} A. E. Andreev, A. E. F. Clementi and J. D. P. Rolim, \href{https://eccc.weizmann.ac.il/eccc-reports/1995/TR95-041/index.html}{Optimal bounds for the approximation of Boolean functions and some applications}, Theoretical Computer Science, 1997.
+\bibitem{hjmr} P. Harsha, R. Jain, D. McAllester and J. Radhakrishnan, \href{https://www.tcs.tifr.res.in/~prahladh/papers/HJMR/HJMR2010.pdf}{The communication complexity of correlation}, IEEE Transactions on Information Theory, 2010.
+\bibitem{cs} I. Csisz\'ar, \href{https://doi.org/10.1109/18.720546}{The method of types}, IEEE Transactions on Information Theory, 1998.
+\bibitem{ch} A. Chashkin, \href{https://doi.org/10.20948/mvk-2024-152}{On circuit complexity of partial Boolean functions}, Mathematical Problems of Cybernetics, 2024.
+\bibitem{b} S. Bova, F. Capelli, S. Mengel and F. Slivovsky, \href{https://ijcai.org/proceedings/2016/147}{Knowledge compilation meets communication complexity}, IJCAI 2016.
+\end{thebibliography}
+\end{document}

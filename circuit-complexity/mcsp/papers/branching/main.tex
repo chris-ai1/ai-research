@@ -1,0 +1,232 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm,mathtools,microtype,hyperref}
+\usepackage[margin=1.05in]{geometry}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newcommand{\mc}{\mathrm{MCSP}}
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\E}{\mathbb E}
+\newcommand{\prob}{\mathbb P}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\wt}{\operatorname{wt}}
+\DeclareMathOperator{\Var}{Var}
+\title{Bounded-read branching programs and decomposable circuits for the minimum circuit size problem}
+\author{Research manuscript}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+Let $N=2^n$. At every fixed fraction below Shannon's circuit-size bound, we construct distributions on the two sides of Boolean MCSP whose probabilities differ by at most $\exp(-\Omega(N))$ on every balanced rectangle, even when both sides also observe common coordinates. Different rectangles may choose different private and shared coordinates. The construction combines erasure recovery within small blocks, a global dual-distance condition, and a random permutation implemented by a constant number of layers of switches. It gives tight size $2^{\Theta(s\log s)}$ for bounded-error randomized and both polarities of nondeterministic syntactic read-$k$ branching programs for every fixed $k$, and decomposable negation normal forms for MCSP or its complement, throughout $(1+\epsilon)n\le s\le(1-\epsilon)2^n/n$. The parties, branching programs, and decomposable circuits have no uniformity requirement.
+\end{abstract}
+
+\section{Results}
+
+A truth table $x\in\{0,1\}^{N}$ describes a function on $n$ variables. Let $C(x)$ denote its minimum circuit size over binary AND, binary OR and unary NOT, counting gates and allowing input variables and constants as outputs. Write $\mc_{n,s}(x)=1$ if $C(x)\le s$. An indexed bit of $x$ is a variable of this \emph{outer} Boolean function. All logarithms are base two unless they occur inside $\exp$.
+
+For a partition $P\sqcup Q=[N]$, a rectangle consists of all $x$ such that $x_P\in A$ and $x_Q\in B$, for arbitrary $A,B$. A partition is $\beta$-balanced if both parts have at least $\beta N$ sites. More generally a \emph{pseudo-rectangle} has indicator $A(x_X,x_Z)B(x_Y,x_Z)$ for a partition $[N]=X\sqcup Y\sqcup Z$. Its private sets are $X,Y$, and it is $\beta$-balanced when both private sets have size at least $\beta N$. Ordinary rectangles have $Z=\varnothing$.
+
+\begin{theorem}\label{t:rect}
+Fix $0<\beta\le1/2$ and $0<c_1<c_2<1$ with $(1-\beta)c_2<c_1$. For all sufficiently large $n$, there are distributions $\nu,\mu$ supported respectively on tables of complexity at most $c_1N/n$ and greater than $c_2N/n$, and a constant $\kappa>0$, such that
+\[
+   |\nu(R)-\mu(R)|\le e^{-\kappa N}
+\]
+for every $\beta$-balanced pseudo-rectangle $R$.
+\end{theorem}
+
+One consequence concerns the order of quantifiers. After fixing $\nu,\mu$, a branching program may select which truth-table entry to read next as a function of its previous answers. The cuts at which its computations split can therefore differ across nodes.
+
+\begin{theorem}\label{t:size}
+Fix $k\ge1$ and $\epsilon>0$ and let $(1+\epsilon)n\le s\le(1-\epsilon)N/n$. The following minimum sizes are $2^{\Theta_{k,\epsilon}(s\log s)}$:
+\begin{enumerate}
+\item a bounded-error randomized syntactic read-$k$ branching program for $\mc_{n,s}$;
+\item a nondeterministic syntactic read-$k$ branching program for $\mc_{n,s}$ or its complement;
+\item a decomposable negation normal form for $\mc_{n,s}$ or its complement.
+\end{enumerate}
+The same lower bound applies to bounded-error randomized deterministic DNNFs of bounded maximum size. If $u=s-n\to\infty$ but $u=o(n)$, the lower bounds on sizes are $2^{\Omega(u\log u)}$.
+\end{theorem}
+
+A randomized branching program has unbiased random choices in addition to its input queries, and its error is at most $1/3$ on each input. A nondeterministic program accepts if an accepting path exists. Syntactic read-$k$ means that every source-to-sink path in the directed acyclic graph queries each input at most $k$ times. A decomposable negation normal form (DNNF) uses AND and OR gates and literals. The inputs to each AND gate have disjoint variable sets. An OR gate is deterministic if no assignment satisfies two of its inputs. A randomized deterministic DNNF is a distribution on deterministic DNNFs with pointwise error at most $1/3$.
+
+Cheraghchi, Hirahara, Myrisiotis and Yoshida proved a $2^{\widetilde\Omega(N)}$ lower bound for read-once co-nondeterministic branching programs for MCSP \cite[Corollary~7]{chmy}. Glinskih and Riazanov proved a superpolynomial lower bound for read-once nondeterministic programs by a different method \cite{gr}. Local pseudorandom generators for MCSP go back at least to Cheraghchi, Kabanets, Lu and Myrisiotis \cite{cklm}. Our witness uses distinct, explicitly specified sampling laws for easy and hard tables. Its proof gives exponentially small error for a common pair of laws across cuts. For DNNFs we use the balanced rectangle cover theorem of Bova, Capelli, Mengel and Slivovsky \cite[Theorem~6]{bcms}.
+
+\section{Two circuit-size estimates}
+
+We use the following classical counting and synthesis estimates. For $a$ fixed in $(0,1)$, the number of $n$-variable functions of complexity at most $aN/n$ is at most $2^{(a+o(1))N}$. To see the leading constant, describe the circuit backwards from its output. A depth-first traversal discovers each reachable gate once and uses one of the two incoming pointers to discover each non-root gate. There are at most $s+1$ remaining pointers to previous gates or inputs, each described in $\lceil\log(s+n+2)\rceil$ bits. The traversal structure, basis labels, fan-ins and pointer types use $O(s)$ more bits. The same argument gives $\log|\{C(x)\le s\}|=O(s\log(s+n))$ generally. Lupanov's synthesis theorem gives, for every $d$-input Boolean lookup table, a circuit of at most $(1+o(1))2^d/d$ gates \cite{lup}. We apply it to individual tables; all numbers of lookup outputs below are fixed in $n$ except where explicit bounds are given.
+
+\begin{lemma}\label{l:prod}
+For every fixed $\rho>0$ sufficiently small there are linear spaces $V\subseteq\F^N$ and a constant $\delta=\delta(\rho)>0$ such that each nonzero word of $V^\perp$ has weight at least $\delta N$ and every word of $V$ is an $n$-variable function of circuit size at most $(9\rho+o(1))N/n$.
+\end{lemma}
+\begin{proof}
+Write $N=B_1 B_2$ with $B_1=2^{\lfloor n/2\rfloor}$ and $B_2=2^{\lceil n/2\rceil}$. For $i=1,2$, let $H_i$ be an $\lceil\rho B_i\rceil$ by $B_i$ binary matrix whose kernel has minimum nonzero weight at least $\Delta B_i$. A uniform matrix works with probability tending to one if the binary entropy of $\Delta$ is less than $\rho$. Indeed each candidate word lies in the kernel with probability $2^{-\lceil\rho B_i\rceil}$, and a union bound suffices. Denote its columns by $h_{i,j}$. Let $V$ consist of the arrays
+\[
+ v_{ij}=\langle U_i,h_{2,j}\rangle+\langle W_j,h_{1,i}\rangle,
+\]
+where the vectors $U_i,W_j$ range independently over the appropriate binary spaces. A nonzero annihilator has every row in $\ker H_2$ and every column in $\ker H_1$. One nonzero row gives at least $\Delta B_2$ nonzero columns, each of weight at least $\Delta B_1$.
+
+All four vector-valued lookups can be implemented bit by bit. Two lookup lists on the $B_1$ row addresses have $\lceil\rho B_2\rceil$ and $\lceil\rho B_1\rceil$ outputs; the analogous two on the $B_2$ column addresses have the same two output counts. The cost is at most
+\[
+ (2+o(1))\rho(B_1+B_2)^2/n +o(N/n)
+ \le(9\rho+o(1))N/n.
+\]
+The dot products require $O(B_1+B_2)$ more gates. Take $\delta=\Delta^2$.
+\end{proof}
+
+\section{A small random permutation that disperses cuts}
+
+Group the table addresses into $T=N/B_0$ chunks of $B_0$ consecutive sites. The within-chunk coordinate stays fixed under every permutation. The chunk size $B_0$ is a constant to be chosen after the number of switch layers.
+
+\begin{lemma}\label{l:switch}
+For each fixed $\xi>0$ a list of $L=O_\xi(1)$ perfect matchings of the chunks has the following properties. Independently swap each matched pair with probability $1/2$ in each layer. On mean-zero chunk vectors the expectation of the resulting permutation contracts Euclidean norm by a factor at most $\xi$. For every setting of the switches, computing the permuted address or its inverse costs at most $(L/(2B_0)+o(1))N/n$ gates. The power of two $B_0$ may be chosen arbitrarily large subject to $T=2m^2$ for an integer $m$; two choices of $B_0$ differing by a factor two accommodate both parities of $n$.
+\end{lemma}
+\begin{proof}
+Take the bipartite double cover of the degree-eight Gabber--Galil expander on $(\mathbb Z/m\mathbb Z)^2$ \cite{gg}. Its eight affine neighbor permutations and their inverses can be evaluated with $\operatorname{poly}(n)$ gates. They give eight perfect matchings. Include eight copies of the identity matching between the copies, making $d=16$ in the sweep below. The normalized adjacency of this cover has eigenvalues $\pm(1+\lambda_j)/2$ for the eigenvalues $\lambda_j$ of the original normalized graph. Its second largest eigenvalue is therefore bounded by a fixed $\lambda<1$ using the one-sided expansion of the original graph. For matching permutation $M_i$ write $P_i=(I+M_i)/2$. This is the expected action of a layer and an orthogonal projection. For $x\perp\mathsf{1}$,
+\[
+ d^{-1}\sum_i\|(I-P_i)x\|^2\ge(1-\lambda)\|x\|^2/2 .
+\]
+Set $x_0=x$, $x_i=P_i x_{i-1}$. The sum $E=\sum_i\|x_i-x_{i-1}\|^2$ equals $\|x\|^2-\|x_d\|^2$. The triangle inequality gives $\|(I-P_i)x\|\le(1+\sqrt d)\sqrt E$. Thus a full sweep contracts the squared norm by a fixed factor less than one. Repeat a constant number of sweeps. Independent layers make the expected permutation their product. Each layer stores one bit per left vertex. Given the current vertex, compute its left representative and partner, look up the swap bit among $T/2$ entries, and follow the chosen edge or stay. Lupanov synthesis gives the claimed size in either order of layers.
+\end{proof}
+
+Fix a cut with Alice's proportion $\alpha\in[\beta,1-\beta]$. The cut induces weights $a_j\in[0,1]$, its fraction in each chunk, of mean $\alpha$. In the shuffled order group $D$ consecutive chunks into one block of $b=DB_0$ sites, where $D$ is a large constant power of two.
+
+\begin{lemma}\label{l:disperse}
+Given fixed $\tau,\eta>0$, one can choose $\xi$ sufficiently small and then $D$ sufficiently large so that the expected fraction of sites in blocks whose Alice proportion differs from $\alpha$ by more than $\tau$ is at most $\eta$. These choices are uniform in the cut. The circuit-size choice of $B_0$ can be made between choosing $\xi$ and $D$.
+\end{lemma}
+\begin{proof}
+The expected shuffled vector differs from $\alpha\mathsf{1}$ by Euclidean norm at most $\xi\sqrt T$. Averaging over chunks of each block and squaring shows that at most $4\xi^2/\tau^2$ of the blocks have expected proportion outside $\alpha\pm\tau/2$.
+
+For a particular output block, run the switches backwards and write $I_j$ for the indicator that input chunk $j$ reaches that block. The $I_j$ are pairwise negatively correlated. Start with a fixed set and apply the independent swaps one at a time. Swapping entries $i,j$ with probability $p$ mixes their covariances with a third entry by nonnegative weights. Their mutual product remains unchanged, while the product of their expectations increases by $p(1-p)(\E I_i-\E I_j)^2$. This proves the assertion inductively. Since $\sum_j I_j=D$, the variance of $\sum_j a_j I_j$ is at most $\sum_j a_j^2\E I_j\le D$. The probability of an additional $\tau/2$ deviation is at most $4/(D\tau^2)$. Add the two bounds.
+\end{proof}
+
+\section{Constructing the two laws}
+
+Choose a dyadic $t>c_2$ and $r>1-\beta$ with $tr<c_1$. This is possible by the strict inequality in Theorem~\ref{t:rect}. Choose $\rho$ small so the term in Lemma~\ref{l:prod} uses less than one quarter of the margin $c_1-tr$. Let $\delta$ be as in that lemma. Fix $\tau>0$ such that $\beta-\tau>1-r$, and fix $\eta<\delta/4$. Choose $\xi$ from Lemma~\ref{l:disperse}, then $B_0$ to put the switch cost below one quarter of the margin. We may still increase $D$ by any constant factor.
+
+In shuffled coordinates the active domain $U$ consists of the first $t$ fraction of the blocks. In each active block we use a parity-check matrix with $h=\lfloor(1-r)b\rfloor$ rows and $b$ columns. Fix the private sets $X,Y$ of the pseudo-rectangle. A local pattern is balanced for this step when each of $X,Y$ has at least $(\beta-\tau)b$ entries in the block. For each such pattern a uniformly random binary matrix has full row rank on each private set of columns except with probability $2^{-\Omega(b)}$, by union-bounding nonzero row combinations. Conditioning on full row rank of the entire matrix changes this probability by a bounded factor. There is a list of $K=O_\eta(b)$ full-rank matrices, $K$ a power of two, such that on each balanced pattern at most an $\eta$ fraction of this list fails. To obtain the list, take $K$ independent samples: Chernoff's inequality and the union bound over $3^b$ possible patterns suffice when the constant in $K$ and then $b$ are large. Fix the same list for all blocks. Each active block independently draws its matrix uniformly from this list.
+
+Call an active block bad for the given cut if it has a local pattern outside the specified balance range or if its matrix lacks full row rank on either party's columns. Apply Lemma~\ref{l:disperse} to the indicators of $X$ and $Y$ separately, choosing its tolerance quota $\eta/2$ each time. Together with the list property this shows that the expected total bad volume is at most $2\eta N$. Flipping one switch transposes two final chunks and affects at most two block indicators. Changing one matrix choice affects at most one. The independent choices comprise $LT/2$ switch bits and at most $N/b$ matrix identifiers. The bounded-differences inequality therefore gives, uniformly over all cuts,
+\begin{equation}\label{eq:bad}
+ \prob[\text{bad volume}\ge\delta N]\le
+ \exp\!\left(-\frac{2(\delta-2\eta)^2N^2}{(LT/2)(2b)^2+(N/b)b^2}\right)
+ =\exp(-\Omega(N)).
+\end{equation}
+Here $b,D,B_0,L$ are fixed as $n$ grows. In particular a switching configuration need not succeed on all cuts at once.
+
+Condition on the permutation and the matrix choices. Take $G_0$ to be the direct sum on $U$ of the local kernels. Set $G=G_0+V|_U$ and extend all words by zero on $U^c$. Here $V|_U$ denotes puncturing. Independently of a uniform word of $G$, form noise in independent groups of $B$ consecutive shuffled sites, for a fixed large power of two $B$. Choose one uniform site per group and set it to an independent fair bit; remaining entries are zero. Mask the noise outside $U$. The easy law $\nu$ is the sum over $\F$ of the uniform word and this noise, returned to the original layout. For the reference law $\mu_0$, take independent fair bits on $U$ and zeros outside, returned by the same random layout. By circuit counting,
+\[
+ \prob_{\mu_0}[C(x)\le c_2N/n]\le2^{-(t-c_2+o(1))N}.
+\]
+This bound holds separately for each layout. Let $\mu$ be $\mu_0$ conditioned on the complementary event.
+
+\paragraph{Size of an easy sample.}
+A word of $G_0$ uses $b-h$ independent message bits per active block. Implement each message column by lookups on the block address. The active prefix of density $t$ is a fixed disjoint union of dyadic address subcubes, so the sum of their lookup lengths is $tN/b$. The total cost for the message tables is at most $(tr+1/b+o(1))N/n$. The matrix selector costs at most $(\log K/b+o(1))N/n$. For fixed $b,K$ the selected generator, within-block index, and all accesses to the decoded word have size bounded independently of $n$. Dyadic masks have polynomial address overhead. A fixed noise sample uses $\log B+1$ arbitrary lookups on $\log(N/B)$ address bits to recover its marked position and mark, costing $((\log B+1)/B+o(1))N/n$. The punctured $V$ word uses Lemma~\ref{l:prod} and a mask. Choose $D$ and $B$ sufficiently large that the sum of the rounding and selector terms and the noise term fits the remaining margin. Compute the permuted address once and feed it to these circuits. Every sample has size at most $c_1N/n$.
+
+\paragraph{Fourier comparison on overlapping scopes.}
+Suppose the bad volume is less than $\delta N$. Intersect $X,Y,Z$ with $U$, keeping the same names. The code $G$ projects surjectively onto both $XZ=X\cup Z$ and $YZ=Y\cup Z$. Indeed, a dual word supported on $XZ$ and orthogonal to $G_0$ must vanish on every good block, since the restriction of its check matrix to $Y$ has full row rank. Its weight is therefore less than $\delta N$. Extending by zeros to the full domain precludes its being a nonzero word orthogonal to $V|_U$. The same extension shows that every nonzero word of $G^\perp$ has weight at least $\delta N$.
+
+Use the overlapping-scope Fourier calculation of Bogdanov, Papakonstantinou and Wan \cite[Lemma~1]{bpw12}. Write the rectangle indicators as $f$ on $XZ$ and $h$ on $YZ$, fixing the inactive entries to zero and pulling the functions back by the layout permutation. Expand both functions in the uniform orthonormal Walsh basis. For a pair of characters with supports $S\subseteq XZ$ and $T\subseteq YZ$, the product character has support $S\triangle T$. Averaging over a uniform codeword kills the pair unless $S\triangle T\in G^\perp$. These surviving pairs form a matching: two edges incident to $S$ would differ by a nonzero dual word supported on $YZ$, which surjectivity excludes, and likewise at $T$. Diagonal pairs $S=T\subseteq Z$ give exactly the expectation under the uniform active-domain reference. Each remaining pair has $w=|S\triangle T|\ge\delta N$. Writing $w_j$ for its weight in noise group $j$, the independent noise contributes bias
+\[
+ \prod_j (1-w_j/B)\le \exp(-w/B)\le\exp(-\delta N/B).
+\]
+The conditional checking of the layout left the noise and the uniform codeword independent. Summing over the off-diagonal matching and using Cauchy--Schwarz and Parseval gives absolute difference at most $\exp(-\delta N/B)\|f\|_2\|h\|_2\le\exp(-\delta N/B)$. Bad layouts cost at most \eqref{eq:bad}; conditioning the reference on hardness costs exponentially small total variation. This proves Theorem~\ref{t:rect}.
+
+Bogdanov, Papakonstantinou and Wan \cite[Lemma~2 and its following remarks]{bpw} already obtained exponential-error pseudorandomness for two possibly overlapping factors that each miss a fixed fraction of the input, using a linear code and small-bias noise. Here every point of the easy distribution must satisfy a prescribed Boolean circuit bound. The active-domain construction also lets the hard distribution vary with the threshold. The following uniform-reference specialization identifies the exact limiting circuit-size fraction.
+
+\begin{corollary}\label{c:uniform}
+Fix $0<\beta\le1/2$ and let $U_N$ be the uniform law on all $N$ truth-table entries. For $1-\beta<c<1$ there exists a distribution $\nu$ supported on complexity at most $cN/n$ for which $\sup_R|\nu(R)-U_N(R)|\le e^{-\Omega(N)}$ over all $\beta$-balanced pseudo-rectangles. For $0<c<1-\beta$, every distribution supported on that complexity class has a rectangle $R$ for which $\nu(R)-U_N(R)\ge1-e^{-\Omega(N)}$. At $c=1-\beta$ this last bound is $1-2^{-\Omega(N\log n/n)}$.
+\end{corollary}
+\begin{proof}
+Take the whole domain active, $t=1$, and choose $1-\beta<r<c$. Before conditioning on hardness the reference distribution is exactly $U_N$, since every layout is a permutation. For the converse let one party see $\lfloor(1-\beta)N\rfloor$ sites, up to an integer endpoint adjustment. On those sites test whether the observed string has an extension of complexity at most $cN/n$. The other factor is constant. Circuit counting gives $U_N(R)\le2^{-(1-\beta-c+o(1))N}$, whereas $\nu(R)=1$. At the endpoint $c=1-\beta$ the same test has $U_N(R)\le2^{-\Omega(N\log n/n)}$, since the earlier rooted count is at most $s\log(s+n+2)+O(s)=cN-(c+o(1))N\log n/n$.
+\end{proof}
+
+\section{From rectangles to branching programs and DNNFs}
+
+Apply Theorem~\ref{t:rect} with $\beta=1/3$. A cover of the YES set by balanced rectangles has at least $e^{\kappa N}$ members: each has $\mu$-mass zero and $\nu$-mass at most $e^{-\kappa N}$. Interchanging the laws gives the same bound for covers of the NO set. More generally a disjoint union of $S$ balanced rectangles has distinguishing advantage at most $S e^{-\kappa N}$ in absolute value. These observations hold for any labels in the gap ignored by the two laws.
+
+Fix $k$. We recall the trace decomposition of Borodin, Razborov and Smolensky \cite[Theorem~1]{brs}. For a fixed integer $p$, a size-$S$ syntactic read-$k$ program has an accepting-set cover by $(2S)^{O(kp)}$ products of at most $kp$ local factors. Each factor depends on at most $\lceil N/p\rceil$ variables and each variable occurs in at most $k$ factors of one product. For a deterministic program the cover is disjoint. To see the latter detail, in the proof of that theorem each term specifies the successive edges of a trace. Starting at its current endpoint, a path marks the first edge for which the union of all variables on paths to its new endpoint reaches the specified size. Each path has a unique trace. The product tests precisely existence of an accepting path containing its trace edges. A deterministic input therefore satisfies at most one term.
+
+Thathachar \cite[Lemma~4]{thatha} shows that each such product is a pseudo-rectangle with two large private sets for an appropriate $p=p(k)$. Here is the combinatorial argument with constants sufficient for our use. Color each factor independently red or blue. Adjoin one dummy singleton factor for each variable appearing in no factor, so that every variable appears between one and $k$ times. The expected number of variables appearing only in red factors is at least $2^{-k}N$, and similarly for blue. Changing a factor color affects either count by at most the size of that factor. The sum of squared changes is bounded by $kp\lceil N/p\rceil^2+N$. By the bounded-differences inequality, choosing $p$ as a sufficiently large constant multiple of $k4^k$ makes both counts at least $\beta_k N$, with positive probability, where $\beta_k=2^{-k-1}$. Such a coloring expresses the product as the conjunction of a red factor and a blue factor, sharing all coordinates outside their respective private sets.
+
+
+
+Apply Theorem~\ref{t:rect} with $\beta_k$, taking the dense gap sufficiently narrow. Each monochromatic pseudo-rectangle has mass at most $e^{-\kappa N}$ under the law on its own class. Thus both nondeterministic polarities need exponentially many traces. For a randomized program fix its choices and use disjointness. Its average distinguishing advantage on the two laws is at most $(2S)^{O(kp)}e^{-\kappa N}$, whereas the pointwise guarantee requires advantage at least $1/3$. This proves the branching-program claims at dense thresholds.
+
+By the balanced rectangle theorem of Bova et al.\ \cite[Theorem~6]{bcms}, the models of a DNNF with $S$ gates admit a cover by at most $S$ rectangles whose two parts each contain at least one third of the variables. In the deterministic case the cover can be taken disjoint. This directly proves the dense DNNF bounds for both polarities and the bounded-error randomized deterministic-DNNF assertion. The convention permitting unbounded fan-in gives the same exponential orders upon conversion to binary gates with polynomial overhead.
+
+\paragraph{Nonnegative arithmetic approximants.}
+A related statement allows pointwise additive approximation by a nonnegative sum-product circuit on the truth-table bits. Suppose each leaf computes a nonnegative function of one bit, every sum has nonnegative coefficients, every product has disjoint input scopes, and all inputs to a sum have the same scope. The balanced-product decomposition of Martens and Medabalimi \cite[Theorem~38]{mm} represents its output as a sum of at most a polynomial in the circuit size many nonnegative products over balanced partitions. If the output approximates either polarity of $\mc$ within $1/3$, each summand is everywhere at most $4/3$. Dividing a nonzero summand by $4/3$ and rescaling its two factors by constants gives a product of functions valued in $[0,1]$, since the supremum of a product on separate variables is the product of the suprema. Each factor is the integral of its threshold indicators over $[0,1]$. Theorem~\ref{t:rect} therefore bounds the difference of expectations of a summand by $(4/3)e^{-\kappa N}$. The output has difference at least $1/3$, giving the same dense exponential lower bound. Restriction gives the smaller-budget bounds as well, preserving smoothness by retaining constant-one factors on the remaining scopes where needed.
+
+\begin{lemma}\label{l:guard}
+If $f$ is nonconstant and $z_1,\ldots,z_\ell$ are fresh variables, then
+\[
+ C(f(y)\wedge z_1\wedge\cdots\wedge z_\ell)=C(f)+\ell.
+\]
+\end{lemma}
+\begin{proof}
+Chaining $\ell$ AND gates proves the upper bound. $z_\ell$ is essential, so setting it to one eliminates at least its first gate in a minimal circuit: a unary gate becomes constant and each binary AND or OR becomes constant or a wire. The restricted function still depends on every remaining $z_i$. Repeat $\ell$ times.
+\end{proof}
+
+To finish Theorem~\ref{t:size}, write $u=s-n\to\infty$. The threshold in dimension $m$ produced by Lemma~\ref{l:guard} is $u+m$. Choose the least sufficiently large $m\le n$ for which $(u+m)m/2^m\le1-\epsilon/2$. Such $m$ exists by the assumption on $s$, and its ratio lies in a compact subinterval of $(0,1)$ by minimality. Thus $2^m=\Theta((u+m)m)=\Theta(u\log u)$. All constants in the dense bounds may be chosen uniformly on this compact interval: bracket the ratio by close pairs $c_1,c_2$ with $(1-\min\{1/3,\beta_k\})c_2<c_1$ and pass to a finite cover. Map the $m$-variable input $f$ to the guarded function, a restriction of the ambient truth table setting all positions outside a fixed subcube to zero. The underlying hard tables are nonconstant. Constant easy tables remain easy after guarding for these thresholds. Restriction preserves every computational model at issue. This gives the claimed lower bounds. When $s\ge(1+\epsilon)n$, $u=\Theta_\epsilon(s)$. For the matching upper bound, use a trie of the prefixes of all easy tables and a default rejecting sink. It has at most $1+N|\{C(x)\le s\}|$ nonterminal nodes. Exchanging sink labels recognizes the complement. An ordered decision diagram converts gate by gate to a deterministic DNNF by writing a query as the disjunction of its two conditioned branches. Decomposability follows because the queried variable never occurs again. This completes the proof.
+
+\section{Growth of the read bound}
+
+The parameter dependence yields a lower bound when the allowed number of reads grows. Here the circuit budget is a fixed fraction of Shannon capacity. The exponent in the estimate is uniform over the specified range of $k$.
+
+\begin{theorem}\label{t:quant}
+Fix $0<c<1$ and $s=\lfloor cN/n\rfloor$. There are constants $A,C>0$ depending on $c$ such that, for all sufficiently large $n$ and
+\[
+  1\le k\le \log n-\log\log n-C,
+\]
+every bounded-error randomized or exact nondeterministic syntactic read-$k$ branching program for $\mc_{n,s}$ or its complement has size at least $\exp(N/2^{A(k+1)})$.
+\end{theorem}
+
+\begin{proof}
+Write $\beta=2^{-k-1}$. It suffices to track $\beta$ tending to zero, since the previous theorem handles any bounded set of $k$. Choose dyadic $t$ between $c(1+\beta/8)$ and $c(1+\beta/4)$ with $O_c(\log(1/\beta))$ bits after the radix point, and take $r=1-\beta/2$. Then $t-c$ and $c-tr$ are both $\Theta_c(\beta)$. Take $\tau=\beta/8$, $\rho=a_c\beta$ with $a_c$ a sufficiently small positive constant, and $\Delta=\rho^2$ in Lemma~\ref{l:prod}. The union-bound proof works uniformly because binary entropy $H_2(\rho^2)=o(\rho)$ and the smaller code length is exponential in $n$. Thus $\delta=\rho^4$, and we take $\eta=\delta/8$.
+
+We record a quantitative lookup bound to control the shrinking gate margin. Every $d$-variable truth table has size at most $(1+O(\log d/d))2^d/d$. For large $d$, split off $m=\lceil2\log d\rceil$ variables and build all assignment indicators on each side in $O(2^{d-m}+2^m)$ gates, by branching on successive literals. Partition the $2^m$ small-side indicators into groups of $h=d-\lceil6\log d\rceil$ and precompute every disjunction within each group. This costs $O(\lceil2^m/h\rceil2^h)$ gates. For each setting of the remaining variables, combine at most $\lceil2^m/h\rceil$ precomputed functions and gate the result by the corresponding assignment indicator. The final disjunction costs $2^{d-m}-1$ gates. The leading term is at most $2^d/h$, with all additive costs $O(2^d/d^2)$.
+
+In the permutation construction choose $\xi$ a sufficiently small constant times $\tau\sqrt\eta$, hence $L=O_c(\log(1/\beta))$. Choose powers of two $B_0=\Theta_c(\beta^{-2})$ and $D=\Theta_c(\beta^{-7})$ with large fixed prefactors. Then $1/(D\tau^2)=o(\eta)$ and the switch cost is $o_c(\beta)N/n$. The block length $b$, menu size $K=O(b/\eta^2)$, and a suitable noise-group size $B=\Theta_c(\beta^{-2})$ are polynomial in $1/\beta$. The failure probability for one uniform local matrix on a balanced pattern is at most $2^{-\Omega(\beta b)}=o(\eta)$, so the polynomial menu size follows from a union bound and Hoeffding's inequality. For a selected local decoder, one can hardwire all $K$ generator matrices, evaluate each matrix-vector product by $O(b^2)$ gates, then select among $K$ resulting outputs; hence the shared decoder costs only $\operatorname{poly}_c(1/\beta)$. The address arithmetic and dyadic masks also cost $\operatorname{poly}(n,1/\beta)$. Since $\beta^{-1}\le n$, these polynomial costs are negligible against $\beta N/n$.
+
+In each lookup contributing at leading scale the address length is $n-O_c(\log(1/\beta))$ or $n/2+O(1)$ for the product code. Subdividing the active dyadic prefix affects the smallest of the former lengths by at most another $O_c(\log(1/\beta))$. Consequently the aggregate relative overhead for the leading $trN/n$ term is $O_c(\log n/n)$. Smaller lookup terms and rounding contribute $o_c(\beta)N/n$ in addition to the reserved $O(\rho)N/n$. Taking $C$ large ensures $\beta\ge 2^{C-1}\log(n)/n$, so the leading overhead fits in the reserved $\Theta_c(\beta)$ margin. The circuit count bounds hard-law contamination by $\exp(-\Omega_c(\beta N))$.
+
+The bounded-differences exponent in \eqref{eq:bad} is at least $\beta^{O_c(1)}N$ since $\delta,\eta$ are powers of $\beta$ and $L,b,B_0$ are polynomially bounded in $1/\beta$. The character-damping exponent $\delta N/B$ has the same lower bound. The trace decomposition uses $kp=\operatorname{poly}(1/\beta)$ factors in its exponent. The exponentially small pseudo-rectangle error thus gives $\log S\ge\beta^{O_c(1)}N$. This proves the result for each model.
+\end{proof}
+
+An input-oblivious schedule admits a variant that only bounds the total number of queries. Namely, if its length is at most $kN$, divide the schedule into consecutive windows of at most $\lceil N/p\rceil$ queries. At least half of the variables occur in at most $2k$ windows. Color the windows as in the trace argument, using only these variables to count private sets, and allow all other coordinates to be shared. The bounded-differences estimate gives two private sets of size $\Omega(2^{-2k}N)$ if $p$ is a sufficiently large multiple of $k\, 2^{4k}$. For each fixed sequence of boundary states, the existence of an accepting path is a product of the window predicates. Deterministic inputs have unique accepting boundary sequences. Thus for each fixed $k$ the exponential bounds hold also for these oblivious programs, including programs whose individual variables may occur arbitrarily many times. This argument uses that the window's possible input coordinates are fixed before seeing the input.
+\begin{thebibliography}{10}
+\bibitem{brs} A. Borodin, A. Razborov and R. Smolensky.
+On lower bounds for read-$k$-times branching programs.
+Computational Complexity 3, 1--18, 1993.
+\url{https://www.cs.toronto.edu/~bor/Papers/lower-bounds-read-k-times-branching.pdf}.
+\bibitem{thatha} J. S. Thathachar.
+On separating the read-$k$-times branching program hierarchy.
+ECCC TR98-002, 1998.
+\url{https://eccc.weizmann.ac.il/report/1998/002/}.
+\bibitem{bcms} S. Bova, F. Capelli, S. Mengel and F. Slivovsky.
+Knowledge compilation meets communication complexity. IJCAI, 2016.
+\url{https://ijcai.org/proceedings/2016/147}.
+\bibitem{bpw} A. Bogdanov, P. Papakonstantinou and A. Wan.
+Pseudorandomness for read-once formulas. FOCS, 2011.
+\url{https://ieee-focs.org/FOCS-2011-Papers/Pseudorandomness%20for%20Read-Once%20Formulas.pdf}.
+\bibitem{bpw12} A. Bogdanov, P. Papakonstantinou and A. Wan.
+Pseudorandomness for linear length branching programs and stack machines.
+RANDOM, 2012. \url{https://www.cs.columbia.edu/~atw12/papers/linearlength14.pdf}.
+\bibitem{chmy} M. Cheraghchi, S. Hirahara, D. Myrisiotis and Y. Yoshida.
+One-tape Turing machine and branching program lower bounds for MCSP. STACS, 2021.
+\url{https://doi.org/10.4230/LIPIcs.STACS.2021.23}.
+\bibitem{cklm} M. Cheraghchi, V. Kabanets, Z. Lu and D. Myrisiotis.
+Circuit lower bounds for MCSP from local pseudorandom generators. ICALP, 2019.
+\url{https://doi.org/10.4230/LIPIcs.ICALP.2019.39}.
+\bibitem{gg} O. Gabber and Z. Galil.
+Explicit constructions of linear-sized superconcentrators.
+Journal of Computer and System Sciences 22, 407--420, 1981.
+\bibitem{gr} L. Glinskih and A. Riazanov.
+MCSP is hard for read-once nondeterministic branching programs. LATIN, 2022.
+\bibitem{mm} J. Martens and V. Medabalimi.
+On the expressive efficiency of sum product networks.
+\url{https://arxiv.org/abs/1411.7717}.
+\bibitem{lup} O. B. Lupanov.
+A method of circuit synthesis. Izvestiya VUZ, Radiofizika 1(1), 120--140, 1958.
+\end{thebibliography}
+\end{document}

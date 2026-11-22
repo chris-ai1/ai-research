@@ -1,0 +1,78 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,microtype}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\title{Query complexity of Boolean MCSP with polynomially separated size thresholds}
+\author{Research manuscript}\date{22 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+A reader can query entries of an $N$-bit truth table. The promise is that its Boolean circuit size is at most $s$ or greater than $t$. For $s=\Theta(N^a)$ and $t=\Theta(N^b)$, with fixed $0<a<b<1$, we show that the bounded-error cost is $\Theta(Ns/t)$ classical queries and $\Theta(s\sqrt{N/t})$ quantum queries. The hard tables have one mark per bucket. Low-degree polynomials over a binary extension field place the marks of easy tables in positions that look independent to a reader who has seen only a small number of them. A Boolean circuit for evaluating any one of these field polynomials fits the smaller size threshold. We also show that the threshold degree, globally bounded rational approximate degree and bounded-error postselected quantum query complexity of this promise are all of order $s$.
+\end{abstract}
+
+\section{Estimating circuit size with a promise}
+Fix an inner Boolean basis containing AND, OR and NOT, with binary fan-in, free constants and unrestricted fanout. Let $C(f)$ count gates. Put $N=2^n$ and write $A_u$ for tables representing functions on $n$ variables with $C(f)\le u$. A tester must accept every table in $A_s$ and reject every table outside $A_t$. We count truth-table queries, allow unlimited computation between them, and require error at most $1/3$ on each promised input. Logs are base two.
+\begin{theorem}
+If $s=\Theta(N^a)$ and $t=\Theta(N^b)$ for fixed $0<a<b<1$, the classical randomized and quantum query complexities satisfy
+\[
+                 R=\Theta(Ns/t),\qquad Q=\Theta(s\sqrt{N/t}).
+\]
+The upper bounds allow perfect completeness. The implicit constants may depend on the exponents and the constants in the size thresholds.
+\end{theorem}
+Here the gap is a promise on the minimum number of gates. Hamming distances enter only in the proof of the upper bound.
+\section{Upper bounds by testing distance}
+For some constant $c_b>0$, every Boolean table of weight at most $c_b t$ has a circuit with fewer than $t/2$ gates for large $n$. Indeed Lupanov's sparse synthesis bound \cite{kors} at weight $\lceil c_bt\rceil$ costs $(1+o(1))E/\log E$, where $E=\log\binom{2N}{\lceil c_bt\rceil}=(c_b(1-b)+o(1))tn$ and $\log E=(b+o(1))n$. An extra address bit pads a lower weight to this weight and can be fixed after synthesis. The theorem's weight condition $t/\log n\to\infty$ holds. XOR with a circuit of size at most $s=o(t)$ costs only a constant number of further gates. Thus any no-instance is at Hamming distance at least $c_b t$ from $A_s$.
+
+We give an algorithm that accepts every yes input with certainty. Write $B=\log |A_s|=O(s\log s)$ by ordinary rooted circuit counting. Put $\xi=c_bt/(2N)$, $v=\xi$ classically and $v=\sqrt\xi$ quantumly. Maintain all size-$s$ candidates consistent with the verified answers. Choose a coordinate with minority fraction at least $\gamma=c v\log(2/v)$ if one exists, using a small absolute $c$. Query it and retain exactly consistent candidates. Such a query reduces the candidate count by a factor at most $1-\gamma$, so at most $O(B/\gamma)$ occur.
+
+Otherwise let $m$ be the coordinatewise majority of the survivors. This table is close to one computable with few gates. Draw five independent uniform survivors and take their majority on each coordinate. It has circuit size at most $5s+O(1)$. Its expected disagreement with $m$ is $O(\gamma^3)N=o(\xi N)$, so one choice achieves this distance. On any no input, the actual table and $m$ must differ in at least $\xi N$ entries. Otherwise the input would lie within $c_b t$ entries of the five-circuit majority and could be synthesized with fewer than $t$ gates, by the sparse correction bound and $5s=o(t)$.
+
+Search for an actual disagreement with $m$, repeating independent random samples or bounded-cost quantum search attempts until a verified witness appears. On a no input the expected cost is $O(1/v)$ per witnessed mismatch. Each successful mismatch retains at most a $\gamma$ fraction of survivors. It therefore takes at most $1+B/\log(1/\gamma)$ successes to exhaust the candidate set. Reject if the set becomes empty. Cap the computation at a large constant multiple of the no-input expected query bound and accept at timeout. No true size-$s$ circuit is ever discarded on a yes input. On a no input Markov's inequality bounds the timeout probability by $1/3$. The query bound is
+\[
+ O\!\left(\frac1v+\frac{B}{v\log(2/v)}\right).
+\]
+Here $\log(2/v)=\Theta(n)$, so substitution gives both upper bounds. The constant-five majority is where we use the growing ratio between the two thresholds.
+
+\section{Encoding many marks with a short circuit}
+Let $k$ be a power of two between $C_b t$ and $2C_b t$, for a sufficiently large constant $C_b$. Divide the table into $k$ buckets of size $H=N/k$. The table has a single mark at position $Y_i\in\{0,1\}^h$ in bucket $i$, where $h=\log H$. Put $\ell=\max(\log k,h)$ and identify binary $\ell$-tuples with a basis of $F=\mathbb F_{2^\ell}$. Assign each bucket its distinct field element by zero-padding its binary address. Choose a uniform polynomial of degree less than $D=\lfloor c_a s\rfloor$ in $F[X]$ and take the first $h$ bits of its evaluation for the location. Vandermonde interpolation gives jointly uniform labels in every $D$ buckets.
+
+\begin{lemma}\label{eval}
+Each fixed degree-below-$D$ polynomial on $F$ has a Boolean evaluation circuit of size
+\[
+                  O\bigl(D\ell/\log D+\sqrt D\,\ell^{O(1)}\bigr)
+\]
+for $D\to\infty$.
+\end{lemma}
+\begin{proof}
+Take $m=\lceil\sqrt D\rceil$. Form $1,x,\ldots,x^{m-1},x^m$ and the $m$ giant powers $(x^m)^j$ using $O(m)$ field multiplications of polynomial cost in $\ell$. Pad the coefficients to an $m$ by $m$ array $c_{ji}$. The $j$th block result is $S_j=\sum_{i=0}^{m-1} c_{ji}x^i$.
+
+Multiplication in any binary extension of degree $\ell$ has bilinear rank $r=O(\ell)$ \cite{rank}. In particular $uv=\sum_{e=1}^r w_e L_e(u)R_e(v)$ for fixed $w_e\in F$ and binary linear functionals $L_e,R_e$. For a fixed $e$, the $m$ bits $R_e(x^i)$ form one vector. Map it to the $m$ sums $\sum_i L_e(c_{ji})R_e(x^i)$ by one hardwired binary linear map. Every $m$ by $m$ binary map costs $O(m^2/\log m)$ XOR gates: group inputs into blocks of $\lfloor(\log m)/2\rfloor$ bits, generate all sums in each block, and combine one partial sum per block in each output. At all $r$ ranks together this is $O(D\ell/\log D)$. Forming the input linear forms and reconstructing the $S_j$ costs $O(m\ell^2)$. Finally combine $S_j$ with the giant powers and add the field products. Implementing each XOR by a constant number of basis gates leaves the bound unchanged.
+\end{proof}
+Since $\ell\le n$ and $\log D\sim an$, choosing $c_a>0$ sufficiently small leaves room to compare the computed $h$-bit label with the suffix of the truth-table address. Thus every code-generated table belongs to $A_s$. The independent comparison law chooses all $Y_i$ independently and uniformly. Its tables have point probability $2^{-kh}$ and $kh\ge(C_b(1-b)+o(1))tn$. Rooted counting gives $\log|A_t|\le(t+1)\log(t+n+2)+O(t+\log n)=(b+o(1))tn$. Choose $C_b>b/(1-b)$ with margin. A table from this law lies outside $A_t$ with probability tending to one.
+
+\section{What a query can learn about the marks}
+\paragraph{Classical queries.}
+Fix a deterministic query tree of depth $u\le cDH$, for a sufficiently small absolute $c$. Repeated bit queries can be answered locally. The following argument compares its distributions of transcripts under independent and $D$-wise independent labels. For each leaf expose the full labels of every bucket with a positive answer and every bucket that received at least $H/2$ distinct queries. The latter number is at most $2u/H$. The resulting refined leaves partition the label space. Call a leaf good if at most $D/4$ buckets with a positive answer were encountered.
+
+Under the independent law the expected number of first hits before a bucket reaches $H/2$ queries is at most $2u/H$. Conditional on its observed misses, its next hit probability is at most $2/H$. Any remaining positive buckets are among the at most $2u/H$ heavy buckets. Thus the bad probability is at most $16c$ by Markov. At a good refined leaf at most $D/4+2u/H<D/2$ labels have been exposed. The two laws give these exposed values the same probability; under their conditioning the other labels are still $(D/2)$-wise uniform, rounding down. On the unexposed buckets the leaf asks that $Y_i$ avoid some set of size $m_i<H/2$, with $\sum_i m_i\le u$. Conditional on independent labels the avoidance probability is at least $\exp(-2u/H)$. The first $j=\lfloor D/2\rfloor$ terms of inclusion--exclusion are common to both laws. Bonferroni bounds their difference by at most twice the $j$th elementary symmetric sum in the numbers $m_i/H$, hence by $2(eu/(jH))^j$. For small enough $c$ this is exponentially small in $D$ even after division by $\exp(-2u/H)$. Each good refined leaf thus has nearly the same relative probability under the two laws. Summing over good leaves controls the mass of the bad leaves in both laws by $16c+o(1)$. A randomized mixture of trees has the same indistinguishability bound. This proves $R=\Omega(DH)$.
+
+\paragraph{Quantum queries.}
+For completeness, view the quantum state as a vector-valued function of $Y$. Under the uniform law, decompose this function orthogonally by its sets of mean-zero bucket coordinates; the level is the size of such a set. For levels up to $j=\lfloor D/2\rfloor$, inner products agree under both laws, since each term in an inner product depends on at most $2j$ labels. A query increases the level by at most one. On a fixed address $(i,z)$ it acts by $I+\mathbf1[Y_i=z](X-I)$, where $X$ is the answer-bit flip. Its upward transition adds the mean-zero part of $\mathbf1[Y_i=z]$, of norm at most $H^{-1/2}$. Distinct supports constant in $i$ remain orthogonal after adding $i$. Orthogonal address blocks handle superposed queries, giving upward operator norm at most $u_0=2/\sqrt H$.
+
+Project back to levels below $j$ after each query in an auxiliary calculation. This calculation agrees under the two laws. If $a_v(q)$ denotes its norm on levels at least $v$ after $q$ queries, then $a_v(q+1)\le a_v(q)+u_0a_{v-1}(q)$ and $a_0(q)\le1$. The norm discarded over $q$ queries is at most $\binom qj u_0^j$ by the binomial recurrence and telescoping. The true final states therefore have acceptance probabilities differing by at most $4\binom qj u_0^j$. At $q\le c' D\sqrt H$ this is $o(1)$ for a small constant $c'$. The promised labels require a constant gap, proving $Q=\Omega(D\sqrt H)$.
+
+\input{certification.tex}
+
+\input{rational.tex}
+\input{small-bias.tex}
+
+\section{Scope}
+Oliveira, Pich and Santhanam study circuit-size gaps in their hardness-magnification theorems \cite{ops}. Their hypotheses concern the size of computational models for deciding the promise problem. The results here concern oracle access to the input. In particular, the finite-family upper bounds may enumerate exponentially many circuits between queries. Our proof for a growing size ratio gives lower bounds on randomized and quantum algorithms. Establishing an equally sharp ordinary bounded approximate-degree lower bound in that growing-gap regime remains open in this work.
+\begin{thebibliography}{9}
+\bibitem{rank} S. Ballet and J. Pieltant. \href{https://arxiv.org/abs/1003.1864}{On the tensor rank of multiplication in any extension of $\mathbb F_2$}. Finite Fields and Their Applications, 2011.
+\bibitem{kors} A. D. Korshunov. \href{https://www.mathnet.ru/eng/rm9459}{Computational complexity of Boolean functions}. Russian Math. Surveys 67 (2012), Section 2.4.
+\bibitem{ops} I. C. Oliveira, J. Pich and R. Santhanam. \href{https://theoryofcomputing.org/articles/v017a011/}{Hardness magnification near state-of-the-art lower bounds}. Theory of Computing 17 (2021), article 11.
+\end{thebibliography}
+\end{document}

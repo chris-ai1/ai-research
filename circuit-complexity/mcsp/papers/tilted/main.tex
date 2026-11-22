@@ -1,0 +1,91 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newcommand{\KL}{D_{\mathrm{KL}}}
+\title{A tilted gate-elimination bound for Boolean MCSP}
+\author{}\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+At the fixed threshold $\lfloor .99435\,2^n/n\rfloor$, deterministic full-basis circuits for the minimum circuit size problem require more than $2.5226\,2^n$ gates. A promise with thresholds $.993\,2^n/n$ and $.99435\,2^n/n$ still requires more than $2.5168\,2^n$ gates. We combine a one-sided affine hitting property of small truth tables with the circuit census. Tilting the branch probabilities in Chen and Kabanets's elimination process improves circuit shrinkage, while a relative entropy bound guarantees a rejecting point on one of the resulting large affine flats.
+\end{abstract}
+
+Write $N=2^n$. The inner size $C(x)$ is the minimum number of fan-in-two Boolean gates needed to compute the $N$-bit table $x$ from an $n$-bit address. The outer circuit has the $N$ table entries as inputs and uses the full binary basis with unrestricted fanout. All numerical bounds below hold for sufficiently large $n$.
+
+For $0<c_1\le c_2<1$, the promise requires acceptance if $C(x)\le\lfloor c_1N/n\rfloor$ and rejection if $C(x)>\lfloor c_2N/n\rfloor$. Put $a=1-c_1$ and $b=1-c_2$. Two facts about MCSP suffice. First, the sharp circuit census bounds the uniform density of the entire accepting set by $2^{-(b-o(1))N}$. Second, every affine flat on which the outer circuit rejects has dimension at most $(a+o(1))N$. Indeed, the dense affine interpolation theorem of the companion manuscript \cite{local} places a table of size at most $(r+o(N))/n$ in every affine flat of codimension $r=\Theta(N)$. A larger flat contains a subflat of any smaller fixed positive dimension. Both applications can thus use a fixed positive margin before passing to a limit.
+
+\begin{theorem}
+Choose $0<\eta<1/2$, $3/4\le q<1$ and set
+\[
+ d=1-H_2(1/2+\eta),\qquad
+ D=q\log_2(4q/3)+(1-q)\log_2(4(1-q)).
+\]
+If $d+(D-2d)_+a/q<b$, every deterministic circuit for this promise has size at least
+\[
+ \left[2.5+\eta-\max\{3.5+\eta,(3+2\eta)/q\}\,a-o(1)\right]N .
+\]
+\end{theorem}
+
+\begin{proof}
+Use the simplified-circuit restrictions of Chen and Kabanets \cite[Section 4.1, Lemma 4.1]{ck}. Their potential $M$ counts gates and live input variables. An ordinary restriction branches on one nonconstant affine form. In each branch the potential drops by at least three, and in at least one it drops by four. The remaining case uses a bottom AND-type gate with two private raw inputs, each of fanout one. Either gate output eliminates its two inputs, the gate, and a successor. A circuit of potential at most four can be settled by a bounded number of additional equations. A terminal affine function needs at most one equation. All parent restrictions and substitutions are affine when lifted to the original parameters, except for the AND-type step which we handle by sampling its two inputs explicitly.
+
+In an ordinary step choose a branch giving the guaranteed larger decrement with probability $p=1/2+\eta$. At a private AND-type gate, three input pairs give its common output. Choose that output with probability $q$ and sample its three pairs uniformly, or take the exceptional pair otherwise. Tilt only the first $J=\lceil(a+\xi)N/q\rceil$ private gates, using fair raw bits thereafter. Here $\xi>0$ is sufficiently small. Complete any unused parameters uniformly.
+
+If all ordinary branches and private inputs were fair, the resulting point would be uniform. In affine coordinates each chosen ordinary form is a fresh free bit, and each private pair comprises two free bits. One can equivalently sample newly unused parameters immediately and retain their values for the final completion. Hence the sum of the number of ordinary branches and twice the number of private pairs is at most $N$. The chain rule for relative entropy, followed by data processing, bounds the divergence of the actual point law $P$ from uniform $U$ by
+\[
+ \KL(P\Vert U)\le Nd+(D-2d)_+J.
+\]
+All relative entropies here are in bits. For the accepting set $E$, binary data processing gives $\KL(P\Vert U)\ge P(E)\log_2(1/U(E))-1$. The assumed strict inequality allows $\xi>0$ such that the sampled point is rejected with probability bounded below by a positive constant.
+
+Let $T$ be the number of nonterminal steps, including $W$ private gates. Truncate each potential decrement at four, pad to $N$ steps by zeros, and center at its conditional mean. Azuma's inequality yields with probability $1-o(1)$
+\[
+ M_{\rm initial}\ge A T+(4-A)W-o(N),\qquad A=3.5+\eta .
+\]
+Indeed the conditional mean is at least $A$ at ordinary steps and four at private ones. With the same probability, the number of common outcomes among the first $\min(W,J)$ private gates is $q\min(W,J)+o(N)$, by the corresponding bounded martingale.
+
+Construct an affine flat through the sampled point on which the output stays fixed. Keep one affine equation per ordinary branch. At a private gate with the common output, fix just one input literal that forces this output at the sampled pair. Fix both inputs in the exceptional case. A restored direction is independent of all later choices: in the current affine coordinates the two raw inputs occur nowhere else, and after this gate's output is fixed the reduced circuit is independent of both. Future substitutions involve only the remaining live parameters. Pulling the free direction and the new coordinates back along the injective affine parametrization preserves their independence. Unused coordinates remain free. Thus if $W\ge J$ the flat has dimension at least $(a+\xi)N-o(N)$. Otherwise its dimension $L$ satisfies
+\[
+ L\ge qW-o(N),\qquad L\ge N-T-(1-q)W-o(N).
+\]
+The bounded number of terminal equations is absorbed by the remainder.
+
+With positive probability the point is rejected and both concentration estimates hold. The whole flat then rejects and satisfies $L\le(a+o(1))N$, excluding $W\ge J$. Hence $W\le (a/q+o(1))N$. If $G$ is the gate count, substitution gives
+\[
+ G+N\ge A(N-L)+(4-2A+Aq)W-o(N).
+\]
+According to the sign of the coefficient of $W$, use either zero or the upper bound on $W$ in this lower bound. The result is the claimed estimate.
+\end{proof}
+
+\paragraph{Certified constants.}
+Take $q=6/7$, giving $D=q-\log_2(7/4)<1/20$. For transparency,
+$\ln 2>6931/10000$, $\ln 2<6932/10000$ and $\ln(7/4)>5596/10000$ follow by inserting $y=1/3$ and $y=3/11$ into
+\[
+ 2\sum_{j=0}^{4}\frac{y^{2j+1}}{2j+1}\le
+ \ln\frac{1+y}{1-y}
+ \le 2\sum_{j=0}^{4}\frac{y^{2j+1}}{2j+1}
+       +\frac{2y^{11}}{11(1-y^2)} .
+\]
+The indicated bounds imply $\log_2(7/4)>6/7-1/20$. For $x=2\eta$ the entropy expansion gives
+\[
+ d=\frac1{\ln 2}\sum_{j\ge1}\frac{x^{2j}}{(2j-1)2j}
+ \le u:=\frac{x^2}{2(1-x^2)(6931/10000)} .
+\]
+Both rows below have $2a/q<1$. Their entropy cost is at most
+$\max\{u,(1-2a/q)u+a/(20q)\}$.
+The last two columns are strict outward rational bounds obtained by substituting the displayed terminating decimals as fractions.
+\[
+\begin{array}{ccccc}\toprule
+ \eta & a & b & \text{entropy cost below} & \text{gate coefficient above}\\\midrule
+ .043 & .00565 & .00565 & .005634 & 2.52265\\
+ .042 & .007 & .00565 & .005451 & 2.51681\\\bottomrule
+\end{array}
+\]
+This yields the strict constants in the abstract after absorbing $o(1)$. A coin-fixed circuit of a two-sided bounded-error algorithm need not have monochromatic rejecting flats disjoint from the easy set. The proof uses exact correctness on both parts of the promise.
+\input{confidence}
+
+\begin{thebibliography}{9}
+\bibitem{ck} R. Chen and V. Kabanets. \emph{Correlation bounds and \#SAT algorithms for small linear-size circuits}. \href{https://www2.cs.sfu.ca/~kabanets/papers/linsize-eccc.pdf}{Author manuscript}, Section 4.
+\bibitem{local} Companion manuscript. \emph{Satisfying parity constraints on a Boolean truth table with a small circuit}. Dense local affine interpolation theorem and circuit census. See the accompanying \textnormal{papers/affine/main.tex}.
+\end{thebibliography}
+\end{document}

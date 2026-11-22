@@ -1,0 +1,44 @@
+\section{Outer circuits without parity gates}
+For every fixed $\eta>0$ there is a fixed $c<1$ such that recognizing
+$A_{\lfloor cN/n\rfloor}$ with pointwise error at most $1/3$ requires
+at least $(13/4-\eta)N$ outer $U_2$ gates for all sufficiently large $n$.
+Here $U_2$ consists of the binary Boolean gates except XOR and its
+complement, with free wire negations. The inner circuit convention and
+the easy input law are those of Theorem~\ref{th:law}. Consequently the
+threshold-supplied problem requires $(13/4-o(1))N$ gates in this outer basis.
+
+To see the relevant simulation explicitly, use the projection recursion
+of Golovnev, Kulikov, Smal and Tamaki (\href{https://golovnev.org/papers/sharp_sat.pdf}
+{full version, Lemma 7 and Corollary 8(1)}). Write $s$ for the residual
+number of gates, $i$ for the number of live input variables, and $i_1$
+for the number used once. For the nonnegative measure
+$M=s+a i-i_1/2$, their decreases at the children of each nonterminal
+split dominate one of the four vectors
+\[
+ (a,2a),\quad(2a,2a,2a,3a),\quad
+ (a+7/2,a+3),\quad (a+9/2,a+2).
+\]
+A split fixes one or two variables, either to constants or to signed
+copies of remaining variables. Each split is a parity decision subtree
+of depth at most two. The substitution and normalization compute the
+actual restricted function on each branch. When the residual output is
+trivial, at most a constant number of extra parity queries determines
+it. Thus bounding the number of leaves of this recursion bounds an
+exact representation of the original Boolean function.
+
+For completeness, set $\lambda=2^{1/(a+13/4)+K/a^3}$ for an absolute
+constant $K$ and sufficiently large $a$. For each vector $v$ above,
+$\sum_{u\in v}\lambda^{-u}\le1$. For the first two vectors the sums
+tend to $3/4$ and $7/8$, respectively. Each of the last two vectors
+has entries $a+13/4\pm d$ for bounded $d$, so its sum is
+$2\lambda^{-(a+13/4)}\cosh(d\ln\lambda)$, at most one upon taking $K$
+sufficiently large. Induction on the tree bounds its leaf count by
+$O(\lambda^{M})$. If initially $s\le(13/4-\eta)N$, the base-two
+logarithm of this bound is at most
+\[
+ N\left(1-\frac{\eta}{a+13/4}+O(a^{-2})\right)+O(1).
+\]
+Fixing $a$ sufficiently large in terms of $\eta$ gives at most
+$2^{(1-\kappa_\eta)N}$ leaves for a constant $\kappa_\eta>0$.
+Choose $1-\kappa_\eta<\alpha<c<1$ and apply the parity leaf lower
+bound to each fixing of the outer circuit's random bits.

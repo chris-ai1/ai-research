@@ -1,0 +1,32 @@
+\section{Small error on the full truth table}\label{sec:confidence}
+Write $Q_\delta$ for quantum queries with error at most $\delta$ and $\deg_\delta$ for the ordinary approximate degree at this tolerance. A small error can be obtained at a lower cost than independent repetition of the entire decision algorithm.
+
+\begin{lemma}[Identifying a word with small error]\label{lem:small-error-oip}
+Let $A$ be a nonempty known family of $N$-bit words. Put $B=\min\{N,1+\log|A|\}$, $K=1+B/(1+\log(N/B))$ and $\ell=\log(1/\delta)$ for $0<\delta\le1/3$. There is a quantum algorithm with
+\[
+                O\bigl(\min\{N,\sqrt{N(K+\ell)}\}\bigr)
+\]
+queries which returns the input word when it belongs to $A$, or rejects when it lies outside $A$, with probability at least $1-\delta$ on every input. Computation on the known family is free.
+\end{lemma}
+\begin{proof}
+Set $r=\lceil K+\ell\rceil$. Read the whole word if $r\ge N/16$. Otherwise put $a=\sqrt{r/N}$, $\gamma=c a\log(2/a)$, where $c>0$ is a sufficiently small absolute constant. Keep the words consistent with each explicitly read bit. Reject when no survivor remains. Whenever a coordinate has minority frequency at least $\gamma$, query it. Each such query retains at most a $(1-\gamma)$ fraction, so at most $O(B/\gamma)$ occur.
+
+When all coordinates have smaller minority frequency, store the survivors' coordinatewise majority $m$ as one vote. Search for a disagreement with $m$, verifying any returned index. A search using $O(1/a)$ queries finds a disagreement with probability at least $3/4$ whenever $d(x,m)>r/8$. This is bounded-error quantum search with a known lower bound on the marked fraction \cite{dw}. A verified disagreement retains at most a $\gamma$ fraction. There are at most $J=1+\lceil B/\log(1/\gamma)\rceil$ successful searches, including a last search that empties the family. A singleton keeps voting by the same rule.
+
+Stop at $q=\lceil C(J+\ell)\rceil$ votes for a sufficiently large absolute $C$. A vote is bad when $d(x,m)>r/8$. At each bad vote, conditional on the entire history, search succeeds with probability at least $3/4$. Couple these success indicators with independent Bernoulli$(3/4)$ trials indexed by the successive bad votes, padding unused trials after stopping. A run reaching $q$ votes with at least $u=\lceil q/4\rceil$ bad votes has at most $J$ successes among the first $u$ trials. The binomial tail is at most $\delta$. Otherwise the coordinatewise majority $z$ of the stored words differs from $x$ in at most $r/2$ positions. Every wrong coordinate accounts for at least $q/4$ disagreements among good votes, whereas all good votes together account for at most $qr/8$ disagreements.
+
+To correct $z$, run exact quantum search successively for $j=r,r-1,\ldots,1$ marked positions among the as yet uncorrected discrepancies. Each invocation costs $O(\sqrt{N/j})$ and any reported index is verified. If the remaining number is $j$ the search succeeds with certainty. If it is smaller, verification can only reduce it. Induction thus corrects every discrepancy whenever initially at most $r$ were present \cite{dw}. Check offline whether the result belongs to $A$.
+
+The cost is $O(B/\gamma+(J+\ell)/a+\sqrt{Nr})$. Here $\log(1/\gamma)=\Theta(\log(2/a))$ and $B=O(r\log(2/a))$. For the latter inequality put $u=B/(1+\log(N/B))\le B$. Then $u(1+\log(N/u))\ge B$, and $v(1+\log(N/v))$ is increasing on the interval concerned, $u\le v\le N/16$. Substitution gives the stated bound.
+\end{proof}
+
+\begin{theorem}[The full error dependence]\label{th:small-error}
+In the gate range of Theorem~\ref{th:main}, put $K_N=T/(1+\log(N/T))$. Uniformly for $0<\delta\le1/3$,
+\[
+ \deg_\delta(\mc_{n,s}),\ Q_\delta(\mc_{n,s})
+      =\Theta_{\epsilon,\eta}\!\bigl(\min\{N,\sqrt{N(K_N+\log(1/\delta))}\}\bigr).
+\]
+\end{theorem}
+\begin{proof}
+The circuit census (1) and Lemma~\ref{lem:small-error-oip} give the algorithm. Its acceptance polynomial has at most twice its query count as degree. Theorem~\ref{th:main} gives the first lower-bound term. For the second, start with $A_s$ and repeatedly query a coordinate on which the survivors disagree, retaining the smaller nonempty side. Within $\lfloor\log|A_s|\rfloor$ steps just one word $v$ remains. Fix these coordinates to their values in $v$ and complement each remaining coordinate on which $v$ is one. The restricted membership function is NOR on $N-\lfloor\log|A_s|\rfloor$ or more inputs. The census and the fixed Shannon margin leave $\Omega_\epsilon(N)$ such inputs. NOR on $d$ bits has $\delta$-approximate degree $\Theta(\min\{d,\sqrt{d\log(1/\delta)}\})$ \cite{dw}. Restrictions preserve the degree upper bound, proving the claim for either inner gate basis.
+\end{proof}

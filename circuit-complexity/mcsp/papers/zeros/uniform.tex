@@ -1,0 +1,26 @@
+\section{A reference chosen from all truth tables}
+The preceding fixed-positive-weight result used a typical \emph{accepted} reference. We now allow $L$ to be uniformly random among all $2^N$ tables, at a fixed gate rate $sn/N\to c\in(0,1)$. Such a table is usually rejected. The enumerator is still $P_L(z)=\sum_{F\in\mathcal A}z^{d(F,L)}$. Its zero multiplicity at the origin is the distance of $L$ to the easy class. Put $\delta=H_2^{-1}(1-c)$ on the increasing branch and $r_-=\delta/(1-\delta)$.
+
+\begin{theorem}
+Let $k/N\to\beta$ be an integer distance sequence with $H_2(\beta)>1-c$. At this distance every reference $L$, of any complexity, has at least $2^{(c+H_2(\beta)-1-o(1))N}$ easy neighbors. For uniform $L$ their number has this logarithmic rate in probability. If $H_2(\beta)<1-c$, the probability that a uniform $L$ has any such neighbor is $2^{-(1-c-H_2(\beta)+o(1))N}$. The last assertion includes $\beta=0,1$. The covering radius of $\mathcal A$ and the distance of a uniform reference to $\mathcal A$ are $(\delta+o(1))N$, the latter in probability.
+\end{theorem}
+\begin{proof}
+For the universal lower bound, prescribe $k$ changes to $L$. Round so that the fractions of changed zeros and changed ones differ from $k/N$ only by integer rounding in their respective class counts. The resulting joint distribution has conditional output entropy $H_2(\beta)+o(1)$, since there are only two source classes and average rounding variation is $O(1/N)$. Its mutual information is $H(Y)-H_2(\beta)+o(1)\le1-H_2(\beta)+o(1)$. The constructive bound in the companion manuscript \emph{How many small Boolean circuits realize a prescribed joint type?}, Theorem~2, supplies the claimed list. Indeed for any fixed exponent $e<c+H_2(\beta)-1$, spend an additional normalized rate $e$ above that mutual information; it is at most the available conditional entropy. Taking $e$ up to the stated bound is uniform over references. This covering-radius upper is also the classical scalar result of Pippenger \cite{pipp}.
+
+For every $F$, a uniform $L$ has distance $k$ with probability $2^{-N}\binom Nk$. Multiplication by $|\mathcal A|\le2^{(c+o(1))N}$ and Markov give the typical upper above threshold and the rare-event upper below. For the matching lower below threshold, first condition $L$ to have $\lfloor N/2\rfloor$ ones, an event of probability $2^{-o(N)}$. Prescribe $k$ changes nearly equally on its two classes. Then $H(Y)\to1$, $H(Y\mid L)\to H_2(\beta)$, and the below-threshold part of the companion Theorem~1 gives the claimed probability from below. When $\beta$ equals zero or one the same limiting argument applies. Union bounding the elementary expectation over all $k\le(\delta-\epsilon)N$ excludes easy neighbors with high probability there, for each fixed positive $\epsilon<\delta$. This and the universal lower on a layer a little above $\delta N$ give the distance assertions.
+\end{proof}
+
+\paragraph{A positive-axis formula and two zero accumulations.}
+In the log coordinate $t$ on the real axis, the limiting pressure $f(t)=\lim N^{-1}\log P_L(e^t)$ for a uniform reference, in probability, is
+\[
+ f(t)=
+ \begin{cases}
+   \delta t, &t\le\log r_-,\\
+   (c-1)\log2+\log(1+e^t), &\log r_-\le t\le-\log r_-,\\
+   (1-\delta)t, &t\ge-\log r_- .
+ \end{cases}
+\]
+Indeed Markov's bound on each shell holds simultaneously on all shells with a fixed positive exponent slack, by a union bound over $N+1$ terms. It excludes macroscopically negative-exponent shells. The uniform lower on each strictly feasible layer then gives, by taking nearby layers at the endpoints, the maximum of
+$(c-1)\log2+H_2(\beta)\log2+\beta t$ over $\delta\le\beta\le1-\delta$. Maximization in $\beta$ gives the formula. Lipschitz continuity extends convergence locally uniformly on the real axis in probability.
+
+With probability tending to one, disks of each sufficiently small fixed radius $\rho$ about $t=\pm\log r_-$ contain $\Theta(\rho^2 N)$ zeros, in the log coordinate. The constants are uniform for sufficiently small $\rho$, taking the large-$N$ limit first. This follows by the same subharmonic rescaling argument as at the two noise transitions in the fixed-weight analysis: the two one-sided Taylor quadratics have unequal second derivatives. On either open half-plane $\Re t<\log r_-$ or $\Re t>-\log r_-$ the radial upper envelope is harmonic and every limit attains it on the real axis. Thus the strong maximum principle identifies the potential there. In particular any fixed compact subannulus of $0<|z|<r_-$ or $1/r_-<|z|<\infty$ contains $o(N)$ zeros in probability. At $z=0$ itself the multiplicity is $(\delta+o(1))N$. The real-axis formula gives no zero accumulation requirement at $z=1$ for this choice of reference.

@@ -1,0 +1,49 @@
+\section{The leading constant for a polynomial or larger number of constraints}
+The field calculation becomes more efficient if its decoder is shared among many blocks. For a truth table on $n$ bits let $N=2^n$. Throughout this section $n^{30}\le r\le N$. The exponent $30$ keeps the secondary costs explicit.
+
+\begin{theorem}\label{th:sparse-sharp}
+Uniformly in this range, $L(n,r)=(1+o(1))r/\log r$. There is one distribution $\mu_r$ supported on tables of size at most $(1+o(1))r/\log r$ such that, for every rank-$p$ matrix $A$ with $p\le r$ and every $y\in\F^p$,
+\[
+                         \Pr_{\mu_r}[Ax=y]\ge(1-o(1))2^{-p}.
+\]
+\end{theorem}
+\begin{proof}
+It suffices to consider $p=r$ because a row basis can be extended. The lower bound for $L(n,r)$ follows from rooted circuit counting: every circuit of size below $(1-\epsilon)r/\log r$ has a description of fewer than $r$ bits, with a fixed linear margin, for any fixed $\epsilon>0$ and sufficiently large $n$. Consider a fixed rank-$r$ matrix and mark a basis of $r$ of its columns.
+
+\paragraph{Distributing the marked columns.}
+Let $B$ be the largest power of two at most $r/n^{20}$, and set $\lambda=r/B$, so $n^{20}\le\lambda<2n^{20}$. Split addresses into $B$ equal blocks after a uniform invertible affine permutation on $\F^n$. The number $p_J$ of marks in each block has mean $\lambda$ and variance at most $\lambda$, by transitivity on ordered pairs. Call a block crowded if $p_J>\lambda+\lambda^{3/4}$. Its expected number of marks charged on this event is at most
+\[
+ \lambda\,\frac{\lambda}{\lambda^{3/2}}
+       +\frac{\lambda}{\lambda^{3/4}}=O(\sqrt\lambda).
+\]
+Indeed $\mathbb E[(p_J-\lambda)1_{\rm crowded}]\le
+\mathbb E[(p_J-\lambda)^2]/\lambda^{3/4}$. Summing over blocks bounds the expected number of crowded marks by $O(r/n^{10})$.
+
+\paragraph{Coding in each block.}
+Use Lemma~\ref{lem:rank} on the $H=N/B$ positions of each block, with local target $q=\lceil\lambda+\lambda^{3/4}\rceil$, working field degree $\ell=n^2$, $h=\ell-4\lceil n+\log(q+1)+2\rceil$ and $d=\lceil q/h\rceil$. This gives a binary linear local encoder with selector $v$ of $\ell$ bits, message $(w_j)_{j\le d}$ of $d\ell$ bits, and success probability at least $1-N^{-2}$ for every fixed test of rank at most $\min(q,H)$. If $q>H$, apply the determinant proof directly to the actual number of independent rows, using that there are at least that many distinct evaluation exponents. The number of selector and message bits in each block is
+\[
+                   W=(1+d)\ell=(1+o(1))\lambda .
+\]
+The logarithm in the error bound uses $n$ as an upper bound for $\log H$, and $q=O(n^{20})$. Selectors and messages are independent between blocks.
+
+Process the blocks while retaining an independent set. Initially retain all marked columns of $A$. Discard all marks in a crowded block. For any other block, the $p_J$ original marks remain independent of all the other retained columns, including replacements from preceding blocks. Take $p_J$ forms that annihilate those other columns and give the coordinate basis on the current marks. On the $H$ columns here they define a fixed rank-$p_J$ test, independent of the next selector. If the local code preserves its rank, replace the $p_J$ marks by $p_J$ coded columns independent modulo the other retained columns. Otherwise discard its marks. The conditional expected extra loss per such block is at most $p_J/N^2$. Thus the overall expected rank deficit is $O(r/n^{10})$. By Markov's inequality the deficit is at most $t=\lceil r/n^6\rceil$ with probability $1-O(n^{-4})$.
+
+\paragraph{Recovering the remaining rank.}
+Add a second, independent table, at original address $i$, with bit
+$\operatorname{Tr}\sum_{j\le D} w'_j (v'_j)^i$, where $D=\lceil 2t/n\rceil+1$ and all the primed elements are independent uniform in $\mathbb F_{2^{2n}}$. Condition on the local selectors and permutation when the deficit is at most $t$. Each of the at most $2^t-1$ nonzero missing combinations of the rows of $A$ is a nonzero coefficient polynomial of degree below $N$. The probability that it vanishes at all of the $D$ independent points is at most $2^{-nD}$. Except with probability $2^{t-nD}$, the combined encoder therefore has rank $r$, by nondegeneracy of the trace pairing. Independent uniform messages now make every right-hand side equally likely.
+
+\paragraph{Reading all the bits for one block.}
+Given an address, the circuit computes its affine image and then retrieves the $W$ selector and message bits stored on its block. We give the lookup cost explicitly because the number of output wires grows with $n$. Put $P=BW=(1+o(1))r$. There is a power of two $M$ between $(\log P)^2$ and $2(\log P)^2$, with $M\mid B$ for large $n$. The low address has $M$ possible values. Partition them into groups of $g=\lfloor\log P-6\log\log P\rfloor$ values, with a possible shorter final group. Construct all $M$ low-address indicators and all $B/M$ high-address indicators using $O(M+B/M+\log B)$ gates by recursive extension of prefixes. For each low group precompute the OR of every subset of its indicators in $O(2^g)$ gates, by extending subsets one bit at a time. These shared costs are $o(P/\log P)$.
+
+For each of the $B/M$ high addresses and each output bit, choose the desired subset OR in each low group, combine the selected terms, and gate by the high-address indicator. Then take the union over high addresses. The cost is at most
+\[
+           \frac{WB}{M}\bigl(\lceil M/g\rceil+2\bigr)
+                      =(1+o(1))\,\frac P{\log P}.
+\]
+This is the grouping argument in Lupanov's synthesis method, with the groups reused across all outputs. It gives the leading constant also when $\log B$ and $\log P$ differ by a fixed factor.
+
+\paragraph{One decoder for every block.}
+The same hardware evaluates the selected field polynomial on the position within the block, using the retrieved $v,w_j$ as inputs. Repeated squaring and conditional multiplication compute the field power in $O(n\ell^2)$ gates. Horner evaluation costs $O(d\ell^2)$ further gates using schoolbook extension field multiplication. Altogether these gates cost $O(n^{22}+n^5)=o(r/\log r)$; the affine permutation also fits. The second table uses $O(Dn^3)=O(r/n^4+n^3)=o(r/\log r)$ gates by the same schoolbook estimate. One final XOR completes the evaluation. The endpoint estimates are uniform for $n^{30}\le r\le N$.
+\end{proof}
+
+Consequently in the range $n^{30}\le s\le(1-\epsilon)N/n$, for each fixed $\epsilon>0$, bounded-error adaptive parity query complexity and the logarithm of minimum bounded-error parity-tree size are both $(1+o(1))s\log s$. In the lower bound use $r=\lfloor (1-\gamma)s\log s\rfloor$ for each fixed $\gamma>0$. The easy law gives relative lower bounds simultaneously at the level of all leaf probabilities. A tree with at most $2^{(1-\gamma)r}$ leaves has vanishing uniform probability on leaves of rank greater than $r$. At every other leaf the two distributions have total overlap at least $1-o(1)$ after summing the smaller masses. A uniform input is hard with probability $1-o(1)$. The random parity sketch in the preceding section attains the matching upper bound by rooted circuit counting. The same conclusion holds with a larger promised no threshold up to $(1-\epsilon)N/n$.

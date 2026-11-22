@@ -1,0 +1,92 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,geometry,hyperref,microtype}
+\geometry{margin=1.05in}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\newtheorem{theorem}{Theorem}
+\title{A high-confidence circuit lower bound for Boolean MCSP}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+Let \(N=2^n\) be the length of a Boolean truth table. At every integer threshold from \(n-2\) to \(cN/n\), for an absolute \(c>0\), exact minimum circuit size has probabilistic circuit complexity at least \(2N-O(N/n)\) at pointwise error \(N^{-1-\epsilon}\), for each fixed \(\epsilon>0\). The proof calibrates the minimum cost of an odd number of changes to a parity function in a specified fiber. Its exact two-gate increment yields witnesses on at most four varying truth-table positions. These force all sites whose critical paths collide to form a distance-two-free set in the raw Boolean cube.
+\end{abstract}
+\section{Statement}
+Use the full basis of binary Boolean gates, with free constants and complemented wires; write \(C(f)\) for the minimum number of gates computing \(f\). The outer input consists of all \(N=2^n\) truth-table bits and the threshold is fixed. An outer circuit accepts precisely when \(C(f)\le s\). A probabilistic circuit is a distribution over circuits of a common maximum size, judged on each input separately.
+\begin{theorem}
+There is an absolute constant \(c>0\) such that, for every sufficiently large \(n\) and integer \(n-2\le s\le cN/n\), every probabilistic outer circuit with pointwise error \(\delta\) has size at least
+\[
+ 2N-O\bigl(N/n+\delta N^2+N\sqrt{\delta N}\bigr).
+\]
+A fixed list of \(O(N^2n^2)\) labeled inputs forces size at least \(2N-N/n-2\) for any deterministic circuit that agrees on the list.
+\end{theorem}
+In particular each fixed \(\delta\le N^{-1-\epsilon}\) gives the stated \(2N-O(N/n)\) lower bound. Chen, Li and Yang asked whether MCSP has a \(2N-o(N)\) deterministic lower bound and showed that a probabilistic lower bound beyond \(2N+O(N/\log\log N)\) in their threshold range would imply a major circuit separation \cite[Theorem~1.6]{cly}. The theorem here stays below that threshold. Wittcop's manuscript studies deterministic \(2N-O(N/n)\) bounds at thresholds near \(n\) using sparse truth tables \cite{wittcop}.
+\section{Odd errors in a fixed fiber}
+
+Use \(r\) core bits \(y\), \(l\ge1\) unused selector bits \(q\), and \(m\ge1\) parity bits \(z\), with \(r+l+m=n\). Fix a core function \(h\), a location \(u\) of the core, and normalize the selected value of all selectors to \(1\) by signs. Baseline \(B_m=h(y)\oplus\operatorname{Par}_m(z)\) is independent of the selectors. Let \(A_m(l,u)\) be the minimum inner size among functions differing from \(B_m\) on an odd number of addresses all contained in the single fiber \((y,q)=(u,1^l)\).
+
+For every \(m\ge1\),
+\[
+ A_m(l,u)=A_1(l,u)+2(m-1),
+\]
+and a single error attains the minimum. At \(m=1\) an odd number of errors on two addresses is one error. For the upper induction, take the singleton supplied by the induction hypothesis. To append a new parity bit \(w\), substitute \(q_1\gets q_1\wedge\neg w\) and XOR the output with \(w\). At \(w=0\) the old fault remains and at \(w=1\) the old selector is zero, so no new fault is introduced. This uses two gates. Raw signs on \(z\) and a free output sign move the singleton to any desired parity address.
+
+For the lower induction reduce from \(m\ge2\) to \(m-1\). During preprocessing allow an extra baseline XOR of tags depending syntactically only on \((y,q)\). Retain tagged signals as auxiliary outputs and count the number of deleted gates. In every core/selector fiber each \(z_i\) is essential. In the sole altered fiber, a function independent of \(z_i\) would disagree with full parity (up to a fixed sign) on exactly \(2^{m-1}\) addresses, an even number. The untouched fibers are parities. If every \(z_i\) has just one gate reader, take the earliest gate syntactically depending on one. If it reads two raw \(z\)'s, freeze a clean fiber and the other parity bits. Since both variables are private to that gate, the output reduces to a unary function of its value, forcing its intrinsic gate type to be XOR/XNOR. The entire function would be invariant under flipping both inputs, which contradicts the odd cardinality of the altered fiber's error set. Thus the gate reads \(z_i\) and a signal \(H(y,q)\). A nonlinear binary gate canalizes on some value of this partner, which would make \(z_i\) inessential throughout that fiber. Consequently its partner must be constant and the gate can be bypassed with a signed raw wire. For a parity gate perform the invertible substitution \(z'_i=z_i\oplus H(y,q)\oplus b\), replace the gate by raw \(z'_i\), and retain \(H\) as a tag. This removes one gate, adds at most one tag, and translates the error set on its sole fiber. Prune any gates unused by all outputs. Every step decreases the gate count, so eventually a parity raw has at least two gate readers. No parity raw can be the main output, since a clean fiber is full parity of at least two inputs, or any auxiliary tag.
+
+Fix such a raw to a branch retaining an odd number of errors. At least two gates disappear. Among the \(m-1\) remaining raws, substitute one by its XOR with the sum of all tags, absorbing constants as signs. This uses at most as many gates as the preliminary shears removed. It is topologically possible because the tags have no syntactic dependence on any remaining \(z\). The tag sum cancels from the parity baseline and translates the restricted errors on the single fiber, without changing their odd count. We have a valid competitor for \(A_{m-1}(l,u)\) with at least two fewer gates. This argument includes \(m=2\).
+
+Writing \(A_m(l)=\min_u A_m(l,u)\), we also have \(A_m(l)=A_m(l-1)+1\) for \(l\ge2\). For the upper bound add a new selector by substituting the AND of it and an existing selector in an optimal single-fault circuit. For the lower bound use a minimizing singleton and fix the new selector to its active value. It was essential because its unique fault disappears on the other branch, so one gate is saved. The dimensions used below ensure the function is not a bare raw input.
+
+The baseline is easy at \(s=A_m(l)-1\). Indeed fixing a selector in an optimal singleton circuit to an inactive value returns \(B_m\) and removes at least one gate by essentiality. Raw-input signs and permutations preserve these bounds.
+
+\section{The four-site certificates}
+
+Let outer sites \(a,b\) have raw Hamming distance two, and let \(a',b'\) be two further distinct sites. Put the two axes on which \(a,b\) differ in the parity group. For each \(v\in\{a',b'\}\) differing from \(a,b\) outside these two axes, choose one such differing coordinate and put it in the selector group. There are at most two required selectors. Take \(l\ge3,m\ge2\), allocate all other axes arbitrarily, and apply input signs to put \(a,b\) at common selector value \(1^l\) and a minimizing core location \(u\). The following labels refer to flipping the indicated outer entries of this very same baseline.
+
+\begin{itemize}
+\item The baseline is easy. Every singleton flip is hard, whatever its location, by the global minimum over \(u\) and free signs on selectors and parity bits.
+\item Flipping \(a,b\) together is easy. On \(m-1\) parity bits use a minimizing singleton on the specified core/selector fiber. For one parity raw substitute the XOR of the two differing coordinates, using one new gate. The preimages of the singleton are exactly \(a,b\) after choice of raw signs, and the background is still full parity on \(m\) bits. The size is \(A_{m-1}(l)+1=s\).
+\item Flipping \(a,b,v\) for \(v=a'\) or \(b'\) is hard. If \(v\) agrees with \(a,b\) off their two differing axes the errors all belong to the indicated fiber. Otherwise fix the selector designated for \(v\) to its value there. The two errors at \(a,b\) vanish and the singleton at \(v\) remains. The original function was essential in this selector, because independence would pair all errors along it, contrary to odd cardinality. The restriction therefore saves one gate and has cost at least \(A_m(l-1)=A_m(l)-1\).
+\end{itemize}
+
+A second use of the induction supplies a quadratic, or single-accepted-corner, face at \emph{every} pair of outer sites. Keep the same \(h\), but use \(m+1\) parity axes and \(l-1\) dummy selectors. Make any differing coordinate of the two sites a selector. The auxiliary baseline has cost at most \(C(h)+m+1\), whereas \(A_m(l)-1=A_1(1)+l+2m-4\ge C(h)+l+2m-4\), since the first term \(A_1(1)\) is at least \(C(h)\) by restriction. Thus the baseline is easy for \(l+m\ge5\). Following one or two flips among the pair, restrict the chosen selector to a branch retaining exactly one flip. Its singleton cost is at least \(A_{m+1}(l-2)=A_m(l)>s\), since \(l\ge3\). Hence all three nonbaseline corners are hard. 
+
+\section{Critical paths and confidence}
+
+Trace the unique outgoing edge from each used outer input through fanout-one vertices to its first vertex of fanout unequal to one, counting the endpoint. Intersecting paths coalesce and have the same endpoint \cite[Section~4.4]{cly}. If two meet, freezing all other sites makes their output restriction factor through their first common gate, with unary preprocessing at its two inputs. A witnessed quadratic face forces that intrinsic gate to be nonlinear. For distance-two sites the baseline, singletons and double also witness an XOR face; hence those sites cannot share an endpoint.
+
+Let \(U\) contain all sites sharing a critical endpoint with at least one additional site. Suppose \(a,b\in U\) are at distance two. Their endpoints are distinct. Select partners \(a',b'\) at their respective endpoints. Of the first common gates of the pairs \(a,a'\) and \(b,b'\), choose the topologically earlier one. Suppose it is the first pair's gate \(G\). With all other sites fixed at the four-site baseline, both preprocessors of \(G\) are unary functions of their respective sites independent of \(b,b'\). Indeed every path from either member of the second pair must pass through its own pair merger before it can leave its private critical branch; it cannot influence the earlier gate. Additional, fixed members of the endpoint clusters do not affect the argument. Single flips at \(a,a'\) change the output from acceptance to rejection, so the unary preprocessors are bijective and \(G\)'s baseline inputs sit at its unique corner sensitive along both axes. After flipping \(a\), changing \(a'\) has no effect on \(G\). This remains true when \(b\) is flipped. The double \(a,b\) and triple \(a,b,a'\) therefore give identical circuit outputs, contradicting their labels. The other ordering is symmetric.
+
+Thus \(U\) has no two members at raw distance two. Its open Hamming neighborhoods, each of size \(n\), are disjoint, yielding \(|U|\le N/n\). At least \(N-|U|\) critical endpoints are distinct. All except possibly the output contribute at least one to the fanout surplus. A trimmed \(H\)-gate binary circuit on \(N\) used inputs has surplus \(H-N+1\) over nonoutput vertices, by counting incoming edges. The quadratic tests imply every site is essential. Consequently \(H\ge2N-N/n-2\).
+
+There are \(O(N^2)\) first certificates for the intrinsic quadratic faces and the distance-two exclusions. Separately, for each distance-two pair \(a,b\) and third site \(v\), fix just one designated selector for \(v\) when it differs outside the two varying axes. Fill out a canonical layout and list the baseline, singleton, double and triple labels used above for this single partner. The number of these second certificates is \(O(N^2n^2)\). Although the earlier description supplies labels for both partners, only the partner in the topologically earlier cluster is used in the contradiction. The later pair's role is purely topological, and that pair's other bit is held at the baseline throughout. Thus these reusable three-site certificates suffice.
+
+For pointwise error \(\delta\) fix a realization with \(O(\delta N^2)\) failed first certificates and \(O(\delta N^2n^2)\) failed second certificates. Such a seed exists by Markov's inequality applied to both counts; a count of expectation zero vanishes almost surely. Remove all sites indexing failed first certificates, at most two per failure, and form \(U\) only from remaining sites sharing an endpoint with another remaining site. Each distance-two pair in \(U\) forces a failed second certificate indexed by that pair and the earlier partner, because its two endpoints belong to distinct clusters and the intrinsic nonlinear gate test survived. This gives \(O(\delta N^2n^2)\) distance-two pairs in \(U\). On the other hand, summing \(\binom{d_x}2\) over raw cube vertices \(x\), where \(d_x\) counts their neighbors in \(U\), counts each such pair twice and \(\sum_x d_x=n|U|\). Cauchy--Schwarz gives at least
+\[
+ \frac{n^2|U|^2/N-n|U|}{4}
+\]
+distance-two pairs. Thus \(|U|\le N/n+O(N\sqrt{\delta N})\). Each surviving exceptional site or discarded input costs at most a constant in the fanout count, giving
+\[
+ H\ge2N-O\bigl(N/n+\delta N^2+N\sqrt{\delta N}\bigr).
+\]
+In particular pointwise error \(o(1/N)\) forces \(2N-o(N)\) gates, and \(\delta=O(1/(Nn^2))\) forces \(2N-O(N/n)\). A seed satisfying all certificates preserves the exact \(2N-N/n-2\) bound whenever the pointwise error is strictly below the reciprocal list size.
+
+\section{The threshold \(n-2\)}
+
+At \(s=n-2\) an inner function depends on at most \(n-1\) raw variables. All accepted truth tables therefore have even weight. Every indicator of an edge of the raw cube is easy, using \(n-2\) gates for the conjunction of its \(n-1\) fixed literals. For a distance-two pair \(a,b\), let \(u\) be a common neighbor. Take the indicator of \(\{u,a\}\) as baseline. Flipping \(a,b\) gives the easy indicator of \(\{u,b\}\); all one- and three-site flips of the baseline have odd weight and are hard. This supplies the same certificates independently of the third site. For the auxiliary quadratic face at sites \(i,j\), choose an edge \(\{v,v'\}\) whose endpoints are at distance at least two from both, and whose direction differs from that of \(i,j\) if they are adjacent. Such an edge exists for large \(n\), since excluding the radius-two neighborhoods of \(i,j\) removes only \(O(n^2)\) candidate starting vertices. The edge is an easy baseline and its single perturbations have odd weight. Its double perturbation has support \(\{v,v',i,j\}\), which cannot be invariant under any coordinate flip. Indeed the only possible direction must pair \(v\) with \(v'\), and in that direction \(i,j\) do not pair. All \(n\) variables are essential, hence at least \(n-1\) gates are needed. The critical-path and confidence argument applies unchanged.
+
+\section{Realizing the thresholds}
+
+Fix \(r=n-L\), with an absolute \(L\) sufficiently large. For a given \(h\), all integer values
+\[
+ s=A_1(1)+2L-l-4,\qquad 3\le l\le L-2,
+\]
+are available. This is an interval of length \(L-O(1)\). There is a path of core functions \(h_j\) starting at a simple state-output function and ending at one of size \(\Omega(2^r/r)\), in which each step precomposes by a bijection on the \(r\) data/state registers computable as the identity outside \(O(1)\) registers and implementable in \(O(1)\) new gates. For instance apply Barrington's width-five permutation program \cite{barrington} for an arbitrary function on \(r-O(1)\) variables in reverse to a fixed accepting-state predicate, encoding the constant-size state by raw bits and extending each permutation to a bijection of the full encoding. Arbitrary functions have bounded-fan-in formulas of depth \(O(r)\) \(balanced DNF\), so no uniform time or program-length assumption is needed. A fixed initial state restriction realizes a maximum-complexity function on the data inputs.
+
+A bijective precomposition carries any minimizing singleton at core value \(u\) to a singleton at its unique preimage. Thus \(A_1(1)\) increases by only \(O(1)\) per step, uniformly in \(r\); it is at least \(C(h_j)\) by setting the selector and parity bits to zero. Initially a raw-address minterm and simple baseline give \(A_1(1)\le r+O(1)\). Choose \(L\) larger than the step bound plus the endpoint losses. Also include the constant-zero core. For this core \(A_1(1)=r+1\): the signed singleton perturbation of the remaining raw parity bit is an OR of that bit and a minterm of the other \(r+1\) variables, and all \(r+2\) raw variables are essential. Thus its interval starts exactly at \(s=n-1\). Since \(L\) can exceed the constant in the simple-state bound, the constant-core interval overlaps the starting state interval. All subsequent intervals overlap whenever a new upper level is reached and extend through at least \(cN/n\) for a sufficiently small fixed \(c>0\).
+\begin{thebibliography}{9}
+\bibitem{barrington} D. A. Barrington, Bounded-width polynomial-size branching programs recognize exactly those languages in \(\mathrm{NC}^1\), \emph{J. Comput. System Sci.} 38 (1989), 150--164. \href{https://doi.org/10.1016/0022-0000(89)90037-8}{Article}.
+\bibitem{cly} L. Chen, J. Li, and T. Yang, Extremely efficient constructions of hash functions, with applications to hardness magnification and PRFs, \emph{CCC 2022}, article 23. \href{https://doi.org/10.4230/LIPIcs.CCC.2022.23}{Article}.
+\bibitem{wittcop} Wittcop, \(2N\) circuit lower bounds for the minimum circuit size problem, author-posted manuscript (2026). \href{https://www.academia.edu/180415409/2N_Circuit_Lower_Bounds_for_the_Minimum_Circuit_Size_Problem}{Manuscript}.
+\end{thebibliography}
+\end{document}

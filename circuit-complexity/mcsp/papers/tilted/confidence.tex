@@ -1,0 +1,105 @@
+\section*{Exponentially accurate randomized circuits}
+The same gate coefficient holds at two-sided pointwise error
+$2^{-eN}$ whenever
+\[
+ e>d+(D-2d)_+a/q.
+\]
+As in the theorem, assume $\kappa=d+(D-2d)_+a/q<b$. This gives,
+for example, the strict $2.5226N$ bound at the first threshold in
+the table for every fixed $e\ge .00564$. The same exponent controls uniform false positives and false negatives
+on the common easy distribution.
+
+To prove this claim, fix a gate coefficient strictly below the
+theorem's bound. Choose constants $a<a'<a''$ sufficiently close to
+$a$. Use $a''$ in the twig cutoff and write
+$\kappa''=d+(D-2d)_+a''/q$. All strict margins, including
+$b>\kappa''$ and $e>\kappa''$, persist. For any
+deterministic circuit respecting the new gate bound, the two
+concentration estimates in the proof imply that the maximum restored
+dimension is at least $a'N$ with tilted probability $1-o(1)$.
+This inference only uses the gate count. In particular it holds for
+circuits with arbitrary erroneous labels. When the cutoff is not
+reached the same algebra applies with $a'$ in place of $a$, since
+otherwise the size lower bound with $a'$ would contradict our strict
+gate margin.
+
+Consider the generalized terminal path that records each affine
+answer and each twig \emph{output}. Choose simplifications from these
+answers alone. The likelihood ratio relative to uniform is the
+product of the ordinary branch likelihood ratios and the factors
+$4q/3$ or $4(1-q)$ at tilted twigs. Its logarithm has bounded
+increments, with conditional means $d$ and $D$, respectively.
+The pathwise bound on their sum is at most $\kappa''N+O(1)$.
+Center the increments, pad to $N$ steps, and apply Azuma's inequality.
+Except on a set of tilted mass $o(1)$, the logarithm is at most
+$\kappa''N+o(N)$. Thus the set of generalized paths of restored
+dimension at least $a'N$ has uniform mass at least
+$2^{-(\kappa''+o(1))N}$.
+
+There is an exact fractional representation of each such generalized
+path by affine certificates. In a common twig let $H$ be its three
+possible pairs. Any two distinct binary points constitute an affine
+line. Each point of $H$ belongs to two of its three two-point lines, so
+\[
+ \mathbf 1_H=\tfrac12\sum_{\ell\subset H,\ |\ell|=2}\mathbf 1_\ell .
+\]
+The third line, in addition to those that fix one forcing literal,
+fixes the parity of the two bits. For each common twig choose one
+of these three line equations and retain both literal equations at
+exceptional twigs. Tensoring the displayed identity over the $m$
+common twigs expresses the path indicator as $2^{-m}$ times the sum
+of the $3^m$ resulting certificate indicators. The coordinates used
+in each twig are free parameters at that stage, both removed before
+later substitutions, so their affine pullbacks give one independent
+restored direction per common twig for every choice of lines. In
+particular every certificate has the full restored dimension of its
+generalized path. This identity permits overlap with its exact
+pointwise multiplicity.
+
+Use the dense affine law of the companion manuscript \cite{local}
+with threshold $c_1N/n$ and rank slightly above $(1-a')N$.
+Its mass in every constituent certificate of a large-dimension path
+is at least $1-o(1)$ times the uniform mass there. The positive
+weighted identity transfers the same inequality to the entire
+generalized path. Let $u$ denote uniform false-positive mass
+on inputs of complexity above $c_2N/n$, and let $v$ denote the
+false-negative mass under this common easy law. Large-dimension
+paths labeled one have uniform mass at most $u+2^{-(b-o(1))N}$
+by the census. Those labeled zero have uniform mass at most
+$(1+o(1))v$ by fractional domination and disjointness of the
+generalized paths. Hence
+\[
+ u+2^{-(b-o(1))N}+(1+o(1))v
+ \ \ge\ 2^{-(\kappa''+o(1))N}.
+\]
+All asymptotic error bounds are uniform in the fixed circuit.
+Averaging over independent circuit coins now gives the claimed
+two-sided confidence statement.
+
+\paragraph{A linear dependence on the density deficit at bounded error.}
+For fixed $0<c<1$ and threshold $\lfloor cN/n\rfloor$, a bounded-error
+outer circuit requires at least $(4c-3/2-o(1))N$ gates. More generally
+this conclusion uses the completeness density $c=c_1$ in the promise,
+and any fixed soundness density $c_2<1$. Here the two ensembles give
+asymptotically identical output distributions for every smaller gate
+coefficient.
+
+Indeed use ordinary fair branches and fair raw twig pairs, so the point
+law is uniform and every twig is common with probability $3/4$.
+The concentration estimates in the proof give, with probability
+$1-o(1)$,
+\[
+ M_{\rm initial}\ge\tfrac72 T+\tfrac12 W-o(N),\qquad
+ L\ge \tfrac34 W-o(N),\qquad L\ge N-T-\tfrac14 W-o(N).
+\]
+For any fixed $a'>1-c$, if $L\le a'N$, substitution yields
+$M_{\rm initial}\ge (7/2-4a')N-o(N)$. Since $M_{\rm initial}\le G+N$,
+a gate coefficient strictly below $5/2-4(1-c)$ therefore makes
+$L>a'N$ typical for some $a'>1-c$. The fractional identity gives
+relative domination on every such generalized path. Their uniform
+mass is $1-o(1)$, so summing the smaller path probabilities gives
+$1-o(1)$ as well. The resulting total variation bound holds for
+each fixed circuit and after averaging its coins. Pointwise error
+bounded below $1/2$ by a fixed constant would require a positive
+distinguishing advantage, since the uniform table is a required no
+input with probability $1-o(1)$.

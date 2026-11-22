@@ -1,0 +1,171 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\title{A deterministic circuit lower bound for the minimum circuit size problem across the sub-Shannon range}
+\author{Research manuscript}
+\date{22 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Let $N=2^n$. Every nonempty class $A$ of $N$-bit strings closed under bitwise complementation has a deterministic membership circuit lower bound of $2N-2\lfloor\log_2|A|\rfloor-1$ over arbitrary binary gates. A shortest teaching set isolates a complementary pair, and signing and identifying the taught bits gives Schnorr's all-equal predicate. Circuit counting therefore gives a $(2-o(1))N$ lower bound for exact Boolean MCSP at every threshold $0\le s=o(N/n)$. For $n=o(s)$ below the Shannon scale, the smallest teaching set has $(1+o(1))s\log_2s$ entries. We also prove a promise lower bound with an additive gap by constructing two complementary centers of complexity exactly $s$. A gate-elimination argument controls the cost of perturbing a parity function with a prescribed Boolean core.
+\end{abstract}
+\section{Model and results}
+Let $N=2^n$. All circuits have one output, unrestricted fanout and arbitrary binary Boolean gates of unit cost. Constants and complemented wires are free. Write $C(f)$ for minimum gate count. Set $A_s=\{T:C(T)\le s\}$ for $N$-bit truth tables $T$. A deterministic promise circuit must accept every table in $A_s$ and reject every table outside $A_t$, for integers $0\le s\le t$. The exact problem has $t=s$. All logarithms are base two.
+
+\begin{theorem}[Exact membership]\label{thm:exact}
+If $A\subseteq\{0,1\}^N$ is nonempty and closed under bitwise complementation, then
+\[
+ C({\bf1}_A)\ \ge\ 2N-2\lfloor\log |A|\rfloor-1.
+\]
+Consequently exact MCSP requires $(2-o(1))N$ gates at every integer threshold $0\le s=o(N/n)$. More precisely its size is at least
+\[
+ 2N-2(s+1)\log(n+s+2)-O(s+\log(s+2)).
+\]
+\end{theorem}
+\begin{proof}
+A set of coordinates teaches a member $L\in A$ if only $L$ agrees with its prescribed values among all of $A$. Start with all of $A$. While two strings remain, choose a coordinate on which they differ and keep the smaller nonempty side. After at most $\lfloor\log |A|\rfloor$ steps one string $L$ remains. The selected coordinates $J$ teach $L$. This is the classical halving bound on the \emph{best-case teaching dimension}, the minimum over members of their shortest teaching-set sizes \cite{teaching}. Since $A$ is complement-closed, the same positions teach $\overline L$ with complementary labels.
+
+Use one input $v$ on $J$ and a separate input $v_i$ at every other position. Substitute $L_i\oplus v$ on $J$ and $L_i\oplus v_i$ elsewhere. Each substitution is a signed wire. Membership now holds exactly when all $N-|J|+1$ inputs are equal. Schnorr's exact $2d-3$ lower bound for this predicate on $d\ge2$ inputs proves the claim \cite{schnorr}. For $|J|=N$ the stated bound is trivial.
+
+For $A_s$, the complement of an output is free. To count its members, trim a circuit to the gates reaching the output. Encode a rooted ordered traversal of its $j\ge1$ gates by a binary slot tree and the gate labels in $O(j)$ bits. Of the $2j$ predecessor slots, $j-1$ introduce a gate for the first time. Each of the remaining $j+1$ slots points to an input, constant or previously numbered gate using $\lceil\log(n+j+2)\rceil$ bits, with signs absorbed in the binary labels. The output sign takes one bit. For $j=0$ there are at most $2n+2$ signed literals and constants. Summing over $j\le s$ gives $\log|A_s|\le(s+1)\log(n+s+2)+O(s+\log(s+2))$. In the asserted range this is $o(N)$.
+\end{proof}
+
+\paragraph{How many teaching coordinates are necessary?}
+If $n=o(s)$ and $s=o(N/n)$, the best-case teaching dimension of $A_s$ is $(1+o(1))s\log s$. The upper bound follows from the preceding proof. For the lower bound fix $\delta>0$ and any $d\le(1-\delta)s\log s$ labeled positions of a purported center. Prescribe the opposite bit to that center on one additional position. Enlarge the specified domain to $D=\lfloor(1-\delta)s\log s\rfloor+1=o(N)$ positions, with arbitrary labels on the new positions. Chashkin's partial synthesis theorem for an arbitrary domain of size $D$ gives an extension of size at most $(1+o(1))D/\log D+O(n)$, by taking the permitted minority count $\lfloor D/2\rfloor$ and complementing outputs if needed \cite[Theorem~6.1]{chashkin}. This is less than $s$ for large $n$. The additional bit makes this extension distinct, so the original positions cannot teach the center. The same argument gives best-case teaching dimension $(c+o(1))N$ for $s\sim cN/n$ with fixed $0<c<1$. In particular a teaching set of $o(N)$ positions cannot exist there.
+
+\paragraph{A linear teaching set below the input length.}
+For $0\le s<n$, the best-case teaching dimension is $\Theta(s+1)$. In particular
+\[
+ C({\bf1}_{A_s})\ge 2N-6s-O(1).
+\]
+Write $w=s+1$. For $w\ge2$, take a left-associated formula on $x_1,\ldots,x_w$ whose successive gates alternate between OR and XOR. Its $w-1$ gates attain the connectivity lower bound. Use inputs with all coordinates outside $[w]$ set to zero. Prescribe its labels on the origin, every unit vector, and every pair $e_i+e_j$ with $j-i=1$ or $2$. There are $3w-2$ tests. This is a checking test for a read-once function of the type studied by Chistikov \cite{chistikov}. We include the verification for this chain.
+
+The origin and unit vectors force dependence on all $w$ chosen coordinates. In a trimmed circuit with at most $w-1$ gates, connectedness then forces exactly these raw inputs, no constant predecessors, and a read-once binary tree. Normalize each signal by its value at the origin. Full sensitivity there makes every gate sensitive to each argument at its base pair: otherwise a leaf below its insensitive input would miss the output. Its normalized operation is therefore OR or XOR, since the values at $00,01,10$ are $0,1,1$. The graph on the $w$ leaves joining $i,j$ when the function is one on $e_i+e_j$ has an edge exactly when their lowest common ancestor is OR. Such graphs, called cographs, are constructed by disjoint union at XOR and complete join at OR; they contain no induced four-vertex path, a property preserved by disjoint union and complementation.
+
+For our chain, $ij$ for $i<j$ has status $t_j$, where $t_j$ alternates with $j$. If a candidate had a discrepant pair $i<j$ of least span, then $j-i\ge3$. All other pairs on $i,j-2,j-1,j$ have their specified statuses. If $t_j=1$ these four vertices induce the path $i,j-2,j,j-1$; when $t_j=0$ they induce its complement, also a path. This contradiction establishes every pair status. The graph determines the normalized formula's function: flatten successive gates of like type, then split the graph into its connected components at an XOR root or its complement into connected components at an OR root. The pieces are exactly its child graphs, so recursion recovers the function. For $w=1$, the origin and its unit vector teach a chosen literal in $A_0$.
+
+Conversely, on any $d+1$ prescribed examples a binary decision tree on coordinates can distinguish their inputs with at most $d$ internal nodes. Each node uses a three-gate multiplexer over the full binary basis. Thus if $3d\le s$ one may append a previously unqueried bit opposite the claimed center and extend every label with at most $s$ gates. This proves the lower order bound; nonempty complement-closed classes of size at least two require at least one test.
+
+\paragraph{Linear budgets above twice the input length.}
+For fixed $\eta>0$ and $C>2+\eta$, the best-case teaching dimension is $\Theta_{\eta,C}(n\log n)$ throughout $(2+\eta)n\le s\le Cn$. Circuit counting gives the upper bound. Fix any $d\le(\eta/3)n\log n$ positions, append one opposite bit at a fresh position, and enlarge the domain to $D=\lfloor(\eta/3)n\log n\rfloor+1$. Apply Chen--Li--Yang's almost-universal linear hash on $n$ raw address bits with $\beta=2$ and $\ell=\lceil\log n\log\log n\rceil$ \cite[Theorem~3.9]{cly}. Its output length is $q=O(\ell)$, gate cost $2n+O(n\ell/\log^2n)$, and pairwise collision probability $\exp(-\Omega(\ell))$. By a union bound some fixed hash is injective on the $D$ positions. Synthesize any prescribed labels on these hashed values by Chashkin's theorem on $q$ input bits. This costs at most $(1+o(1))D/\log D+O(q)$. The combined circuit fits below $s$ and agrees with the extra bit, proving the lower bound.
+\begin{theorem}[An additive promise gap]\label{thm:gap}
+When $n\le s=o(N/n)$, there exists an integer
+\[
+ r=\log(s\log(s+2))+O(1), \qquad m=n-r\longrightarrow\infty
+\]
+such that, for every integer $g\ge0$, the promise problem with $t=s+g$ satisfies
+\[
+ C(D)\ \ge\ 2N-2^{r+1}\sum_{j=0}^{\min(m,g+3)}\binom mj-1 .
+\]
+In particular $g\le m/2-\omega(\sqrt m)$ suffices for the same leading bound.
+\end{theorem}
+For the promise problem we must teach a member of $A_s$ among all members of the larger class $A_t$. The halving argument chooses its own target in $A_t$. We instead choose an affine parity center for small thresholds and a parity with an exactly sized Boolean core for larger thresholds.
+\section{A projection from teaching sets}
+A set $J$ of truth-table positions teaches an easy table $L$ at threshold $t$ if $L$ is the only table of size at most $t$ that agrees with $L$ on $J$. Complement closure teaches the other center on the same set.
+\begin{lemma}
+Suppose $C(L)\le s$ and $J\ne\varnothing$ teaches $L$ at threshold $t$. For $|J|\le N-1$ every deterministic promise decider has size at least $2N-2|J|-1$.
+\end{lemma}
+\begin{proof}
+Write $v$ for one new input. At position $i\in J$ substitute $L_i\oplus v$; at each remaining position substitute $L_i\oplus v_i$ for its own new input $v_i$. All substitutions are signed wires. The resulting circuit accepts both constant assignments to the $N-|J|+1$ new inputs. Every other assignment produces a table agreeing on $J$ with one center, but different from that center, and hence of complexity greater than $t$. Thus the circuit decides the all-equal predicate on $N-|J|+1$ inputs. We give its exact gate count next.
+\end{proof}
+\subsection{Two antipodal points}
+Schnorr proved that the all-equal function on \(d\) inputs costs exactly \(2d-3\) gates in the full binary basis \cite{schnorr}. Signing the inputs absorbs into gate labels. We include a gate-elimination proof.
+For \(d\ge2\), an AND of \(d-1\) tests against one reference gives size \(2d-3\). In any trimmed binary circuit on \(d\) essential variables with \(m\) gates the excess of outdegrees over one at the nonoutput vertices is \(m-d+1\). If every raw has at least two readers, this already gives \(m\ge2d-1\). Otherwise select a private raw \(u\), with sole reader \(G(u,H)\). The signal \(H\) is independent of \(u\). If \(H=c\) on both accepted rows, \(G(u,c)\) is a literal since either accepted row rejects after flipping \(u\). Substitute \(c\) at every old use of \(H\), bypass \(G\) and add a single final guard \([H=c]\). On \(H=c\) this is exact and the other side has no accepted rows. Minimality ensures this rewrite saves no second gate, so \(H\) had no other old reader and no other simplifications occurred. The other raw fanouts are unchanged, since raw bits are all mixed on the two positive rows, whereas \(H\) is constant on them. Any nonparity essential binary gate has a canalizing value on its \(H\) argument; the positive rows cannot have that value, so it belongs to this rewriting case.
+
+Process the same \(u\) until it has multiple readers or a parity reader with \(H\) mixed. Each promotion removes a gate present at the beginning of this run. The new guards form a final conjunction with side predicates independent of this private \(u\); reaching the new spine while still private would make the output a literal of \(u\) AND conditions independent of \(u\), contradicting the mixed positive values of \(u\). Thus the run is finite. Once a raw branches, subsequent runs for other raws preserve its readers. Since the upper bound rules out all raws simultaneously branching, a private parity reader with \(H\) mixed must be reached.
+
+As both \(H\) and \(u\) change between the two positive rows, \(G=u\oplus H\oplus c'\) is constant there. Substituting this constant downstream computes the projection of the two-row support onto the other \(d-1\) variables: for each assignment of those variables exactly one \(u\) can give that gate value. At \(d\ge3\) the gate cannot be the output, as it would then accept \(2^{d-1}>2\) rows. The gate and a constant-input successor can both be removed. The projected function is again signed all-equal. Induction from \(d=2\) proves \(2d-3\).
+\section{Small thresholds}
+Let \(L\) be an affine function depending on \(w\) of the \(n\) raw inputs, and let \(f\) differ from \(L\) on exactly \(k\) points with \(1\le k<N/2\). Then
+\[
+                   C(f)\ge n+w-\lfloor\log_2 k\rfloor-3. \tag{1}
+\]
+
+First consider a singleton error on an affine function. For \(d\ge2\) a full \(d\)-variable parity toggled at one point costs at least \(2d-3\). For \(d=2\) the resulting function genuinely depends on both inputs. For \(d\ge3\) consider a reduced minimum circuit. If every raw input has a single reader, a first gate consumes two private raw inputs. Fix the other \(d-2\) bits to any setting distinct from the exceptional point's projection. The resulting function on the two bits is parity up to sign. All downstream gates therefore apply only a unary operation to that first gate's value. Its local operation must itself be XOR or XNOR. On fixing the other bits at the exceptional projection, however, the toggled function fails invariance under flipping both private inputs. Hence some raw variable is used at least twice. Fix it to its exceptional value, deleting its two readers and absorbing the resulting unary or constant gates. The restricted function is a lower-dimensional parity with a singleton error. This proves the recurrence and the bound.
+
+For a singleton error on a parity of weight \(w\ge2\), successively fix the \(n-w\) inactive coordinates at the exceptional point. Each such coordinate is essential due to the singleton and fixing it removes a gate; before the final restriction the function has at least the two active inputs or is a nonliteral by distance from affine functions. The preceding bound gives \(n-w+2w-3=n+w-3\). If \(w=0,1\), the same weaker bound follows by essential variable count: the resulting function is a signed minterm or a signed implication-type function of all the inputs (except possibly when \(n=1\)). The small \(n\) inequalities follow from nonnegativity.
+
+For general \(k\), repeatedly choose a coordinate varying among the remaining error points and fix it to the smaller nonempty side. After \(q\le\lfloor\log_2 k\rfloor\) steps exactly one error remains. Relative error density never increases, and remains strictly between zero and one half. All currently active affine variables are essential for the current function: omitting one would force error exactly one half by pairing along that axis. Furthermore, a constant or a literal cannot differ from an affine function on a fraction strictly between zero and one half. Thus each fixed active coordinate deletes at least one gate, even with complemented literals free. Let \(q_W\) denote their number. The remaining singleton costs at least \(n-q+w-q_W-3\); restoring the eliminated gates contributes at least \(q_W\). This proves (1).
+
+For any \(L\) of weight \(w\le t+1\), and any \(C(f)\le t\) distinct from both \(L\) and its complement, the distances from \(f\) to each of these two centers are at least
+\[
+                         \Delta=2^{n+w-t-3}. \tag{2}
+\]
+For distances below \(N/2\) this is (1). Larger distances already meet the bound because \(\Delta\le N/4\).
+
+Choose any fixed \(L\) of weight \(w=\min(n,s+1)\). Both centers \(L,\overline L\) cost at most \(w-1\le s\). Write \(A=(t+1)\log(n+t+2)\). There are at most \(\exp(O(A))\) truth tables of size at most \(t\): specify each gate's two predecessors and Boolean operation, then the output. Select \(m=\lceil K A\,N/\Delta\rceil\) raw truth-table positions independently and uniformly for a sufficiently large absolute \(K\). A fixed size-\(t\) alternative matches a specified center on every sample with probability at most \(\exp(-m\Delta/N)\). A union bound over two centers and every alternative proves that one choice of these positions distinguishes both centers from every other table of size at most \(t\). Duplicates may be removed. For ranges where the bound on \(m\) is large the theorem becomes vacuous, but the argument remains valid.
+
+
+Applying the projection lemma gives $C(D)\ge 2N-O(1+(t+1)\log(n+t+2)\,2^{t-w})$, since $N/\Delta=2^{t-w+3}$. For $t=s<n$ this proves the small-threshold assertion.
+\section{Keeping the complexity of a hard core}
+Let \(y\in\{0,1\}^r,\ z\in\{0,1\}^m,\ r+m=n,\ m\ge2\), and take an arbitrary Boolean \(h(y)\). Set
+\[
+                   L_h(y,z)=h(y)\oplus\bigoplus_{i=1}^m z_i .
+\]
+If \(h\) is nonconstant, \(C(L_h)=C(h)+m\). The upper bound appends \(m\) gates. For the reverse inequality fix the \(z\) bits successively: each is essential, and while it remains, the nonconstant \(h\) ensures that the function to which it belongs cannot be a bare literal. The final restriction computes \(h\) up to a constant output sign.
+
+\textbf{Rigidity with the core charged.} If \(1\le k=|\{f\ne L_h\}|\le 2^{m-2}\), then
+\[
+                    C(f)\ge C(h)+2m-\lfloor\log_2 k\rfloor-3. \tag{3}
+\]
+This is a special gate-elimination statement about a parity extension and a sparse defect. It does not use general additivity for disjoint circuits.
+
+First, while the remaining errors have more than one \(z\)-projection, choose a \(z\) coordinate on which they vary and retain its smaller, nonempty error side. After \(q\le\lfloor\log_2 k\rfloor\) restrictions all errors have the same projection on the remaining \(m'=m-q\ge2\) parity coordinates; the \(y\) values may vary. All these restrictions save at least one gate each. They keep the error fraction below one half, making every remaining parity variable essential, and before each restriction there are at least two such variables so the current function cannot be a literal. Absorb the constant sign change from fixed parity bits into \(h\).
+
+We prove next that a circuit for
+\[
+ h(y)\oplus {\rm Par}(z)\oplus {\bf1}[y\in B,\ z=u]
+\]
+on \(m'\) remaining parity coordinates, fixed \(u\) and nonempty \(B\subseteq\{0,1\}^r\), has size at least \(C(h)+2m'-3\). During the reduction keep every signal denoted below as a tag as a separate auxiliary output; its subcircuit has no syntactic path from any remaining \(z_i\). Pruning gates irrelevant to both the main output and all tags is permitted. Unary gates and signs may be absorbed. For each original parity index \(i\), maintain the multiset \(A_i\) of its tags. An additive constant sign may change at any step. With \(I\) the remaining coordinates, the invariant is that the computed main function is
+\[
+ h(y)\ \oplus\! \bigoplus_{i\in I}z_i\
+ \oplus\! \bigoplus_i\bigoplus_{H\in A_i}H(y)
+ \ \oplus\ {\bf1}\!\left[y\in B',\
+    z_i=u_i\oplus\bigoplus_{H\in A_i}H(y)\ {\rm for\ every}\ i\in I\right]
+ \ \oplus c ,
+\]
+where \(B'\ne\varnothing\). Initially all multisets are empty. The index in the double sum outside the indicator ranges over \emph{all} original parity positions, including removed ones.
+
+While at least three parity variables remain, if one has two or more gate readers, fix it to its value at a chosen point of the nonempty error graph. At least two gates disappear. The baseline changes by a fixed sign and the graph loses that coordinate, narrowing \(B'\) while remaining nonempty. No tags are lost. A parity input cannot be an auxiliary output, and the main output cannot be a bare parity input, since some \(y\)-fiber is a full parity with a singleton defect.
+
+Otherwise every remaining \(z_i\) has just one reader. Take a topologically earliest gate syntactically depending on a \(z_i\). It cannot consume two raw \(z\)'s. At a fixed \(y\in B'\), the computed function of all \(z\)'s is full parity up to sign with one exceptional point. Setting the other parity bits off its projection forces the putative two-private-input gate to be XOR/XNOR; setting them at that projection violates its resulting pair-flip invariance. Thus the earliest gate is \(G(z_i,H(y))\) with a syntactically \(Y\)-only partner. Any nonparity binary gate has a canalizing partner value at which the output is independent of \(z_i\). If \(H\) attains that value, then at that \(y\) the computed function must be independent of \(z_i\) for all \(z\), impossible since this fiber has at most one parity error. If \(H\) never attains the value, it is semantically constant and the gate can be bypassed by a signed raw wire. In the latter case retain a constant sign as a tag if needed.
+
+For a parity gate, perform the shear \(z'_i=G=z_i\oplus H(y)\oplus c_i\), replace the gate's wire everywhere by the new raw \(z'_i\), and retain its signed partner as one new tag in \(A_i\). The singleton graph and baseline change exactly as in the invariant. This removes one gate; retaining the partner as a second output incurs none. No existing tag changes its \(Y\)-only syntax, since it had no \(z_i\)-dependent ancestor in the first place and the rewrite affects only descendants of that raw variable. Each such shear strictly reduces total gate count, so it cannot prevent termination. The constant-partner bypass has the same accounting.
+
+Stop with two remaining parity variables. Fix one of them to zero before reconnecting the other. The fiber at any \(y\in B'\) is a two-variable parity with one defect, so both parity variables have a gate reader and no auxiliary output depends on them. This restriction saves one additional gate. Choose the remaining index \(j\). Feed \(z_j=u_j\oplus1\oplus\bigoplus_{H\in A_j}H(y)\). The graph indicator vanishes for every \(y\). Constructing this replacement signal uses at most \(|A_j|\) additional gates. Topologically it is legal to compute all retained \(Y\)-only tag subcircuits first, then compute the replacement signal, then the remaining circuit gates: no tag has any syntactic dependence on a parity raw wire. In the output, the replacement cancels all tags from \(A_j\). Recover \(h\) up to a constant sign by taking XOR with the tags at all \emph{other} original indices, including indices fixed during the reduction, using at most \(\sum_{i\ne j}|A_i|\) gates. The total rebuilding cost is thus at most the number of single-gate shears and bypasses. The \(m'-2\) multi-reader restrictions saved at least \(2(m'-2)\) further gates. We have constructed \(h\) with at least \(2m'-3\) fewer than the original gates. Adding back the \(q\) first restrictions proves (3).
+\section{Hitting every integer circuit complexity}
+For any positive integer \(a\), let \(B(a)\) denote the maximum full-binary complexity of a Boolean function on \(a\) inputs. On \(a+2\) inputs every integer \(0\le u\le B(a)\) is a circuit complexity. The two extra inputs provide a finite-state computation whose transitions each increase \emph{minimum} circuit complexity by at most one.
+
+Take a function \(G(y)\) of complexity \(B(a)\) and a DNF for it. A straight-line program scans this DNF with two one-bit state registers \(p,q\). Initialize \(p=0\). For each term set \(q=1\), then update \(q\gets q\wedge\ell(y)\) once per literal, and finally \(p\gets p\vee q\). The result is \(G\). For each suffix of this program, regard its final \(p\) value as a function of its starting inputs \(y,p,q\). The empty suffix computes \(p\), of size zero. Prepending one instruction substitutes either a constant or the output of a single binary gate for one formal register, leaving all other raw inputs as they were. A circuit for the old suffix can be used once with that one shared substitution, so the new suffix complexity is at most the old one plus one. The full suffix at initial \(p=0,\ q=1\) gives \(G(y)\), hence its complexity is at least \(B(a)\). From zero to this value, upward steps of at most one necessarily attain each intermediate integer. The DNF length is immaterial.
+
+Elementary circuit counting gives \(B(a)\ge c2^a/a\) for an absolute \(c>0\). Thus for each budget \(s\ge n\), choose \(a=\lceil\log_2(s\log_2(s+2))\rceil+O(1)\) with the constant large enough that \(B(a)>s\); put \(r=a+2,\ m=n-r\). If \(s=o(N/n)\), then \(s\log s=o(N)\), so \(m\to\infty\). Since \(s-m\ge r\ge1\), interpolation supplies a nonconstant \(r\)-bit core \(h\) of complexity exactly \(s-m\). Both \(L_h\) and its complement have complexity exactly \(s\). Finding this core in polynomial time is not part of the existence claim.
+\section{Teaching a center at every sub-Shannon threshold}
+For \(s,t=s+g,r,m,h\) as just chosen, (3) shows that every \(C(f)\le t\) other than the two centers has distance at least \(2^{m-g-3}\) from each. For distances beyond the range \(2^{m-2}\) of (3) this lower bound already holds. The sampling argument and projection lemma therefore give
+\[
+ C(D)\ge 2N-O\big((t+1)\log(n+t+2)\,2^{r+g}\big).                 \tag{4}
+\]
+At \(g=0,\ s\ge n\), this is \(2N-O((s\log s)^2)\).
+
+A different fingerprint removes the census factor and reaches all \(s=o(N/n)\). Use every \(y\) and all \(z\) of Hamming weight at most \(u=\min(m,g+3)\). Suppose \(f\) matches \(L_h\) on all these positions but differs somewhere. Among the \(z\)-supports over which some \(y\) gives a disagreement, choose an inclusion-minimal \(D\), of size \(d>u\). Fix all \(m-d\) parity variables outside \(D\) to zero. Each such variable is essential and costs at least one gate: the tested zero and singleton \(z\)-rows witness its essentiality at any \(y\) and remain present after the previous restrictions. Because \(d>u\ge3\) and the retained singleton rows witness multiple essential raw inputs, the restricted circuit cannot be a bare literal. By inclusion-minimality the remaining disagreement set has the form \(B\times\{1_D\}\) for some nonempty set \(B\) of \(y\)-values. The graph-recovery proof of (3) before preliminary restrictions gives \(C\ge C(h)+2d-3\) for this residual. Adding the eliminated gates yields \(C(f)\ge C(h)+(m-d)+(2d-3)=s+d-3>t\). Complement the core for the identical conclusion at the opposite center.
+
+
+The projection lemma now gives the stated theorem when the set has size at most $N-1$; the bound for a full set is trivial. For $g=0$ its size is $O(2^r m^3)=o(N)$ since $m\to\infty$. In general its relative size is exactly $\Pr[\operatorname{Bin}(m,1/2)\le g+3]$, which tends to zero for the stipulated gaps. The core is an existence result. Once its truth table is specified, the positions and signs of the projection are explicit.
+\section{Relation to earlier results}
+Chen, Li and Yang explicitly asked for a deterministic $2N-o(N)$ lower bound following their Theorem 1.6 \cite[p.~23:7]{cly}. That theorem treats fixed threshold functions $n\le s(n)\le n^2/\log n$, a range covered by Theorem~\ref{thm:exact}. A circuit taking the threshold as an additional input inherits each fixed-threshold bound by restriction. Their hardness magnification theorem requires a probabilistic lower bound above $2N$. Wittcop's author-posted manuscript \cite{wittcop} gives $2N-O(N/n)$ at $s=n-1$ and studies $s=n,n+1$ using sparse supports and a zero-restriction game. The alternating read-once center gives an $O(n)$ deficit at $s=n-1$. Theorem~\ref{thm:exact} gives the full little-$o$ range by circuit counting. The hard core is used for the promise gap in Theorem~\ref{thm:gap}. The halving bound and Schnorr's gate count both predate this work. We have not located their combination for complement-closed MCSP in these sources, and make no claim of priority for the elementary observation.
+A separate zero-restriction argument in the accompanying sparse-support note, Sections 2--6, uses only tables with at most four ones to obtain $(2-o(1))N$ for $n-1\le s\le(2-\epsilon)n$ with fixed $\epsilon>0$. For this partial argument a pointwise error smaller than $1/\sum_{j=0}^4\binom Nj$ permits a union bound fixing a single seed. The teaching projection in this paper proves a deterministic statement across the larger little-$o$ range.
+
+The gate promotion in the antipodal-point proof is related to Red'kin's strong-variable method \cite{redkin}. His gate basis excludes XOR and XNOR. A private parity gate requires the separate projection argument above. The recovery step for a perturbed parity extension is a special additive bound: fixing the core inputs would lose the term $C(h)$, so the proof keeps the inputs of the removed parity gates as auxiliary outputs until it reconstructs $h$.
+\begin{thebibliography}{9}
+\bibitem{teaching} S. Compton, C. Pabbaraju and N. Zhivotovskiy, \href{https://proceedings.mlr.press/v291/compton25a.html}{Lower bounds for greedy teaching set constructions}, COLT 2025, 1314--1329.
+\bibitem{chistikov} D. Chistikov, \href{https://people.mpi-sws.org/~dch/pub/aaco.pdf}{An upper bound on checking test complexity for almost all cographs}.
+\bibitem{chashkin} A. V. Chashkin, \href{https://keldysh.ru/papers/2024/mvk/mvk2024_152.pdf}{On computing partial Boolean functions}, Theorem 6.1, pp. 199--200, 2024.
+\bibitem{schnorr} C. P. Schnorr, \href{https://doi.org/10.1016/0304-3975(76)90073-6}{The combinational complexity of equivalence}, Theoretical Computer Science 1 (1976), 289--295.
+\bibitem{cly} L. Chen, J. Li and T. Yang, \href{https://doi.org/10.4230/LIPIcs.CCC.2022.23}{CCC 2022, article 23}.
+\bibitem{wittcop} Wittcop, \href{https://www.academia.edu/180415409/2N_Circuit_Lower_Bounds_for_the_Minimum_Circuit_Size_Problem}{\emph{$2N$ Circuit Lower Bounds for the Minimum Circuit Size Problem}}, author-posted manuscript, November 2026.
+\bibitem{redkin} N. P. Red'kin, \href{https://www.mathnet.ru/links/6ef68b131ca510955e5a8deb4508b795/dm172.pdf}{Diskretnaya Matematika, 2004}.
+\end{thebibliography}
+\end{document}

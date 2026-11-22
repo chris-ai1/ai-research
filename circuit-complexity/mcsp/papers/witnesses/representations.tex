@@ -1,0 +1,17 @@
+\section{Witnesses for decomposable predicates}
+A decomposable negation normal form (DNNF) has literal leaves and AND and OR gates. Each AND combines disjoint variable sets. The predicate now receives all $N$ entries as independent input variables. Its number of wires measures the complexity of \emph{testing} a property, whereas the circuit for a witness computes an entry from its $n$ address bits.
+\begin{theorem}
+Let a DNNF of size $2^{o(N)}$ have $T>0$ satisfying words on a weight layer of logarithmic size $H$. The list and circuit bound of Theorem~\ref{th:relations} hold for this predicate. In particular, a predicate of this size that certifies complexity greater than $cN/n$ accepts at most a fraction $2^{-cN+o(N)}$ of any weight layer. The theorem also applies to syntactically read-once nondeterministic branching programs of size $2^{o(N)}$.
+\end{theorem}
+\begin{proof}
+Binarize the circuit and smooth it by completing smaller OR-input scopes with tautologies, adding missing variables at the root. Polynomial overhead keeps the resulting size $S$ subexponential; take $S\ge N$. In an accepting trace, an OR keeps the chosen child's scope, while an AND splits into disjoint scopes. Starting from a scope of size $m>2$, follow an accepting child at an OR and a larger child at an AND. At the first node with at most $2m/3$ variables, its size is at least $m/3$. For each possible such gate $g$, its satisfying set times its possible contexts lies inside the root's satisfying set. These products cover the root. This is the balanced rectangle-cover argument of Bova et al.\ \cite{b}.
+
+To repeat the split, the context must itself have a small DNNF. Along a path from the output to $g$, conjoin the off-path siblings at AND gates. The OR over all paths of these conjunctions has a circuit with $O(S)$ wires. In reverse topological order, a child context takes the OR over its parents' contexts, conjoining the other sibling's gate for an AND parent. By induction its scope is exactly the root scope minus the child scope; each new AND is therefore decomposable and each OR is smooth. The sibling gates retain their original representations. Every satisfying assignment of such a context extends any satisfying assignment of $g$ along the corresponding path.
+
+Choose $B=\lceil\sqrt{N\log(S+2)}\rceil=o(N)$ and recursively split any factor larger than $B$, using a fixed rule to break ties. A lineage is split $O(\log(N/B))$ times. Each terminal scope has at least $B/3$ entries, so each branch of the cover uses $O(N/B)$ splits. Even allowing a constant factor growth in circuit size per level, the number of products is at most
+\[
+  2^{O((N/B)(\log S+\log(N/B)))}=2^{o(N)}.
+\]
+Some product retains at least $T2^{-o(N)}$ satisfying words in the layer, and all its individual factors have scope at most $B$. Apply Theorem~\ref{th:relations}. A read-once nondeterministic program converts to a DNNF using OR for guesses and guards by a literal for each tested branch. Syntactic read-once ensures the guarded successor does not reuse the tested variable.
+\end{proof}
+For an unrestricted weight, choose a weight layer containing at least $T/(N+1)$ satisfying words and use $H\le N$. For any fixed predicate or cell system, uniformly permuting all its input coordinates preserves its representation size and the count $T$. The first-moment bound from Section~2 then gives the corresponding typical lower bound when the information cost is linear in $N$.

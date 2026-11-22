@@ -1,0 +1,75 @@
+\section{Noise about a typical center of fixed positive weight}
+
+Suppose \(sn/N\to c\in(0,1)\). Write \(H(x)=-x\log x-(1-x)\log(1-x)\) and let \(\alpha\in(0,1/2)\) solve \(H(\alpha)=c\log2\). Fix \(0<h<\alpha\) and any deterministic baseline \(B=B_N\) of cost \(o(s)\), including the zero table. Choose \(L=B\oplus U\), where \(U\) is uniform on a layer of integer weight \(h_NN\) with \(h_N\to h\). Every such center belongs to \(\mathcal A\) for all sufficiently large \(N\). Define
+\[
+ \Lambda_{h,p}(v)=(1-h)\log(1-p+pe^v)+h\log(p+(1-p)e^v),
+ \qquad I_{h,p}(q)=\sup_v\{vq-\Lambda_{h,p}(v)\}.
+\]
+The critical noise and the corresponding positive argument are
+\[
+ p_0=\frac{\alpha-h}{1-2h}\in(0,1/2),\qquad r_0=\frac{p_0}{1-p_0}.
+\]
+
+\begin{theorem}
+For \(0<p\le 1/2\), let \(A_L(p)=\Pr[L_p\in\mathcal A\mid L]\). In probability over the chosen center,
+\[
+ \frac1N\log A_L(p)\longrightarrow
+ \begin{cases}0&p\le p_0,\\-I_{h,p}(\alpha)&p>p_0.\end{cases}
+\]
+For \(0<p\le p_0\), also \(N^{-1}\log(1-A_L(p))\to-I_{h,p}(\alpha)\) in probability. For each fixed \(p\) and positive error tolerance, the exceptional fraction is at most \(\exp(-\Omega(N))\), with a constant depending on those parameters. Complement symmetry gives \(A_L(1-p)=A_L(p)\).
+
+Every fixed open disk about any of \(r_0,1,1/r_0\) contains at least \(\gamma N\) zeros of \(P_L\) with probability tending to one, for some \(\gamma>0\) depending on the disk and the fixed parameters. For \emph{every} center in the indicated layer there are eventually no zeros on compact subsets of
+\[
+ \left\{z:\ p=\frac{|z|}{1+|z|}<p_0,\quad
+       \log\frac{1+|z|}{|1+z|}< I_{h,p}(\alpha)\right\}
+\]
+or its reciprocal image, interpreting the condition at zero by continuity.
+\end{theorem}
+
+\begin{proof}
+Set \(\mathcal B=B\oplus\mathcal A\). The census gives \(|\mathcal B|\le\exp(NH(\alpha)+o(N))\). For every fixed \(\delta>0\), \(\mathcal B\) contains all layers of weight at most \((\alpha-\delta)N\), by synthesis with slack and combination with \(B\). Conditional on \(U\), the weight \(W\) of the perturbed \(U\) is a sum of two independent binomials of parameters \(((1-h_N)N,p)\) and \((h_NN,1-p)\). Its rate function is \(I_{h,p}\), strictly convex with minimum zero at \(\mu=h+(1-2h)p\). More explicitly, for \(qN\) integral with \(q\) tending to an interior point, the logarithmic probability of \(W=qN\), divided by \(N\), tends to \(-I_{h,p}(q)\) evaluated at that limit. This follows by maximizing the two binomial point probabilities subject to their counts summing to \(qN\), using Stirling's formula and a polynomial number of count pairs. The maximum is obtained by a common exponential tilt \(v\) with \(\Lambda'_{h,p}(v)=q\). The Chernoff bound gives the corresponding uniform upper rate, including the endpoints by continuity. These estimates hold for every \(U\) in the specified layer.
+
+After averaging over \(U\), conditional on \(W\) the perturbed table is uniform in its layer by permutation invariance. The exponential upper rate for the mean acceptance is consequently the negative of
+\[
+ \min_{0\le q\le1}\{I_{h,p}(q)+(H(q)-H(\alpha))_+\}.
+\]
+For \(p>p_0\) this minimum is \(I_{h,p}(\alpha)\). Indeed \(\alpha<\mu\le1/2\). On \([\alpha,1-\alpha]\) the derivative of \(I_{h,p}(q)+H(q)\) is \(v-\log(q/(1-q))\), which is nonnegative throughout this interval. To check the sign for \(p<1/2\), put \(x=e^v\), \(a=p/(1-p)\). The sign of \(\Lambda'_{h,p}(v)-x/(1+x)\) is that of \(h-(1-h)a-(1-h-ha)x\). If this linear expression has a positive root, the associated crossing occurs at \(q=(h-p)/(1-2p)<h\); above it the expression is negative. For \(p=1/2\) the derivative is identically zero. On the two exterior intervals convexity and \(\alpha<\mu\le1/2\) put the minima at their inner endpoints; the middle-interval comparison orders those endpoints. When \(p\le p_0\), the minimum is zero at \(\mu\).
+
+The complete layers supply the matching lower rate, for every center, by taking weights tending to \(\min(\mu,\alpha)\) from below. Markov's inequality turns the averaged upper rate into the claimed exponential exceptional-set bound. For \(p<p_0\), rejection is bounded above for every center by \(\Pr[W>(\alpha-\delta)N]\), which gives upper rate \(-I_{h,p}(\alpha)\) after \(\delta\downarrow0\); at \(p=p_0\) the upper rate zero is immediate. For the reverse estimate choose \(q=\alpha+\delta<1/2\). Conditional on \(W=\lfloor qN\rfloor\), the mean accepted fraction is exponentially small by the census. For all but an exponentially small fraction of centers the conditional rejected fraction exceeds \(1/2\). The point probability of this layer supplies the lower rate, taking \(\delta\) small for the specified tolerance.
+
+For \(r>0\), let \(\Phi(r)\) be the limiting \(N^{-1}\log P_L(r)\), obtained by adding \(\log(1+r)\) to the acceptance exponent at \(p=r/(1+r)\) and using the stated symmetry on the other half. The convergence is locally uniform in probability on the positive ray: as functions of \(\log r\) these normalized logarithms are \(1\)-Lipschitz since powers range from \(0\) to \(N\). At \(r_0\), the pressure changes second derivative. In fact, as \(p\to p_0\),
+\[
+ I_{h,p}(\alpha)=
+ \frac{(1-2h)^2}{2p_0(1-p_0)}(p-p_0)^2+O(|p-p_0|^3),
+\]
+by the Legendre transform about its mean and \(\Lambda''_{h,p}(0)=p(1-p)\). Reciprocity gives the same nonanalyticity at \(1/r_0\). At \(r=1\) the first derivative with respect to \(\log r\) jumps. At \(p=1/2\), differentiating at the optimizer gives \(\partial_p I_{h,p}(\alpha)=2(1-2h)(1-2\alpha)\). The left slope is \(h+\alpha-2h\alpha<1/2\) and the right slope is its complement.
+
+For any deterministic sequence of centers along which the positive-ray convergence is locally uniform, the subharmonic functions \(u_N=N^{-1}\log|P_L|\) have locally uniform upper bounds, and \(u_N(0)=0\) excludes collapse to minus infinity. Every subsequential \(L^1_{\rm loc}\) limit \(u\), taken in its upper semicontinuous representative, satisfies \(u(z)\le\Phi(|z|)\) for \(z\ne0\) by positivity of coefficients and the submean inequality. Hartogs' lemma gives \(u(r)\ge\limsup u_N(r)=\Phi(r)\) for \(r>0\). If some fixed disk about one of the three points had \(o(N)\) zeros along a subsequence, the distributional Laplacian of a limit would vanish there. Its restriction to the positive ray would then be real analytic, contrary to the respective derivative jump. To obtain a uniform \(\gamma>0\) in probability, choose deterministic tolerances decreasing sufficiently slowly on growing compact intervals so that local uniform convergence holds along every sequence drawn from the resulting sets of probability \(1-o(1)\). A vanishing infimum of the normalized disk count on these sets would give the excluded subsequence.
+
+Finally, put \(r=|z|\), \(p=r/(1+r)<p_0\). The absolute difference between \(P_L(z)\) and \((1+z)^N\) is bounded by \((1+r)^N\Pr[W>(\alpha-\delta)N]\) for every center. The strict displayed inequality makes this exponentially smaller than \(|1+z|^N\), uniformly on compact subsets by the Chernoff bound with sufficiently small \(\delta>0\). Near zero the same bound follows from the deterministic complete initial distance shells through \((\alpha-h-\delta)N\). The identity \(P_L(z)=z^N P_L(1/z)\) gives the reciprocal conclusion.
+\end{proof}
+
+The statistic here fixes one accepted center and asks for the probability that its random perturbation is again accepted. Worst-case approximation of partial truth tables by small circuits is studied by \href{https://eccc.weizmann.ac.il/eccc-reports/1995/TR95-041/index.html}{Andreev, Clementi and Rolim}.
+
+\paragraph{Local density at the three positive points.}
+Use the local coordinate \(t=\log z\) and put \(f(t)=\Phi(e^t)\) on the real axis. For \(t_0=\log r_0,0,-\log r_0\), let \(Z_N(t_0,\rho)\) count zeros with \(|\log z-t_0|<\rho\), using the branch real on the positive axis. For suitable constants \(b_1,b_2>0\) and every sufficiently small fixed \(\rho>0\),
+\[
+ \Pr\!\left[b_1\rho^2\le Z_N(t_0,\rho)/N\le b_2\rho^2\right]\longrightarrow1
+ \qquad(t_0=\pm\log r_0).
+\]
+At the central point the exact first-order density is
+\[
+ \lim_{\rho\downarrow0}\limsup_{N\to\infty}
+ \Pr\!\left[\left|\frac{Z_N(0,\rho)}{N\rho}
+            -\frac{(1-2h)(1-2\alpha)}{\pi}\right|>\epsilon\right]=0
+ \qquad(\epsilon>0).
+\]
+In the same ordered limits the rescaled zero measures at \(0\), divided by \(N\rho\), converge vaguely in probability to \((1-2h)(1-2\alpha)/(2\pi)\) times length on the imaginary axis.
+
+To see this, take any locally uniform positive-ray sequence from the preceding proof and any limit \(u\) of its normalized potentials in the log coordinate. Then \(u(t)\le f(\Re t)\), with equality on the real axis. These two facts suffice uniformly over all such limits. Write
+\[
+ v_\rho(w)=\rho^{-j}\big[u(t_0+\rho w)-f(t_0)-\rho b\Re w\big].
+\]
+Use \(j=2,\ b=f'(t_0)\) at the outer points and \(j=1,\ b=0\) at the center. As \(\rho\downarrow0\) these subharmonic functions are bounded above uniformly on compact sets by Taylor expansion on each side, and \(v_\rho(0)=0\). They therefore have \(L^1_{\rm loc}\) subsequential limits even if the underlying \(u\) varies. Each limit is bounded above by the corresponding piecewise Taylor term evaluated at \(\Re w\), by the submean inequality, and agrees with it on the real axis by Hartogs' lemma. At an outer point the trace consists of two quadratic polynomials with unequal second derivatives. A limit cannot be harmonic on any disk about zero. Consequently the Riesz masses of \(v_\rho\) on the unit disk are bounded away from zero uniformly: otherwise a limiting mass would vanish on its interior. They are bounded above uniformly by Jensen's formula using the upper bound on the disk of radius two and \(v_\rho(0)=0\). Undoing the scaling multiplies these masses by \(\rho^2\).
+
+At the center the upper bound for every limit is \(f'(0-)\Re w\) on the left half-plane and \(f'(0+)\Re w\) on the right. Each affine bound is attained at interior real points of its respective half-plane. The strong maximum principle gives equality there. Thus the tangent potential is unique in \(L^1_{\rm loc}\), and its Riesz measure is the stated line measure because \(f'(0+)-f'(0-)=(1-2h)(1-2\alpha)\). The unit circle has zero mass for this measure. Vague convergence of Riesz measures now transfers these bounds to the finite polynomials in the stated ordered limits. Explicitly, at fixed \(\rho\) compare an open disk to slightly smaller and larger disks of limiting potentials by Portmanteau. For the quadratic orders one may use radii \(\rho/2,2\rho\); for the central constant first use \((1\pm\eta)\rho\) and then send \(\eta\downarrow0\). Compactly supported continuous tests give the vague statement directly. The typical sets of centers used for local uniform convergence have probability tending to one.

@@ -1,0 +1,121 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newcommand{\sr}{\mathop{\mathrm{signrank}}}
+\newcommand{\F}{\mathbb F_2}
+\title{Unbounded-error communication for Boolean MCSP}
+\author{Research manuscript}\date{}
+\begin{document}\maketitle
+\begin{abstract}
+For any fixed positive fraction of Shannon's threshold below one, the Boolean minimum circuit size problem has sign-rank $2^{\Omega(N)}$ on every fixed balanced partition of its $N$ truth-table entries. Thus even a private-coin two-party protocol with arbitrarily small positive pointwise advantage needs linear communication. The argument uses a small-circuit distribution with a spectral mixing bound and repairs its signs on the exponentially sparse set of easy entries. Under invertible linear changes of the outer coordinates there is a transition: every basis is hard when both views have rank below the inner information rate, whereas most bases have constant unbounded-error complexity when one view has rank above the rate.
+\end{abstract}
+Let $N=2^n$, and let $E_s$ be the set of tables computed from their address by a Boolean circuit with at most $s$ binary gates. Take $s=\lfloor cN/n\rfloor$ for fixed $0<c<1$. The sign convention assigns $+1$ to $E_s$ and $-1$ to its complement. The sign-rank of a sign matrix is the minimum rank of a real matrix having its strict entrywise signs. Its base-two logarithm agrees up to a constant with the unbounded-error private-coin communication complexity \cite{ps}. Coins are independent between the parties, cost is worst-case, and on each input the probability of the correct response is strictly greater than one half. Free shared coins with arbitrarily small advantage would trivialize this notion.
+
+\section{A spectral witness with the correct signs}
+\begin{lemma}\label{repair}
+Let $E$ occupy at most a fraction $p$ of a Cartesian product $X\times Y$, with $T=|X||Y|$. Assume there is a probability law $\nu$ supported on $E$ such that $W=T\nu-\mathbf 1$ satisfies $\|W\|_{\mathrm{op}}\le\tau\sqrt T$. Then the sign matrix of $E$ has sign-rank at least $(\tau+2\sqrt p)^{-1}$.
+\end{lemma}
+\begin{proof}
+On every point of $E$ increase $W_{xy}$ to $\max(1,W_{xy})$. On its complement $W_{xy}=-1$ already. The corrected matrix $J$ has the required signs and every magnitude is at least one. Since $W_{xy}\ge-1$, the Frobenius norm of the change is at most $2\sqrt{pT}$. Apply the real-matrix form of Forster's bound \cite[eq.~(5.1)]{rs}, $\sr(\mathrm{sign}\,J)\ge \sqrt T\min_{xy}|J_{xy}|/\|J\|_{\mathrm{op}}$.
+\end{proof}
+
+\begin{theorem}\label{raw}
+Every partition of the raw truth table into parts of sizes $\alpha N+o(N)$ and $(1-\alpha)N+o(N)$, for fixed $0<\alpha<1$, has sign-rank $2^{\Omega_{c,\alpha}(N)}$. Its private-coin unbounded-error complexity is $\Theta(N)$.
+\end{theorem}
+\begin{proof}
+We specify the ingredients of the active-coordinate code construction \cite{code}. Choose a dyadic constant $t>c$ and a rate $r$ with $\max(\alpha,1-\alpha)<r<c/t$. Fix all but $(t+o(1))N$ coordinates to zero. The active set and a binary linear space $G$ on it can be chosen so that $G$ projects surjectively onto the active coordinates held by each party, every nonzero element of $G^\perp$ has physical weight at least $\Delta N$ for some fixed $\Delta>0$, and every codeword leaves a fixed positive fraction of the gate budget available for noise.
+
+Here are the construction details used in this claim. After an invertible affine permutation of the $n$ address bits, keep the first $t$ fraction of blocks of length $b=2^{\lceil(\log_2 n)/2\rceil}$. Pairwise transitivity and the variance bound $O(b)$ show that in all but $o(N/b)$ blocks each party has its expected fraction within $b^{-1/4}$. On good blocks impose a common $\lfloor(1-r)b\rfloor$ by $b$ binary parity check; with a random check matrix its restrictions to both parties have full row rank on all but $o(N/b)$ blocks in expectation. Fix a matrix achieving that loss and discard those blocks. Independent block messages can then be stored as one Boolean lookup per message position indexed by the block address. Binary lookup synthesis costs $(tr+o(1))N/n$ gates, by partitioning the dyadic prefix into finitely many dyadic subintervals. The shared decoder costs $O(b^2)$ gates. Discarded blocks are masked by one lookup of cost $o(N/n)$.
+
+Add the restriction to the active set of a binary space with positive relative dual distance and arbitrarily small fixed per-word gate cost in units of $N/n$. For completeness arrange all positions in a nearly square binary array. On each side use the check matrix of a rate $1-\rho$ binary code with fixed positive relative distance. The sum of arbitrary dual codewords on individual rows and arbitrary dual codewords on individual columns has the desired dual distance: an orthogonal array lies in the primal code along every line, so nonzero support meets a positive fraction of rows, each in a positive fraction of columns. Orthogonality to the punctured space extends by zero outside the active set. For each side, looking up row messages and the column of the shared check matrix on their respective half addresses costs $O(\rho N/n)$ gates by ordinary lookup synthesis; the dot product costs $O(\sqrt N)$. Choose fixed $\rho>0$ sufficiently small. The activity mask above applies to this whole extra summand.
+
+Independently select one random position in each block of a large fixed power-of-two length $B$ and write an independent fair bit there, zero elsewhere. Restrict to active positions. This noise costs $((1+\log_2B)/B+o(1))N/n$ gates, by lookup of the position and bit, so it fits in the remaining budget. Let $\nu$ be a uniform word of $G$ plus this noise. Every sample lies in $E_s$. Each nonzero dual word of weight $w$ has noise bias at most $e^{-w/B}$ by multiplying the independent block miss probabilities.
+
+On the active Cartesian submatrix let $T$ denote its number of entries. In orthonormal Walsh coordinates, $W/\sqrt T$ has matrix entries equal to the character expectations under $\nu$, with the constant coefficient removed. They vanish unless the pair of characters belongs to $G^\perp$. Surjectivity onto both views makes these nonzero positions a partial matching: the difference of two partners of one character would be a nonzero dual vector on only one side. Thus the operator norm is at most $e^{-\Delta N/B}$. The rooted circuit census gives $|E_s|\le2^{(c+o(1))N}$, while $T=2^{(t+o(1))N}$. Lemma~\ref{repair} gives an exponential lower bound on this submatrix, hence also on the original matrix. Sending one whole view gives the matching communication upper bound in order.
+\end{proof}
+
+
+\paragraph{Smaller budgets and promises.}
+In Theorem~\ref{raw} the same conclusion applies to any sign extension of the promise accepting tables of size at most $c_1N/n$ and rejecting those of size above $c_2N/n$, provided $0<c_1\le c_2<1$ and $\max(\alpha,1-\alpha)c_2<c_1$. Choose $t>c_2$ with $rt<c_1$ in that proof. The law lies wholly in the promised yes set. All positive cells of the extension belong to the size-$c_2N/n$ cap, still exponentially sparse. The repair therefore applies to the actual choice of signs on the unspecified cells.
+
+For every fixed $\eta,\epsilon>0$, with $(1+\eta)n\le s\le(1-\epsilon)N/n$, the raw-cut private-coin unbounded-error complexity is $\Theta(s\log s)$ on every fixed balanced cut. Here is the restriction argument. Choose $m\le n$ with $M=2^m=\Theta(s\log s)$ and $(s-n+m)m/M$ confined to a fixed compact subinterval of $(0,1)$; stopping as this last ratio first decreases below $1-\epsilon/2$ yields such an $m$. There is an $m$-dimensional coordinate face with the induced cut bounded away from both endpoints. Indeed, fix any $m$ free axes. If all parallel faces have either density $<\delta$ or density $>1-\delta$ for a sufficiently small fixed $\delta>0$, there must be adjacent faces of opposite kinds. Replace one free axis by the axis distinguishing those two. In the resulting face both colors occupy at least $1/2-\delta$ of its sites up to an innocuous weakening to $1/2-2\delta$.
+
+Restrict the outer matrix by setting every site outside that face to zero. If an $m$-variable nonconstant table $f$ is supported on the face in this construction, its guarded extension $F$ has inner size between $C(f)+n-m$ and $C(f)+n-m+O(1)$. For the lower bound fix the new guard variables successively to their prescribed literals; each is essential at the time it is fixed and eliminates at least one gate. Conversely adjoining their conjunction costs $n-m+O(1)$ gates. A dense promise on the smaller $M$-bit table bracketing $s-(n-m)$ by a sufficiently small fixed relative gap now induces the correct signs on the full table. The positive half also holds for constant functions via the synthesis upper bound. The preceding promise theorem gives $\Omega(M)$ on the submatrix. The upper bound follows by sending the identifier of the observed local part among those consistent with an easy table, with a separate default for no consistent table. There are at most $2^{O(s\log s)}$ possible identifiers in this range.
+
+\section{Linear changes of coordinates}
+\begin{theorem}\label{basis}
+Split an invertible linear basis of the $N$ outer bits into two views of ranks $\alpha N+O(1)$ and $(1-\alpha)N+O(1)$, and put $a=\max(\alpha,1-\alpha)$. If $a<c$, every such basis gives sign-rank $2^{\Omega(N)}$. If $a>c$, a uniform random basis gives sign-rank $O_{a,c}(1)$ with probability tending to one.
+\end{theorem}
+\begin{proof}
+In the first case use the conditional linear encoder of the companion dense-circuit manuscript \cite{dense} at a fixed rate strictly between $a$ and $c$. For each prescribed view its projection is surjective with probability $1-o(1)$. Thus one layout works for both. Its space contains the product-code summand just described. Every nonzero orthogonal word consequently has physical weight $\Omega(N)$. Add independent sparse noise as in Theorem~\ref{raw}. In the new basis the support of the Fourier transform is still a matching, and each nonconstant matched coefficient still represents a physical word of weight $\Omega(N)$. Use Lemma~\ref{repair} on the whole cube, with $p\le2^{-(1-c-o(1))N}$. The layout may depend on the two views.
+
+For the converse call the larger view $A$. Choose a fixed positive integer $j>c/(a-c)$. More than $2^{j-1}$ easy points in a fiber of $A$ contain $j+1$ affinely independent easy points. For any prescribed such tuple, all $j$ independent differences are killed by a uniformly random full-rank $A$ with probability at most $2^{-j\,\mathrm{rank}(A)}$ by sequential counting in the uniform kernel. A union bound over $|E_s|^{j+1}$ tuples proves that with high probability every row contains at most $2^{j-1}$ easy columns. Label columns by distinct integers. In row $x$ take the univariate polynomial
+\[
+   \tfrac12-\prod_{i\text{ easy in row }x}(z-i)^2.
+\]
+Its evaluations on the column labels have the prescribed signs. The empty product gives the identically rejecting sign. The degree is at most $2^j$, hence the matrix of evaluations has rank at most $2^j+1$.
+\end{proof}
+This small-list upper bound also applies at constant error with public coins. Bob sends a universal hash of his column label with $\lceil\log_2(3L)\rceil$ bits, where $L$ is the largest row list. Alice accepts if some candidate has that hash. A union bound controls the false positives, and all easy inputs pass.
+
+At the boundary $a=c$ a uniform random basis gives private-coin unbounded-error complexity and public-coin bounded-error complexity $O(\log n)=O(\log\log N)$ with probability tending to one, for the precise size threshold $\lfloor cN/n\rfloor$. The rooted census gives
+\[
+ \log_2 |E_s|\le s\log_2 s+O(s+n\log s)
+ = cN-(c+o(1))N\log_2 n/n .
+\]
+To see the quantitative gain over the elementary affine-tuple count, let $H=2^{\mathrm{rank}(A)}$, $\mu=|E_s|/H$, and $L$ be the maximum row load under an unconditioned random linear map with the prescribed output dimension. Kumar's potential inequality \cite[eq.~(1)]{load} implies, for every $\lambda>0$,
+\[
+ \mathbb E L\le[\ln H+\mu(e^\lambda-1)]/\lambda .
+\]
+Indeed the maximum is bounded by $\lambda^{-1}\ln\sum_y e^{\lambda L_y}$. Set $\lambda=\ln(1/\mu)$ and use the census to obtain $\mathbb E L=O(n/\log n)$. With probability tending to one $L=O(n)$ by Markov's inequality. Full row rank has probability tending to one since $a<1$, so the same conclusion holds for a uniform basis. Polynomial evaluation proves the private-coin unbounded-error claim, and the preceding fingerprint gives the bounded-error public-coin claim.
+
+\paragraph{Private coins at bounded error.}
+When $a\ge c$, private coins at constant two-sided error give a distinct regime: with probability tending to one over the basis, the cost is $\Theta(\log N)$. For the upper bound, fix in advance $O(N)$ independent public-hash seeds so most succeed on each input (start at error at most $1/8$ and apply a Chernoff bound to the $2^N$ inputs). A party selects and sends a seed index. For the lower bound, choose a dyadic fraction $\rho<\min(c,\alpha,1-\alpha)$ and a coordinate address subcube of size $\rho N$. Arbitrary tables on this subcube extended by zero are all easy by lookup synthesis, and form a space $V$ of dimension $\rho N$. Each random view is injective on $V$ with probability $1-o(1)$ by a union bound over its nonzero words. The easy entries indexed by $V$ now give a matching of length $2^{\rho N}$. Among these matched rows and columns the list bound $L=O(n)$ allows at most $L$ additional easy cells in each row. Connect two matching edges if either cross-position is easy. Average degree at most $2L$ gives an independent set of size at least $2^{\rho N}/(2L+1)$. Its rows and columns induce an equality matrix. Any private-coin protocol of $q$ bits has acceptance-probability matrix of rank at most $2^{q+1}$ by transcript factorization. For equality on $H$ symbols the $H$ rows are separated by $1/3$ in the unit ball of their common row space under the maximum norm. A volume packing gives row dimension $\Omega(\log H)$, hence $q=\Omega(\log\log H)=\Omega(\log N)$ here.
+
+\section{Restrictions of depth-two threshold circuits}
+Theorem~\ref{raw} forces $2^{\Omega(N)}$ bottom gates in any exact threshold of symmetric gates on subsets of the input literals, with arbitrary real weights at the top. Each symmetric gate on unrepeated literals has at most $2N+1$ distinct rows, indexed by Alice's contribution to the number of true literals. Consequently $K$ gates and the threshold's offset give a strict sign representation of rank at most $(2N+1)K+1$. Here a threshold can always be adjusted to give strict signs on the finite domain. The same argument allows bottom integer weights of total absolute value $2^{o(N)}$ per gate.
+
+In the opposite order, suppose an unweighted majority computes MCSP from $K$ arbitrary real-weight threshold votes. In sign notation choose an integral offset so the majority has absolute margin at least one (doubling votes if needed). A single lower threshold compares a scalar local score on each side. Order all distinct scores, handling ties by a fixed ordering of the two parties, and use their binary rank labels. Group strict comparisons by the first differing bit. At each bit level the accepted pairs form rectangles with mutually disjoint row sets and mutually disjoint column sets. For the corrected witness $J$ of Lemma~\ref{repair}, the absolute sum over these rectangles is at most $\|J\|_{\mathrm{op}}\sqrt T$, by Cauchy--Schwarz on the rectangle side sizes. There are $O(\log(|X|+|Y|))=O(N)$ levels. The sign contribution and the constant offset change the absolute bound only by constant factors per vote. Pointwise sign agreement and the margin give a signed total correlation at least $T$, so $K=2^{\Omega(N)}$. Equivalently this is an exponential lower bound on the total integer weight at the top. It does not bound circuits with unrestricted weights on both layers; exponential sign-rank can coexist with linear size in that model \cite{am}.
+
+\paragraph{One-sided acceptance and average error.}
+Unions or intersections of real-weight halfspaces are included among these exact lower bounds. There is a direct extension for a randomized union accepting easy tables with constant probability and rejecting every hard table with certainty. For almost every coin fixing, each accepting halfspace then contains only easy tables. Its uniform mass is at most $p$ and its mass under $\nu$ is at most $p+O(N)\tau$ by the dyadic comparison argument applied to $W$. Summing over $K$ halfspaces gives $K\ge 2^{\Omega(N)}$. The same reasoning handles the complementary acceptance convention by complementing the entire circuit.
+
+A single distribution also quantifies the price of high, two-sided accuracy. Normalize $|J|$ to a probability law $D$, where $J$ is the sign-repaired matrix. Put $v=\|J\|_{\mathrm{op}}/\sqrt T$ and $w=\|J\|_1/T\le 2+2p$ (entrywise norm). If a candidate Boolean sign matrix has sign-rank $r$ and error $e$ under $D$, its normalized rank-$r$ real witness $R$ can be taken with $\|R\|_\infty\le1$ and $\|R\|_F^2=T/r$ by \cite[Theorem 2.4]{rs} (or by an arbitrarily close limiting normalization). Hence
+\[
+ T/r-2ewT\le \langle J,R\rangle\le\|J\|_{\mathrm{op}}\sqrt r\,\|R\|_F=vT .
+\]
+Here $\sum |R_{xy}|\ge \|R\|_F^2$ and $|J_{xy}|\ge1$. Thus $r\ge 1/(v+2we)$. For a bounded-weight top majority evaluated on $K$ threshold votes, the score has unsigned margin at least one and total magnitude $O(K)$, and the same calculation with its dyadic rectangles gives $1\le O(K)(Nv+we)$. Both inequalities persist after averaging over coins for candidates of uniformly bounded size. They imply exponential lower bounds for pointwise exponentially accurate circuits in both threshold classes.
+
+\paragraph{Constant two-sided error for unions of halfspaces.}
+A different argument gives a stretched-exponential bound even when both error types are allowed. For every fixed $\gamma<1/7$, unions or intersections of at most $2^{N^\gamma}$ arbitrary real halfspaces fail to decide dense MCSP at bounded error, even with randomized circuits. More strongly, for any fixed $\delta>0$ a mixture of an easy law and uniform conditioned on hard tables, with equal prior probabilities, gives every such circuit success at most $1/2+\delta$ for large $N$. Under unrestricted uniform input alone a constant rejection already has vanishing error, so the easy component in this formulation matters.
+
+Use the polytope generator of O'Donnell, Servedio and Tan \cite[Definitions 4.1--4.2, Section 4.1, Remark 4.4]{ost} with small fixed target error. Write $B=\log_2(2M)$ for $M$ halfspaces. At fixed accuracy their parameter setting, with auxiliary fixed $\varepsilon>0$, uses $L=O(B^5)$ buckets, hash and bucket uniformity $O(B)$, global uniformity $O(B^{6+2\varepsilon}\log(2B))$, CNF width $w=O(B^{1+2\varepsilon}\log(2B))$, and $\log(1/\delta_{\rm CNF})=O_\varepsilon(B+\log N)$. Constants can depend on the desired accuracy. Round the bucket count upward to a power of two, which only changes its scale by a constant. Each bucket's extra independent CNF-fooling source may be taken to be $K$-wise independent with
+\[
+ K=O\big((w\log(2N)+\log(1/\delta_{\rm CNF}))^2\big),
+\]
+since there are at most $(2N+1)^{O(w)}$ distinct clauses of width $w$, and bounded independence fools their CNF \cite{bazzi}. This substitution preserves the CNF fooling property used in the generator proof. Give each of the uniformity sources independent finite-field polynomial coefficients. For hardwired seed and an $n$-bit address, evaluating the degree-below-$K$ polynomial over $\mathbb F_{2^n}$ and returning the required bits costs $O(Kn^2)$ gates by Horner evaluation; the same construction gives the hash into a power-of-two number of buckets. Forming all bucket outputs and selecting the designated one shows that each sample costs at most
+\[
+ B^{7+4\varepsilon}\,\mathrm{poly}_\varepsilon(\log N)
+\]
+address gates, including the independent final uniformity layer. At $B=O(N^\gamma)$ choose $\varepsilon$ so that $\gamma(7+4\varepsilon)<1$. The gate bound is then $o(N/n)$. Uniform $N$-bit data are hard with probability $1-2^{-\Omega(N)}$, and the polytope acceptance gap is as small a fixed constant as desired. Complements cover unions, and averaging covers randomized choices of circuits. This application combines the published polytope generator with the local-PRG criterion of Cheraghchi et al.; it uses no implication from sign-rank to bounded-error unions.
+
+\paragraph{Signed tensor networks.}
+Consider a binary tree tensor network with one leaf per distinct physical bit and arbitrary real local tensors, whose contracted scalar has the prescribed strict sign on every input. A balanced edge splits the leaves into parts of size between $N/3$ and $2N/3$. Summing over its bond index expresses the real matrix across that cut as a sum of as many rank-one terms as the bond dimension. Theorem~\ref{raw}, with the cut fraction bounded uniformly away from the endpoints, forces that dimension to be $2^{\Omega(N)}$, even with cancellations and arbitrarily small output margins.
+
+The Paturi--Simon equivalence and Forster's inequality supply the general communication and threshold-circuit mechanisms here. Previous local generators for MCSP give nearly cubic De Morgan formula lower bounds, nearly quadratic full-basis formula and branching-program lower bounds, and exponential constant-depth lower bounds \cite{cklm}. Those models differ from the private-coin unbounded-error communication and two depth-two threshold classes treated here. Chen--Li--Yang's small-threshold magnification theorem concerns $n\le s\le n^2/\log n$ and circuits of unrestricted binary gates \cite[Theorem 1.6]{cly}; the present dense statement does not imply its premise.
+
+\begin{thebibliography}{9}
+\bibitem{ps} R. Paturi and J. Simon, \emph{Probabilistic communication complexity}, JCSS 33 (1986).
+\bibitem{rs} A. Razborov and A. Sherstov, \href{https://web.cs.ucla.edu/~sherstov/pdf/sign.pdf}{The sign-rank of AC$^0$}, eq.~(5.1) and references therein.
+\bibitem{code} Companion proof, \emph{Interactive communication for Boolean MCSP}, communication.md, sections 1--3.
+\bibitem{dense} Companion manuscript, \emph{Small Boolean truth tables under adaptive parity tests}, section on exponentially accurate generators.
+\bibitem{load} V. M. Kumar, \href{https://arxiv.org/abs/2610.34750}{Linear hashing is Poissonesque}, October 2026.
+\bibitem{ost} R. O'Donnell, R. Servedio and L.-Y. Tan, \href{https://www.cs.cmu.edu/~odonnell/papers/fooling-polytopes.pdf}{Fooling polytopes}, STOC 2019.
+\bibitem{bazzi} L. Bazzi, \href{https://doi.org/10.1137/070691954}{Polylogarithmic independence can fool DNF formulas}, SIAM J. Comput.
+\bibitem{am} A. Chattopadhyay and N. Mande, \href{https://arxiv.org/abs/1705.02397}{Weights at the bottom matter when the top is heavy}.
+\bibitem{cklm} M. Cheraghchi, V. Kabanets, Z. Lu and D. Myrisiotis, \href{https://doi.org/10.4230/LIPIcs.ICALP.2019.39}{Circuit lower bounds for MCSP from local pseudorandom generators}.
+\bibitem{cly} L. Chen, J. Li and T. Yang, \href{https://doi.org/10.4230/LIPIcs.CCC.2022.23}{Extremely efficient constructions of hash functions, with applications to hardness magnification and PRFs}.
+\end{thebibliography}
+\end{document}

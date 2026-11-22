@@ -1,0 +1,132 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1.02in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\newtheorem{theorem}{Theorem}\newtheorem{lemma}[theorem]{Lemma}\newtheorem{corollary}[theorem]{Corollary}
+\newcommand{\mc}{\mathsf{MCSP}}\newcommand{\F}{\mathbb F_2}\newcommand{\E}{\mathbb E}
+\newcommand{\poly}{\operatorname{poly}}\newcommand{\supp}{\operatorname{supp}}
+\title{How many quantum queries does Boolean circuit minimization require?}
+\author{Research manuscript}\date{22 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+A quantum algorithm receives query access to the classical truth table of a Boolean function. Its task is to decide whether a classical circuit of at most $s$ gates computes the table. Let $N=2^n$ and $T=s\log_2s$. For every fixed $\eta,\epsilon>0$ we obtain matching bounds of order $\sqrt{NT/(1+\log_2(N/T))}$ queries throughout $(2+\eta)n\le s\le(1-\epsilon)N/n$. For $s\le n-\log_2 n-2\log_2\log_2(n+2)$ the bound is instead $\Theta(\sqrt N)$. The upper bounds follow from oracle identification. For the lower bound we hide one mark in each of several buckets. Small classical circuits produce mark locations that are jointly uniform on every small collection of buckets. We bound the rate at which a quantum reader can detect the remaining correlations. At polynomial gate budgets the hard input can also be chosen uniformly among truth tables with a prescribed number of ones, conditioned on its having circuit complexity greater than $s$.
+\end{abstract}
+\section{The decision problem}
+Fix binary AND and OR, unary NOT, unrestricted fanout and free input constants. The circuit size $C(f)$ of an $n$-input Boolean function is its minimum number of gates. The input to $\mc_{n,s}$ is the $N=2^n$ entries of its truth table. The answer is yes if $C(f)\le s$. A quantum query in superposition adds the selected entry modulo two into a reply qubit. Computation between queries is unrestricted. All logarithms are base two.
+\begin{theorem}\label{main}
+For fixed $\epsilon,\eta>0$, let $(2+\eta)n\le s\le(1-\epsilon)N/n$ and $T=s\log s$. The bounded-error quantum query complexity is
+\[
+ Q(\mc_{n,s})=\Theta_{\eta,\epsilon}\!\left(\sqrt{\frac{NT}{1+\log(N/T)}}\right).
+\]
+\end{theorem}
+For example, in the polynomial regime $n=o(s)$, $s=n^{O(1)}$, the order is $\sqrt{Ns\log s/n}$. At any fixed positive fraction of the Shannon budget $N/n$ the order is $N$. These are bounds on accessing data. The time taken by a query algorithm to enumerate circuits can be arbitrarily large.
+
+The construction compares two lists of mark locations. The first list is completely random, so its description is usually too long for a small circuit. The second list is generated from fewer random bits and has a small circuit for locating its marks. The proof has two components. Section~\ref{record} shows how to hide correlations from a quantum reader. Sections~\ref{poly} and~\ref{large} build the small circuits, including a different encoding when the number of buckets becomes too large to store a lookup table for their dependencies.
+
+\paragraph{Known upper bound.} Let $A$ be the set of accepted tables. A rooted circuit with $j$ gates has at most $j+1$ predecessor slots beyond the $j-1$ internal wires of a spanning tree. An ordered slot tree, the gate types and the distinction between slots already in the tree take $O(j)$ bits; the other slots each take $\log(n+j+2)+O(1)$ bits. After summing over $j\le s$ this gives $\log|A|\le T+O(s+\log s)$ in the stated range. Kothari's oracle identification algorithm identifies a promised member of a known $M$-element family of $N$-bit strings in $O(\sqrt{N\log M/(1+\log(N/\log M))})$ queries when $M\ge N$ \cite{kothari}. Here $M\ge N$ since every singleton table has a circuit with at most $2n$ gates. Cap the algorithm at its promised query bound, reject any candidate outside $A$, and check the proposed string by quantum search for a differing bit \cite{grover}. Repeating identification and verification a constant number of times controls the errors. Near $T=\Theta(N)$ the elementary upper bound $N$ suffices.
+
+\section{The cost of learning correlations between mark locations}\label{record}
+Divide a table into $k$ buckets with $M$ possible locations in each. In bucket $i$ only location $Y_i$ is marked. A query at $(i,z)$ thus tests a single equality, $Y_i=z$. Extra empty buckets can be included for free.
+\begin{lemma}\label{recording}
+Let the vector of labels be uniformly independent in one experiment and $D$-wise uniform in another. For $t=\lfloor D/2\rfloor\ge1$, the difference of the acceptance probabilities of any $q$-query quantum algorithm on the two experiments is at most
+\[
+  4\binom qt(2/\sqrt M)^t.
+\]
+\end{lemma}
+\begin{proof}
+View the algorithm's state as a vector-valued function of the list $Y$. Under the uniform product law, each coordinate function space splits into constants and mean-zero functions. Their tensor product is an orthogonal sum indexed by subsets $S$ of the $k$ coordinates. Its level is $|S|$. All inner products of terms through level $t$ are unchanged under the second law, since each pair involves at most $2t\le D$ labels. Evaluation therefore identifies the two low-level spaces isometrically.
+
+A query raises the level by at most one. For a fixed query address its operation is $I+\mathbf{1}_{Y_i=z}(X-I)$, where $X$ flips the reply qubit. An upward transition applies only to terms that were constant in coordinate $i$. It inserts the mean-zero function $\mathbf{1}_{Y_i=z}-1/M$, of norm at most $M^{-1/2}$. Distinct supports before this insertion give orthogonal supports afterwards for this fixed $i$. The norm of the upward transition between neighboring levels is thus at most $a=2/\sqrt M$. The same bound holds for a superposition of addresses because the query is block diagonal in them.
+
+Run a truncated evolution that projects back to levels below $t$ after each query. Its states, norms and measurement probabilities agree between the two laws under the isometry. One step starting in the truncated space reaches at most level $t$, where the isometry still applies. Let $A_j(u)$ be the norm at levels at least $j$ in the truncated state after $u$ queries. Contractivity and the one-step estimate give $A_j(u+1)\le A_j(u)+aA_{j-1}(u)$ for $j\ge1$, and $A_0(u)\le1$. Hence $A_j(u)\le\binom uj a^j$. The norm discarded after the next query is at most $aA_{t-1}(u)$. Summing over all steps bounds the distance from the true final state under either law by $\binom qt a^t$. A measurement probability changes by at most twice the norm distance, proving the lemma.
+\end{proof}
+In particular taking $q$ below a sufficiently small constant times $D\sqrt M$ makes the two experiments indistinguishable with bounded error. The square root arises from the cost of locating a mark, while the factor $D$ is the number of different buckets whose correlations have been hidden.
+
+\section{Polynomial gate budgets}\label{poly}
+Fix $A>1$, a constant $a_0>1$, and $(2+\eta)n\le s\le n^A$. Take $k=\lfloor a_0s\log s/n\rfloor$, use $B=2^{\lceil\log k\rceil}$ buckets, and mark the first $k$. The suffixes have $w=n-\log B$ bits. The random independent lists have entropy $kw=(a_0+o(1))T$ and give distinct tables. The circuit count in the introduction shows that all but an exponentially small fraction of these tables are no-instances.
+\begin{lemma}\label{ldpc}
+For every sufficiently small fixed $\rho>0$ and all large $k$, there is a binary matrix with $k$ columns, $m=\lceil\rho k\rceil$ rows, four ones per column, and every set of at most $\kappa k$ columns linearly independent, for a constant $\kappa=\kappa(\rho)>0$.
+\end{lemma}
+\begin{proof}
+Choose four distinct uniform neighbors per column. If a set of $u$ columns has no unique row, its neighbors occupy at most $2u$ rows. Provided $2u\le m$, the union bound for failure at that size is at most
+\[
+ \binom ku\binom m{2u}(2u/m)^{4u}\le(C_\rho u/k)^u.
+\]
+Sum first up to $\sqrt k$ and then up to $\kappa k$ with $C_\rho\kappa<1/2$. The sum tends to zero. A unique row witnesses a nonzero binary sum for each nonempty selected set.
+\end{proof}
+Assign an independent uniform $w$-bit string to each matrix row. Use as the label of a bucket the bitwise XOR of its four neighbors. Then $D=\lfloor\kappa k\rfloor$ labels at a time are fully uniform. Each fixed table of this kind fits the gate budget, as we now show.
+
+Compute the $k$ prefix indicators, and for each of the four neighbor positions OR them into $m$ disjoint row-selector indicators. This first step costs $O(k\log k)$. Split each set of $m$ selectors into blocks of $h=\lfloor(\log n)/2\rfloor$, precompute all subset ORs in each block using $2^h$ gates, and for each of the $w$ output bits OR the appropriate subset results over blocks. Four lookups cost $O(\rho k n/\log n+n)$. XOR the four words, test equality to the input suffix, and check prefix validity, using $O(n)$ more gates. Since $k\log k=o(s)$, choosing $\rho$ sufficiently small in terms of $A,a_0$ fits for $s\ge Cn$ with $C$ a sufficiently large constant.
+
+For $(2+\eta)n\le s\le Cn$, the $k$ by $w$ matrix of labels has at most $2^m$ different columns. Group identical columns. In each group compute the tests that all its input suffix bits are zero and that all are one. The two tests together cost at most twice its length, even when NOT is a counted gate. Each bucket combines its prefix test with the suitable test from each group; OR the bucket results. The total is $2n+O(k2^m+k\log k)$. Choose $\rho$ smaller so that $k2^m=o(n)$ for this interval of $s$. The result fits below $s$ for large $n$. Lemma~\ref{recording} now gives a lower bound $\Omega(k\sqrt{N/B})=\Omega(\sqrt{Nk})$, the order in Theorem~\ref{main}.
+
+\paragraph{A uniform hard Hamming slice.} The buckets can be concealed at negligible gate cost. Split off four disjoint pieces of the suffix, each of length $\lceil\log(Ck)\rceil$ for a large constant $C$. Let $H(y)$ be the XOR of four independent random lookups from those pieces into bucket prefixes. Replace $(i,y)$ by $(i\oplus H(y),y)$. This bijection costs $O(k\log k)=o(s)$ gates, already allowed by the margins above. For each fixed permutation the query bound is the same, since it simply relabels allowed queries. It stays valid after mixing over the hidden permutation.
+
+For independent suffixes $Y_i$, their four pieces select one independent uniform entry from each of four disjoint lists of length $m'=2^{\lceil\log(Ck)\rceil}$. Except with probability $o(1)$ the $k$ incidence rows are independent over $\F$. A dependency on $u$ rows needs $u$ even and at most $u/2$ selected entries per list. Its union bound is
+\[
+ \binom ku\left[\binom{m'}{u/2}\Bigl(\frac{u}{2m'}\Bigr)^u\right]^4
+ \le \left(\frac{e^3ku}{4(m')^2}\right)^u.
+\]
+Summing as in Lemma~\ref{ldpc} proves the claim. Conditional on the independent rows, the values $H(Y_i)$ are independent uniform prefixes. Thus the scrambled reference is $o(1)$ in total variation from $k$ iid uniform full addresses, which have no collisions except with probability $O(k^2/N)$. Its law is $o(1)$ from uniform on the weight-$k$ Hamming slice. That slice contains $2^{(a_0+o(1))T}$ tables, so conditioning it on hardness costs $o(1)$ as well. The easy law always has exactly $k$ marks.
+
+\section{Larger budgets}\label{large}
+A linear code replaces the four-neighbor dictionary when the number of buckets is large. We need an entire $w$-bit label at a requested bucket. The following synthesis bound counts gates for a fixed choice of the random codeword; the seed is hardwired into the circuit.
+\begin{lemma}\label{word}
+Let $k$ be a power of two tending to infinity, and $w\ge1$. For each sufficiently small fixed $\rho>0$ there is a distribution on lists of $k$ labels in $\{0,1\}^w$ that is $\delta k$-wise uniform, for a constant $\delta=\delta(\rho)>0$. A Boolean circuit for any list returns its label from its index using at most
+\[
+ \big((4w+5)\rho+o_\rho(w+1)\big)\frac{k}{\log k}+O(w\sqrt k)
+\]
+gates. The little-oh is uniform in $w$.
+\end{lemma}
+\begin{proof}
+Write $k=b_1b_2$, where the powers of two $b_1,b_2$ differ by at most a factor of two. For $j=1,2$ choose a binary $d_j\times b_j$ matrix with $d_j=\lceil\rho b_j\rceil$ whose kernel has minimum distance greater than $\Delta b_j$. Such a matrix exists by independent entries and a union bound over vectors of relative weight at most $\Delta$, taking binary entropy $H_2(\Delta)<\rho$. Denote its columns by $h_{j,i}$.
+
+For each row $i$ choose a uniform vector $U_i$ of $d_2$ words of length $w$ and for each column $j$ a uniform vector $V_j$ of $d_1$ words, independently. At cell $(i,j)$ output the bitwise word
+\[
+ Y_{ij}=\langle U_i,h_{2,j}\rangle\oplus\langle V_j,h_{1,i}\rangle.
+\]
+For one bit layer, a nonzero binary relation among the cells must have each row in the second kernel and each column in the first. A nonzero row meets more than $\Delta b_2$ nonzero columns, each with more than $\Delta b_1$ nonzero entries. Consequently every relation has weight exceeding $\Delta^2 k$. Every selected set of at most this many cells is uniform by full rank of its linear projection. The bit layers are independent.
+
+The four lookup tables return $U_i,V_j,h_{1,i},h_{2,j}$. Lupanov synthesis of a single Boolean table on $\log b$ bits uses $(1+o(1))b/\log b$ gates \cite{lupanov}. Applying it separately to every bit costs at most
+\[
+ (1+o(1))\left[(w d_2+d_1)\frac{b_1}{\log b_1}
+ +(w d_1+d_2)\frac{b_2}{\log b_2}\right].
+\]
+The mixed products equal $k$, while $b_1^2+b_2^2\le5k/2$; both logarithms are within one of $(\log k)/2$. The remaining inner products take $O(w\sqrt k)$ gates. The estimate for one lookup depends only on its input length, giving the stated uniformity.
+\end{proof}
+
+Now assume $s\ge n^2$ and put $v=\log(N/T)$. If $v\ge16$ choose a power of two $k\in[4T/v,8T/v]$ and set $w=\log(N/k)$. Then $v\le w\le2v$ and $4T\le kw\le16T$. The independent labels describe $kw$ random bits, so the corresponding independent table is almost surely hard. Also $\log k\ge(\log s)/2$ for large $n$, and $w\sqrt{k}=O(\sqrt{wT})=o(s)$ uniformly for $s\ge n^2$. Take $\rho$ small enough in Lemma~\ref{word} to fit the generator and an $O(w)$-gate equality check below $s$. Lemma~\ref{recording} gives $\Omega(k\sqrt{2^w})=\Omega(\sqrt{Nk})$, as required.
+
+It remains to treat $T/N\ge2^{-16}$, where the conclusion is linear. Use the same construction with $k=N$ and $w=1$ and regard the output bits as the table itself. It uses at most $(9\rho+o(1))N/n$ gates per table and is $\delta N$-wise uniform. Since $T=s\log s\le sn$, take $9\rho<2^{-16}$ to ensure all these tables are easy. Under the uniform law on all tables the probability of being easy is at most $2^{-\epsilon N+o(N)}$. A $q$-query quantum algorithm has an acceptance probability polynomial in the table entries of degree at most $2q$ \cite{bbcmw}. For $2q\le\delta N$ the two laws give exactly the same expectation on this polynomial. This proves the last range of Theorem~\ref{main}.
+
+\section{Below the addressing threshold}
+There is a second range where an unstructured search for a single flipped table entry gives the right query bound.
+\begin{theorem}\label{low}
+If $s\le n-\log n-2\log\log(n+2)$, then $Q(\mc_{n,s})=\Theta(\sqrt N)$. This also holds over the full binary basis.
+\end{theorem}
+\begin{proof}
+Each circuit with $s$ gates depends on at most $s+1$ raw inputs. The difference of the real multilinear forms of two distinct easy tables has degree at most $s+1$. A nonzero polynomial of degree $d$ on the Boolean cube is nonzero on at least $2^{n-d}$ points: choose the variables of a degree-$d$ monomial and fix every other input arbitrarily; its leading coefficient survives each restriction. Thus easy tables have pairwise distance at least $D=2^{n-s-1}$. Once $D\ge2$, an easy table and its $N$ distinct one-bit perturbations give the ordinary search lower bound.
+
+Write $H=\lceil\log |A|\rceil$. Sample $q=\lceil 4(N/D)(H+1)\rceil$ coordinates independently with replacement. The probability of missing the differences for any pair is at most $|A|^2 e^{-qD/N}<1$. Fix a successful list, which may contain repeats. Its induced tables uniquely identify the members of $A$. Kothari's identification bound applied on these $q$ positions costs
+\[
+ O\!\left(\sqrt{qH/(1+\log(q/H))}\right)
+ =O\!\left(2^{s/2}(H+1)/\sqrt{s+1}\right)
+\]
+queries on a promised easy input. The exact logarithmic denominator can equally be taken as $1+\log(q/(H+1))$ here; in the regime in which $|A|<q$, the standard $O(\sqrt q)$ bound suffices since $H+1=\Omega(s+1)$. Indeed arbitrary signs in a conjunction on $\lfloor s/2\rfloor$ fixed inputs give this last inequality, counting the negations as gates. No more than a constant number of original queries implements a query to the repeated list. Use the promised algorithm with its worst-case query cap and verify its proposed full table by Grover search, costing $O(\sqrt N)$ more. On a nonmember every proposed table fails verification with high probability. Standard constant amplification gives overall bounded error. The rooted enumeration gives $H+1=O((s+1)\log(n+s+2))$. In the stated range, $2^s(s+1)\log^2(n+s+2)=O(N)$, proving the bound.
+\end{proof}
+\section{Scope and previous work}
+Ambainis et al. studied membership in small on-sets and gave tight worst-case examples over families of prescribed size \cite{smallsets}. The oracle-identification upper bound applies to any known family with sufficiently few tables \cite{kothari}. Local pseudorandom generators had already been used to prove Boolean circuit lower bounds for MCSP \cite{cklm}. Our lower bound uses limited independence in the locations of sparse marks rather than in all the entries of the input. Recording-query arguments already give strong direct products for search, and earlier average-case composition results hide payloads in separate buckets \cite{hm,belovs}. In our experiment the unknown location is itself the label being correlated across buckets. This yields the $\sqrt{N/k}$ cost per bucket in Lemma~\ref{recording}. The dense regime uses limited independence of the entries directly. The uniform-slice strengthening is presently proved at polynomial gate budgets. The argument gives a worst-case total decision bound at larger budgets. Related problems which minimize quantum circuits change the circuit model being measured \cite{qmcsp}. The priority of the lower bounds in this manuscript remains under review.
+
+\begin{thebibliography}{9}
+\bibitem{kothari} R.~Kothari. An optimal quantum algorithm for the oracle identification problem. STACS, 2014. \href{https://doi.org/10.4230/LIPIcs.STACS.2014.482}{doi:10.4230/LIPIcs.STACS.2014.482}.
+\bibitem{grover} L.~K.~Grover. A fast quantum mechanical algorithm for database search. STOC, 1996. \href{https://arxiv.org/abs/quant-ph/9605043}{arXiv:quant-ph/9605043}.
+\bibitem{bbcmw} R.~Beals, H.~Buhrman, R.~Cleve, M.~Mosca, and R.~de Wolf. Quantum lower bounds by polynomials. J.~ACM, 2001. \href{https://arxiv.org/abs/quant-ph/9802049}{arXiv:quant-ph/9802049}.
+\bibitem{lupanov} O.~B.~Lupanov. \href{https://radiophysics.unn.ru/issues/1958/1/120}{On a method of circuit synthesis}. Izv.~Vyssh.~Uchebn.~Zaved.~Radiofizika 1 (1958), 120--140 (Russian).
+\bibitem{cklm} M.~Cheraghchi, V.~Kabanets, Z.~Lu, and D.~Myrisiotis. Circuit lower bounds for MCSP from local pseudorandom generators. ICALP, 2019. \href{https://doi.org/10.4230/LIPIcs.ICALP.2019.39}{doi:10.4230/LIPIcs.ICALP.2019.39}.
+\bibitem{qmcsp} N.-H.~Chia, C.-N.~Chou, J.~Zhang, and R.~Zhang. Quantum meets the minimum circuit size problem. ITCS, 2022. \href{https://doi.org/10.4230/LIPIcs.ITCS.2022.47}{doi:10.4230/LIPIcs.ITCS.2022.47}.
+\bibitem{smallsets} A.~Ambainis, K.~Iwama, M.~Nakanishi, H.~Nishimura, R.~Raymond, S.~Tani, and S.~Yamashita. \href{https://www.kecl.ntt.co.jp/people/tani.seiichiro/pdf/SmallOnSets.pdf}{Quantum query complexity of Boolean functions with small on-sets}. ISAAC, 2008.
+\bibitem{hm} Y.~Hamoudi and F.~Magniez. \href{https://arxiv.org/abs/2002.08944}{Quantum time-space tradeoff for finding multiple collision pairs}. TQC, 2021.
+\bibitem{belovs} A.~Belovs, G.~Brassard, P.~H{\o}yer, M.~Kaplan, S.~Laplante, and L.~Salvail. Provably secure key establishment against quantum adversaries. TQC, 2017. \href{https://doi.org/10.4230/LIPIcs.TQC.2017.3}{doi:10.4230/LIPIcs.TQC.2017.3}.
+\end{thebibliography}
+\end{document}

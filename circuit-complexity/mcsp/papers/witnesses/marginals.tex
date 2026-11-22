@@ -1,0 +1,39 @@
+\section{The cost of prescribing every coordinate mean}\label{sec:marginal}
+Let $p=(p_1,\ldots,p_N)\in[0,1]^N$. We seek a distribution on small deterministic address circuits whose output at each site $i$ has expectation exactly $p_i$. Equivalently, $p$ must lie in the convex hull of their Boolean truth tables. Let $C_{\rm mix}(p)$ be the least gate budget allowed for every member of the mixture. Write $H_2$ for binary entropy and let
+\[
+ J(p)=N H_2(\bar p)-\sum_{i=1}^{N}H_2(p_i),\qquad
+ \bar p=N^{-1}\sum_i p_i .
+\]
+The quantity $J(p)/N$ is the mutual information between a uniform site and its prescribed random output. A constant vector has $J(p)=0$ and uses a mixture of the two constant circuits. In contrast, if every $p_i$ equals zero or one, any exact mixture is supported on the single word $p$.
+
+\begin{theorem}\label{th:marginal}
+For every $p\in[0,1]^N$,
+\[
+ C_{\rm mix}(p)\le J(p)/n+O(N\log n/n^2).
+\]
+For a uniform permutation $\pi$ of its coordinates, $n C_{\rm mix}(p\circ\pi)/N-J(p)/N$ tends to zero in probability, uniformly over sequences $p$. The same asymptotic holds for a most expensive permutation.
+\end{theorem}
+\begin{proof}
+Write $s$ for the claimed upper bound with a sufficiently large absolute constant. By separation of a point and a compact convex polytope, it suffices, for every real score vector $a$, to build one $y$ of circuit size at most $s$ with $\sum_i a_i y_i\ge\sum_i a_i p_i$. For a positive score define the favorable outcome to be one and put $p_i'=p_i$; at a negative score use zero and put $p_i'=1-p_i$. Either choice works at a zero score. Apart from the same additive constant on both sides, the scores now sum $|a_i|$ times the favorable indicator or probability.
+
+Put $B=n^2$ and round each $p_i'$ upwards to $q_i=\lceil Bp_i'\rceil/B$. Form strata by $q_i=q$ and the favorable bit, and sort the sites within each stratum by decreasing $|a_i|$. Divide the stratum into consecutive blocks of length $B$, except possibly its last block. Pin the first and last blocks to the favorable bit. In each other block prescribe exactly $q B$ favorable outcomes. Every resulting word has the following prefix property in each stratum: its number of favorable outcomes on the prefix is at least the sum of the original favorable probabilities on that prefix. Indeed the initial full block creates slack $(1-q)B$ against the constant fractional benchmark $q$. In a later full block the largest possible deficit on a partial prefix is at most $q(B-qB)\le(1-q)B$, and the complete block has zero deficit. The pinned last block creates no deficit from its starting value. A single shorter stratum is pinned entirely. Summation by parts with the decreasing weights now gives the required score inequality.
+
+These are exact quotas of the form in Theorem~\ref{th:quota}. At most $O(B^2)$ sites are pinned because there are $2(B+1)$ strata. The mean output weight differs from $\bar p$ by $O(B^{-1}+B^2/N)$. In the nonpinned blocks, $\log\binom B{qB}=B H_2(q)+O(\log(B+1))$. The binary entropy continuity bound $|H_2(u)-H_2(v)|\le H_2(|u-v|)$ and $H_2(p)=H_2(1-p)$ give
+\[
+ H-\log T\le J(p)+O(N\log n/n^2+\operatorname{poly}(n)).
+\]
+The quota theorem and the separation criterion prove exact containment. In particular no uniform lower bound on $p_i$ or $1-p_i$ was required.
+
+For the matching typical lower bound, bin the original coordinates by rounding $p_i$ to a grid of mesh $1/n^2$. Write $Z$ for the bin of a uniformly chosen position, and permute these bins along with their original values. For a fixed Boolean word $y$, write $Y$ for its output at that same uniform position. At every empirical joint type, the probability of the type under this permutation is at most $2^{-NI(Z;Y)+O(n^3)}$. In fact it equals a product of cell binomial coefficients divided by the overall weight-layer size. There are at most $(N+1)^{O(n^2)}$ possible types. A union bound over all circuits of size at most $s=O(N/n)$ and all types shows with probability $1-o(1)$ that every such $y$ has $NI(Z;Y)\le sn+o(N)$; the error is uniform and deterministic in $s$ by also union-bounding its $O(N)$ possible values.
+
+For fixed positions, mixing words amounts to mixing their binary-output channels with the input-bin distribution held fixed. Mutual information is convex in this channel, by the log-sum inequality. A mixture with means $p\circ\pi$ has channel output probability within $1/n^2$ of every prescribed $p_i$ in each bin. Entropy continuity therefore gives $NI(Z;Y)=J(p)+o(N)$ for that mixture. Hence $sn\ge J(p)-o(N)$ with the asserted probability. The deterministic upper bound then also identifies the worst placement.
+\end{proof}
+
+\paragraph{Pointwise approximation of a Boolean target.} Fix $0<D<1/2$. Every Boolean target $f$ has a distribution on circuits of size at most $(1-H_2(D))N/n+O(N\log n/n^2)$ with error exactly $D$ at every address: apply the theorem to $p_i=D+(1-2D)f_i$. Conversely, if a distribution on circuits of size $s$ achieves at most $D$ error at every address, some member is within Hamming distance $DN$ of $f$ by averaging. The volume of a Hamming ball and the circuit census show that almost every $f$ needs $s\ge(1-H_2(D)-o(1))N/n$. Thus this size is asymptotically optimal even under the one-sided relaxation of the numerical error bound from equality to inequality. The model permits an arbitrary distribution over gate lists. Requiring a single fixed gate list with explicit coin wires is a different model: at error less than one half each such list determines only one target by pointwise majority.
+
+\paragraph{Exactly uniform choice among a prescribed number of circuits.}
+Suppose $m p_i$ is an integer at every site for some positive integer $m$. We can require the mixture to choose uniformly from $m$ circuits while retaining the leading upper bound whenever $m\to\infty$. More quantitatively, put $\xi=m^{-1/2}+1/n$. For $\xi<1/2$ the additional size over $J(p)/n$ is $O((H_2(\xi)+\log n/n)N/n)$, uniformly in $m$.
+
+To prove this, cut the addresses into between $n$ and $2n$ equal dyadic chunks. On each chunk independently consider $m$ draws from the exact-mean ensemble of Theorem~\ref{th:marginal}, applied at the shorter address length. The expected sum over chunk sites of the difference in absolute value between the actual and desired number of ones is at most the chunk length times $\sqrt m/2$, by binomial variance. Fix draws satisfying this aggregate bound on each chunk. Flip exactly that many entries among the $m$ rows to correct every site count. We next permute the rows of each whole chunk, preserving the counts at its sites. At each chunk assign its rows in decreasing order of the number of corrections to global rows in increasing order of their current correction totals. The range of these totals stays at most the maximum chunk length: for two previously ordered totals, opposing the order of their new increments bounds the new absolute difference by the larger of the two old ranges. Thus every global row has at most $N/(2\sqrt m)+N/n$ corrections.
+
+On each row concatenate the originally drawn chunk circuits. Each has address width $n-O(\log n)$ and their total information budgets are at most $J(p)$ by concavity of $H_2$. The address selectors and total lookup errors fit $O(N\log n/n^2)$ gates. The correction table on the row is sparse. Apply Theorem~\ref{th:quota} with singleton quotas to that particular correction word to synthesize it with at most $H_2(\xi)N/n+O(N\log n/n^2)$ gates. XOR it with the concatenated circuit. The $m$ corrected rows have exactly the prescribed coordinate means. Repeated rows may be retained as distinct tickets in the uniform choice. For an arbitrary real $p$, rounding to the $1/m$ grid gives coordinate error at most $1/m$ and increases $J(p)$ by at most $O(NH_2(1/m))$.

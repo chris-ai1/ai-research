@@ -1,0 +1,45 @@
+\section{Prescribing the joint law inside each cell}
+Let the cells be disjoint with $m_i$ sites, $\sum_i m_i=N$, and let $p_i$ be an arbitrary distribution on binary words of length $m_i$. A mixture of address circuits must have precisely marginal law $p_i$ on cell $i$. Different cells may be correlated in the mixture. Let $\rho=N^{-1}\sum_i\mathbb E_{p_i}|Y_i|$ and define
+\[
+ J_{\rm cell}(p)=N H_2(\rho)-\sum_i H(p_i).
+\]
+\begin{theorem}\label{th:cellmix}
+If $\max_i m_i=o(N)$, the prescribed cell laws are realized exactly by a distribution on Boolean circuits, each of size at most $(J_{\rm cell}(p)+o(N))/n$.
+\end{theorem}
+\begin{proof}
+A separating linear score on the space of marginal vectors has the form $\sum_i a_i(Y_i)$, for arbitrary real-valued functions $a_i$ on their cells. We construct a small table scoring at least $\sum_i\mathbb E_{p_i}a_i$. Put $m_0=\max_i m_i$ and group whole cells into clusters of size comparable to $L=\lceil\sqrt{Nm_0}\rceil$. A greedy filling to size at least $L$, adding the final short remainder to the preceding cluster, gives all cluster sizes between $L$ and $3L$ for large $n$.
+
+Inside one cluster choose independently from $p_i'=(1-\eta)p_i+\eta\delta_{z_i}$, where $z_i$ maximizes $a_i$ and $\eta=(m_0/L)^{1/8}$. Define the nonnegative score loss $d_i=\max a_i-a_i$. The expected aggregate loss under this perturbation is $(1-\eta)$ times its original expectation. Markov's inequality shows that the cluster meets its original expected score with probability at least $\eta$; zero original loss gives probability one. The bound is independent of the units or ranges of the scores.
+
+For the same draw put $S_i=-\log p_i'(Y_i)$. Its tail obeys $\Pr[S_i>m_i+u]\le2^{-u}$ for $u\ge0$, by counting at most $2^{m_i}$ atoms. Thus the variance of its sum is $O(\sum_i m_i^2)=O(m_0L)$, as is the variance of the total number of ones in the cluster. The expected surprise is at least $(1-\eta)\sum_i H(p_i)$ by concavity, and the expected weight differs from its original value by at most $3\eta L$. Chebyshev's inequality with tolerance $\eta L$ fails with probability $O((m_0/L)^{3/4})=o(\eta)$ for either quantity. Thus with probability at least $\eta/2$ a word meets the score, has its original expected weight up to $O(\eta L)$, and has surprise at least $\sum_i H(p_i)-O(\eta L)$. There are at least $2^{\sum_i H(p_i)-o(L)}$ such cluster words. Restricting them to a single weight loses at most a factor $3L+1$.
+
+Use these words as an allowed relation on each cluster. Their product has $T\ge2^{\sum_i H(p_i)-o(N)}$ words, all of weight $N(\rho+o(1))$. Every word in the product attains the separating score. The clusters have $o(N)$ sites, so Theorem~\ref{th:relations} at $\lambda=0$ supplies the required small word. Separation proves exact simultaneous feasibility of the marginal vectors.
+\end{proof}
+
+
+\begin{theorem}[Exact asymptotic rate for arbitrary local marginal laws]\label{th:qconv}
+For each length separately, define
+\[
+ R_*(p)=\min\{r:p\in\operatorname{conv}\{q:J_{\rm cell}(q)\le r\}\}.
+\]
+Here $q$ ranges over the product of the local probability simplices for the actual cells. Let $s_{\min}$ be the smallest budget for a distribution on Boolean circuits with marginals $p$. Every placement has $s_{\min}\le(R_*(p)+o(N))/n$ if $\max_i m_i=o(N)$. Under a uniform permutation of the sites, $n s_{\min}/N-R_*(p)/N$ tends to zero in probability. There is no restriction on the number of distinct marginal laws or on their atom probabilities.
+\end{theorem}
+\begin{proof}
+The sublevel sets are compact. In each finite dimension, take a finite convex decomposition of $p$ into laws $q$ of cost at most $R_*(p)$. The error in Theorem~\ref{th:cellmix} is uniform in $q$. Mixing its circuit ensembles gives the upper bound.
+
+For the converse take $r<R_*(p)$. A separating functional gives a real score $A(y)=\sum_i a_i(y_i)$ whose prescribed expectation $A(p)$ exceeds the maximum for marginal vectors in the convex hull at level $r$. For each integer weight $W$, let $E_W$ be the set of weight-$W$ words with score at least $A(p)$. If it is nonempty, take the uniform distribution on $E_W$ and let $q_i$ be its cell marginals. Then $A(q)\ge A(p)$, so $J_{\rm cell}(q)>r$. Entropy subadditivity gives
+\[
+ \log |E_W|\le\sum_i H(q_i)<N H_2(W/N)-r.
+\]
+It follows that $|E_W|/\binom NW\le(N+1)2^{-r}$, uniformly in $W$. When the layout is permuted each fixed Boolean word of weight $W$ lands uniformly on this layer relative to the score. A union bound over all words of circuit size $s$, using the census, shows that with probability at least $1-(N+1)2^{sn-r+o(N)}$ none obtains the prescribed expected score. Then no distribution over them can realize the marginals. Choose $r$ between $sn$ and $R_*(p)$ with a positive linear gap whenever $sn\le R_*(p)-\epsilon N$. This proves the claim, including varying cell sizes and target laws.
+\end{proof}
+
+For singleton cells $J_{\rm cell}$ is mutual information times $N$, convex in the binary-output channel. Its sublevel already is convex and the theorem reduces to Section~\ref{sec:marginal}. For general cells, the distinction matters. Put $u=N^{-1}\sum_i\mathbb E_{q_i}|Y_i|$. Then
+\[
+ J_{\rm cell}(q)=\sum_i D_2\!\left(q_i\,\Vert\,\operatorname{Ber}(u)^{\otimes m_i}\right),
+\]
+where $D_2$ is relative entropy in bits. Its zero set consists of product-bit cell laws sharing one bias $u$. The exact finite-length condition $R_*(p)=0$ therefore means there is one measure $\pi$ on $[0,1]$ for which, simultaneously in every cell,
+\[
+             p_i=\int \operatorname{Ber}(u)^{\otimes m_i}\,d\pi(u).
+\]
+A common random choice can create dependence inside the prescribed cell marginals.

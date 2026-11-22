@@ -1,0 +1,51 @@
+\section{An exact constructive bound for every reference}
+Write $d=|\mathcal X|$, $H_c=H_{P_N}(Y\mid X)$ and $I_N=I_{P_N}(X;Y)$. The information quantities in this section use the actual integer counts at length $N$.
+\begin{theorem}\label{t:construct}
+For every reference $X$ of the prescribed marginal, and $0\le\lambda\le1$, at least
+\[
+       2^{\lambda N H_c-O_d(N\log n/n)}
+\]
+distinct tables exactly realize $P_N$ and each has at most
+\[
+        \frac{N}{n}\left(I_N+\lambda H_c+
+                      O_d\!\left(\frac{\log n}{n}\right)\right)
+\]
+gates. Given the reference and its target counts, one table and a circuit for it at $\lambda=0$ can be constructed deterministically in $N\operatorname{poly}_d(n)$ time on a random-access machine with $O(n)$-bit words. Charging a polynomial in $n$ for operations on these words gives the same stated time form. In particular the construction is nearly linear in the length of the explicit reference table.
+\end{theorem}
+The proof uses a different number of stored bits per block. The addresses of those bits must themselves be computable by a small circuit, as detailed below.
+
+\paragraph{Exact rounding.} Take a power of two $b=\Theta_d(n)$, with the upper constant sufficiently small that $\operatorname{poly}_d(n)(4d)^b=o(N/n^3)$. Divide the addresses into consecutive blocks of length $b$. If class $x$ contains $m_{Jx}$ positions in block $J$ and its desired global density of ones is $w_x$, allocate either $\lfloor m_{Jx}w_x\rfloor$ or $\lceil m_{Jx}w_x\rceil$ ones there. Choose upward roundings so their class total is exactly $NP_N(x,1)$. This is possible because the unrounded sum is that integer. Empty classes need no choice. Denote the resulting joint type in block $J$ by $P_J$ and its information quantities by $I_J,H_{c,J}$. Averaging its entries recovers $P_N$ exactly. Replacing each block's unrounded channel $w_x$ by its rounded counts moves its joint type in total variation by $O_d(1/b)$ and preserves its source marginal. Uniform entropy continuity, or concavity of binary entropy applied to the changed fraction, gives
+\[
+ \left|\sum_J bH_{c,J}-NH_c\right|=O_d(N\log b/b).
+\]
+The block output entropies average to at most the global output entropy, by concavity. Consequently $\sum_J bI_J\le NI_N+O_d(N\log b/b)$.
+
+\paragraph{One dictionary for a block type.}
+For one of the at most $(b+1)^{2d}$ types $P_J$, let $M$ be the number of binary words of its output weight. Each source word of the correct marginal has exactly $K$ compatible binary words, the product of the binomial counts for its classes. Put $v=K/M$ and $L=\max(1,\lfloor K^\lambda/2\rfloor)$. There is a dictionary of at most $O_d(bL/v)$ distinct words containing at least $L$ compatible choices for each permissible source word.
+
+Here is a deterministic construction. A source word is deficient if fewer than $L$ of its compatible words have been selected. Each deficient source still has at least $K-L+1\ge K/2$ compatible unselected words. Greedily add a word serving the greatest number of deficient sources. If the sum of their deficits is $D$, at least $D/L$ sources are deficient, and averaging over unselected words shows a decrease of at least $vD/(2L)$. Initially $D\le Ld^b$. This proves the stated size bound by multiplicative decrease, and termination is guaranteed by selecting the whole layer if necessary. Constructing the dictionary and a map from each source word to one selected compatible entry takes at most $\operatorname{poly}_d(n)(4d)^b$ elementary operations per type by direct enumeration. For the uniform time assertion $L=1$.
+
+An index into this dictionary has width $\ell_J\le -\log v+\lambda\log K+O_d(\log b)$. The multinomial estimates $\log M=bH_{P_J}(Y)+O(\log b)$ and $\log K=bH_{c,J}+O_d(\log b)$ give
+\[
+ \ell_J\le b(I_J+\lambda H_{c,J})+O_d(\log b),
+ \qquad \log L\ge\lambda bH_{c,J}-O_d(\log b).
+\]
+Independently choose a compatible entry in each block. Cartesian products yield the claimed number of distinct full tables, with exact joint type and total index length $D_*:=\sum_J\ell_J\le N(I_N+\lambda H_c)+O_d(N\log n/n)$.
+
+\paragraph{Locating a variable-width index.}
+For every type $t$ having $m_t$ blocks and dictionary width $\ell_t$, store $\ell_t$ binary vectors of length $m_t$. Position $j$ in each vector gives one bit of the index chosen for the $j$th block of this type. Their combined length is exactly $D_*$. To locate $j$, group consecutive blocks into superblocks of $n^{O_d(1)}$ blocks, taking a power of two between $n^{2d+5}$ and $2n^{2d+5}$. A directory over all $N/b$ blocks stores the type and the ordinal of the block among those of its type within its superblock, using $O_d(\log n)$ bits per block. A second table over superblocks gives, for every type, the number of earlier blocks of this type, using at most $n+1$ bits per type. Its total length is $O(N/n^2)$ because there are $O_d(n^{2d})$ types. Query these tables in parallel, select the appropriate count and add the local ordinal. This yields the global ordinal $j$. Evaluate the message vectors there and select the family of the correct type. All selectors, address additions, and the common local dictionaries have size $o(N/n^2)$. In particular the dictionary decoder may store its output word for each index in a Boolean table of size at most $\operatorname{poly}_d(n)2^b$.
+
+\paragraph{Paying for the lookup circuits.}
+A binary vector of length $2^m$ on $m$ input bits has an explicit lookup circuit with at most
+\[
+ \frac{2^m}{m}\left(1+O\!\left(\frac{\log m}{m}\right)\right)
+\]
+gates, constructible in $2^m\operatorname{poly}(m)$ time. For completeness split off $k=\lceil3\log m\rceil$ low address bits. Precompute their minterms and the high-address minterms in $O(2^k+2^{m-k})$ gates. Partition the $2^k$ low minterms into groups of length $g=\lfloor m-8\log m\rfloor$. Precompute all subset disjunctions in every group in $O(\lceil2^k/g\rceil 2^g)$ gates. For each of the $2^{m-k}$ high addresses, take the OR of the prescribed subset choices, one from each group, and guard by its high-address minterm. The final OR gives the lookup. The main cost is $2^m/g$, and the other gates fit the displayed bound. Bounded $m$ can use direct lookup. This is the usual Lupanov synthesis construction.
+
+Across all message and directory bit vectors there are only $\operatorname{poly}_d(n)$ binary vectors. For arbitrary vector lengths use dyadic prefix decomposition, splitting each into at most $n+1$ address-aligned pieces and selecting by the address prefix. Choose a constant $A$ larger than the polynomial degrees in this piece count plus four. All pieces shorter than $N/n^A$ cost together $O(N/n^2)$ even at $O(n)$ gates per position. Each larger piece has arity at least $n-A\log n$ and costs its length times $n^{-1}(1+O_d(\log n/n))$. The first directory has $O_d((N/b)\log n)$ bits. Together the three groups of lookups therefore cost at most
+\[
+             D_*/n+O_d(N\log n/n^2).
+\]
+Straight scans compute the rounded counts, the type ordinals, and the data to place in the vectors. Precomputing the small dictionaries and translating the vectors into a gate list fits $N\operatorname{poly}_d(n)$ time. A gate index or an address has $O(n)$ bits. This completes the constructive bound.
+
+\paragraph{The supercritical list.} In Theorem~\ref{t:main} if $H(Y\mid X)>0$ and $I<c$, choose $\lambda$ with $I+\lambda H(Y\mid X)<c$ and approach $\lambda=(\min(c,H_Y)-I)/H(Y\mid X)$ from below. Theorem~\ref{t:construct} supplies the lower exponent for every reference. If $H(Y\mid X)=0$ and $I<c$, take $\lambda=0$ to obtain one compatible table; the counting upper bound is zero on the logarithmic scale. The typical upper bound also bounds the minimum. This proves the first assertion of Theorem~\ref{t:main}.

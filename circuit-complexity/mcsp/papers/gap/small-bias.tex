@@ -1,0 +1,70 @@
+\section{Optimal local bias and unrestricted threshold weight}
+Let $N=2^n$. For a law $\nu$ on $N$-bit words write
+$\beta(\nu)=\max_{\emptyset\ne S\subseteq[N]}|\mathbb E_\nu(-1)^{\sum_{i\in S}x_i}|$.
+Fixing the random seed of a local generator must give a Boolean address circuit of size at most $s$. Classical small-bias generators give short seeds; Naor and Naor, \emph{Small-bias probability spaces}, SIAM J. Comput. 22 (1993), 838--856, and the local-generator approach of Cheraghchi, Kabanets, Lu and Myrisiotis, ICALP 2019, give relevant context. We count gates of a single output word as a function of its address and determine the leading exponential rate.
+\begin{theorem}
+If $\log s/\log n\to\infty$ and $s\log s\le(1-\eta)N$ for a fixed $\eta>0$, then
+\[
+  -\log_2\inf_{\operatorname{supp}\nu\subseteq A_s}\beta(\nu)
+     =(1/2+o(1))s\log_2 s .
+\]
+The construction also gives the lower bound on this negative logarithm whenever $s\log s=O(N)$ in the same growth range. All gate estimates use the counted De Morgan basis.
+\end{theorem}
+\begin{proof}
+Fix a sufficiently small constant $\delta>0$. Put $k=\lfloor(1-\delta)\log_2s\rfloor$, $K=2^k$, $m=\lfloor(1-\delta)k\rfloor$ and $q=2^m$. Use a strong seeded extractor on $n$ bits for min-entropy $k$, with error $\delta$, output $m$ bits and $D=\operatorname{poly}_\delta(n)$ seeds, computable in $\operatorname{poly}_\delta(n)$ gates (including any hardwired preprocessing). These parameters follow, for example, from D. Doron and J. Ribeiro, \emph{Nearly-linear time seeded extractors with short seeds}, ECCC TR24-176, revision 2 (2025). Write $h_j$ for the map at seed $j$. For any set $S$ of at least $K$ addresses, the pairs $(j,h_j(i))$ over $i\in S$ occupy at least $(1-\delta)Dq$ distinct bins: the joint seed-output law on a uniform element of $S$ is within $\delta$ of uniform.
+
+Set $\ell=n^2$ and use $R=\lfloor (1-\delta)s m/(2\ell Dq)\rfloor$ independent copies of this array of bins. Thus the total number of bins $B=RDq$ satisfies $B=(1-\delta+o(1))sm/(2\ell)$, since $s/q$ dominates every fixed polynomial in $n$. In each bin $(a,j,u)$ choose two independent uniform elements $w_{a,j,u},v_{a,j,u}$ of $\mathbb F_{2^\ell}$. The output bit at the address interpreted as the integer $0\le i<N$ is the sum over copies $a$ and extractor seeds $j$ of
+\[
+  \operatorname{Tr}(w_{a,j,h_j(i)}v_{a,j,h_j(i)}^i),
+\]
+plus an independent $K$-wise uniform bit at $i$. For the latter evaluate one random polynomial of degree $K-1$ on the distinct addresses in $\mathbb F_{2^n}$ and project to one nonzero binary linear functional. This costs $O(K\operatorname{poly}(n))=o(s)$ gates by Horner evaluation. Use $v^0=1$ also for $v=0$.
+
+For fixed $a,j$, the $2\ell$ seed bit tables indexed by $u$ each have $q$ bits and, by ordinary single-output Lupanov synthesis, cost at most $(1+o(1))q/m$ gates each. The resulting total is $(1+o(1))2\ell B/m$. All $RD=B/q$ trace evaluations by repeated squaring, all extractor evaluations, and the final XOR cost $O_\delta((B/q+D)\operatorname{poly}_\delta(n))=o(s)$. This verifies the size cap even with counted negations.
+
+Every nonempty $S$ of size at most $K$ has zero bias by the independent summand. For larger $S$, every occupied bin has a nonempty set $S'$ of distinct addresses. Averaging its trace sign over $w,v$ gives the probability that $\sum_{i\in S'}v^i=0$. This is at most $2^{n-\ell}$ by the univariate root bound. Independence across the bins gives total bias at most $2^{-(\ell-n)(1-\delta)B}$. Sending $\delta$ to zero after the asymptotic limit proves the construction bound. Conversely Fourier Parseval applied to the density $2^N\nu$ yields
+\[
+ \beta(\nu)^2\ge\frac{2^N/|A_s|-1}{2^N-1}.
+\]
+The rooted census $\log_2|A_s|\le(1+o(1))s\log_2s$ finishes the stated equality.
+\end{proof}
+
+For a threshold polynomial use signs and require margin at least one on the promise. Its weight is the sum of absolute real coefficients in the multilinear Walsh basis; write $W_d$ for the minimum weight at degree at most $d$. The unrestricted degree is $N$.
+\begin{theorem}
+Under the preceding growth assumptions, if $s\le t$ and
+$|A_t|2^{-N}=o(2^{-s\log_2 s/2})$, the unrestricted minimum weight for distinguishing $A_s$ from the complement of $A_t$ satisfies
+\[
+ \log_2 W_N=(1/2+o(1))s\log_2s.
+\]
+For polynomially separated $s=N^{a+o(1)}$, $t=N^{b+o(1)}$, $0<a<b<1$, one also has $\log_2 W_{Cs}=\Theta(s\log s)$ for sufficiently large constant $C$ whenever the bounded-ratio gate assumptions of the rational-degree theorem hold.
+\end{theorem}
+\begin{proof}
+The function $2\mathbf1_{A_s}-1$ separates the promise. Parseval and Cauchy--Schwarz show that the Walsh weight of $\mathbf1_{A_s}$ is at most $\sqrt{|A_s|}$, giving the upper bound. For the converse compare the constructed generator with the uniform law conditioned on $A_t^c$. Every nonempty parity has conditional bias at most $|A_t|/(2^N-|A_t|)$. The difference of expectations of a separating polynomial is at least two, and is at most its weight times the sum of these two bias bounds. The constant coefficient cancels. For the low-degree upper in the polynomial-gap case use the preceding Gram separator divided by $M=|A_s|$; its feature dimension and inverse ridge are both at most $2^{O(s\log s)}$, so its Walsh weight is also at most that size after rescaling to unit margin.
+\end{proof}
+
+For comparison, the one-hot code gives a degree-dependent lower bound without a seeded extractor. If it matches independent uniform labels on $D$ buckets of size $H$, its hard coset has the same property. For a character testing at most $d$ raw cells let $Y$ count tested marks. The two laws match the binomial moments of $Y$ through $D$ and $\mathbb E\binom YD\le\binom dD H^{-D}$. Indeed $D$ designated cells can all be marked only when in distinct buckets. Truncate $(-1)^Y=\sum_j(-2)^j\binom Yj$ just before $j=D$. The error vanishes for $Y<D$ and is at most $(1+3^D)\binom YD$ otherwise, since $\binom Yj\le\binom YD\binom Dj$ for $j\le D\le Y$. Thus every margin-one threshold polynomial of degree $d\ge D$ has weight at least $(DH/(Cd))^D$ for an absolute $C$.
+
+\section{Computing MCSP from XOR shares}
+Alice receives a full word $X$, Bob receives $Y$, and the promised input to MCSP is $X\oplus Y$. Write $T=s\log_2 s$. Suppose $\log s/\log n\to\infty$, $T=o(N)$, $s\le t$, and $|A_t|=o(2^N)$. Then bounded-error interactive randomized communication is $(1+o(1))T$ bits. Interactive quantum communication with prior entanglement is $(1/2+o(1))T$ qubits. One-way quantum communication without prior entanglement, even with public randomness, is $(1+o(1))T$ qubits.
+
+For the upper bounds Alice sends $\lceil\log_2|A_s|\rceil+2$ public-coin parity fingerprints. Bob accepts if some easy word agrees with the syndrome of $X\oplus Y$. The union bound gives error at most $1/4$, including for exact MCSP when $t=s$. Entanglement-assisted superdense coding sends these bits in half as many qubits to within rounding.
+
+For the lower bounds compare the laws $(X,X\oplus Z)$ for uniform $X$ independent of $Z$, with $Z$ from the local generator or uniform. The latter violates the hard promise with probability $o(1)$. The bias of the generator is $\beta=2^{-(1/2-o(1))T}$. Let $U$ denote uniform measure on words, and write $\widehat f(S)=\mathbb E_U f\chi_S$. For vector-valued square-integrable maps $u,v$, independence and Parseval bound the change in expectation of $\langle u(X),v(Y)\rangle$ between these two worlds by
+\[
+ \beta\Big(\mathbb E_U\|u\|_2^2\Big)^{1/2}
+       \Big(\mathbb E_U\|v\|_2^2\Big)^{1/2}.
+\]
+Apply this first to the indicators of the sides of a leaf rectangle of a deterministic $c$-bit protocol. The bound is $\beta\sqrt{U(A)U(B)}$; summing over the at most $2^c$ disjoint rectangles gives at most $\beta2^{c/2}$ by Cauchy--Schwarz. Public coins are mixtures and obey the same bound. For an arbitrary interactive $c$-qubit protocol, Linial and Shraibman's factorization theorem for its acceptance matrix gives vectors with the product of their maximum norms at most $2^c$, with or without prior entanglement (see A. Sherstov, \emph{Strong direct product theorems for quantum communication and query complexity}, Theorem 2.6). The preceding Fourier bound is then $\beta2^c$.
+
+For one-way communication without entanglement take the two vector factors to be the density matrix $\rho_x$ of the $c$-qubit message and Bob's acceptance effect $0\le M_y\le I$, using the Hilbert--Schmidt inner product. Their norms are at most $1$ and $2^{c/2}$ respectively. This gives the asserted sharper one-way lower bound. In every case bounded-error correctness requires a constant distinction.
+
+\paragraph{Unbounded error.}
+Suppose additionally $|A_t|/2^N=o(2^{-T/2})$. The sign-rank of every completion of the XOR-share promise is at least $2^{(1/2-o(1))T}$, and one completion has sign-rank at most $2|A_s|+1$. Thus private-coin unbounded-error communication is between $(1/2-o(1))T$ and $(1+o(1))T$ bits by the sign-rank characterization of R. Paturi and J. Simon, \emph{Probabilistic communication complexity}, J. Comput. System Sci. 33 (1986), 106--123. See also A. Chattopadhyay and N. Mande, \emph{A short list of equalities induces large sign-rank}, SIAM J. Comput. 51 (2022), on a different nonsymmetric XOR function.
+
+Indeed, start with $J_{xy}=2^N\nu(x\oplus y)-1$. Its operator norm is at most $2^N\beta$, by Fourier diagonalization and cancellation of the constant term. On easy pairs raise the entry to $1$ when needed. On unspecified pairs choose the prescribed completion sign with magnitude one. Each correction has magnitude at most $2$ since the law is supported on $A_s$. Every row and every column contains at most $|A_t|$ changed entries, whether or not the completion is translation invariant. The operator norm consequently increases by at most $2|A_t|$. The generalized Forster bound gives sign-rank at least $2^N/\|J_{\mathrm{corrected}}\|_{\mathrm{op}}$ since the minimum magnitude is one or greater. For the upper bound fix any injection $I$ from words to integers. The sign of
+\[
+ \frac12-\prod_{e\in A_s}(I(x)-I(y\oplus e))^2
+\]
+is positive precisely on the easy pairs, and the polynomial in $I(x)$ has at most $2|A_s|+1$ powers.
+
+For the full exact matrix the exponent $T/2$ is optimal for this whole-matrix spectral certificate. In fact any sign-compatible witness of minimum magnitude one can be averaged over simultaneous translations without increasing operator norm or reducing the minimum magnitude. Its resulting entries have the form $g(x\oplus y)$. If its normalized norm is $\epsilon$, then every Walsh coefficient of $g$ is at most $\epsilon$ in magnitude. Writing $p=|A_s|/2^N$, the negative entries on $A_s^c$ give
+$1-p-\epsilon\le\mathbb E_U g\mathbf1_{A_s}\le\epsilon\|\widehat{\mathbf1}_{A_s}\|_1\le\epsilon\sqrt{|A_s|}$. Improving sign-rank by a leading factor in the exponent would thus require further information.

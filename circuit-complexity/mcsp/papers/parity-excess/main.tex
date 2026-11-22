@@ -1,0 +1,58 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,microtype}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\Prob}{\mathop{\rm Pr}}
+\title{The gate cost of satisfying a few parity constraints on a Boolean truth table}
+\author{Research manuscript}\date{22 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+A consistent system of $r$ parity constraints on the $2^n$ values of an unknown Boolean function always has a solution computable in $n+2^{O(r)}$ gates. We give systems requiring $n+2^{\Omega(r)}$ gates when $r\to\infty$ and $r\le c\log n$. The constraints in the lower bound are parities on coordinate faces. A uniformly random coordinate face has odd intersection with a given read-once function with probability exponentially small in its number of variables, even over the full binary basis. We combine this estimate with a compression of the parity marginals of circuits having few gates beyond a tree. It also implies that every distribution supported on functions of at most $(1+c)n$ gates has some raw truth-table parity with bias $1-2^{-\Omega(n)}$ or larger.
+\end{abstract}
+All logarithms have base two. Constants, arbitrary fanout and arbitrary binary Boolean gates are allowed for lower bounds; a signed unary or constant wire can be absorbed into adjacent truth tables. Upper bounds hold for counted AND, OR and NOT gates. Write $L(n,r)$ for the maximum, over rank-$r$ systems and their right-hand sides, of the minimum circuit size of a solution. Since the equations concern all $N=2^n$ raw truth-table bits, rank $r$ means that unrestricted solutions exist for every prescribed syndrome.
+
+\begin{theorem}\label{main}
+For a sufficiently small absolute $c>0$, uniformly as $r\to\infty$ with $r\le c\log n$,
+\[
+                       L(n,r)=n+2^{\Theta(r)}.
+\]
+Equivalently, as $e\to\infty$ with $e\le c'n$ for a sufficiently small absolute $c'>0$, the minimum rank of a consistent system missing every size-$(n-1+e)$ table is $\Theta(\log(e+2))$. The upper bound on the latter rank can be attained using only face parities.
+\end{theorem}
+
+\section{The distribution of face parities}
+A random coordinate face is sampled by independently choosing, for each coordinate, one of the restrictions $0,1,*$ with equal probability; $*$ leaves it free. The parity of a function on a face is the sum of its values there in $\F$. This statistic is the highest multilinear coefficient in the algebraic normal form of the restricted function. It differs from its real correlation with parity. M.~Dubiner and U.~Zwick, \href{https://doi.org/10.1017/S0963548300001358}{\emph{How do read-once formulae shrink?}} (1994), bound the expected number of essential variables remaining in a read-once de Morgan restriction. R.~Impagliazzo and V.~Kabanets, \href{https://eccc.weizmann.ac.il/report/2013/163/revision/2/download/}{\emph{Fourier concentration from shrinkage}}, obtain real Fourier tail bounds for de Morgan formulas. Our elementary estimate works for all binary gates, including arbitrary XOR gates.
+\begin{lemma}\label{ro}
+If $f$ is read-once on $m$ formal variables then its random face parity is one with probability at most $2^{-\tau m}$ for $m\ge2$, where $\tau=\log(9/8)/8$.
+\end{lemma}
+\begin{proof}
+Pad unused variables with projection gates and make the formula a full rooted binary tree. Contract each subtree to the pair $(d,t)$ consisting of the parity of its restricted domain size and the parity of its restricted function. The three leaf states $(1,0),(1,1),(0,1)$ are equally likely. Distinct child variable sets are disjoint. Thus a gate $aLR+bL+cR+d_0$ contracts as
+\[
+ (d_Ld_R,\,a t_Lt_R+b t_Ld_R+c d_Lt_R+d_0d_Ld_R).
+\]
+A zero pair kills every ancestor. A cherry, a gate with two leaf children, becomes zero with probability at least $1/9$. When $a=0$, make both children free; when $a=1$, make the left child free and set the right child to $b$. Two consecutive gates each with one leaf child also give a killing event: make the first side leaf free, which produces $d=0$; then pick the second side state annihilating the linear coefficient of the path's $t$ in the display above. At least one of the three nonzero side states annihilates any binary linear functional, irrespective of the incoming path value.
+
+If the tree has $j$ cherries, then $m-2j$ gates have a single leaf child and $j-1$ gates have no leaf child. The single-leaf gates form at most $2j-1$ chains between the other gates (including a possible root stem). Use the cherries if $j\ge m/8$. Otherwise consecutive disjoint pairs in these chains provide at least $(m-2j-(2j-1))/2\ge m/4$ killing events. The chosen events concern disjoint raw leaf pairs; hence they are independent. This proves the estimate.
+\end{proof}
+
+\section{Branching and parity marginals}
+Retain $k$ raw axes and let $h$ be the marginal formed by summing $f$ over all assignments to the other $n-k$ axes in $\F$. A nonzero $h$ implies that all summed axes were essential to $f$. Fix and remove the inessential raw variables of $f$ and trim its circuit to the output. If a nonconstant function has $m$ essential inputs and $g$ gates, the sum $E$ of excess fanouts $\operatorname{outdeg}(v)-1$ over its nonoutput vertices is $g-m+1$: there are $2g$ incoming slots and $g+m-1$ nonoutputs. Any affine simplification can only improve this inequality. Let $B\le E$ count vertices of fanout at least two, including such raw sources.
+
+Cut every outgoing wire of those $B$ vertices and guess their bits $y$. The forest has one component rooted at each cut vertex and one rooted at the final output. Within it, every actual raw leaf occurs just once. Multiply the final component by the $B$ equality guards testing the component outputs against their guesses. For each fixed guess the product is read-once in the raw bits. The sum of the products over the guesses is exactly $f$, since exactly one assignment to the guessed wires is consistent at each raw input.
+
+More precisely, replace every occurrence of a guessed bit by a \emph{separate} placeholder before making the identifications. There are at most $B+E$ outgoing cut wires and $B$ further occurrences in the equality guards. The product is one read-once formula on the actual variables and at most $3E$ distinct placeholder leaves. Marginalizing any subset of actual variables preserves read-once form. Indeed at a gate $aLR+bL+cR+d$, if both subtrees contain a summed variable the result is $a(HL)(HR)$, where $H$ sums the required variables in each respective subtree. If just $L$ does, the result is $(HL)(aR+b)$. The symmetric and no-sum cases complete the induction. Algebraically unused variables of a subtree, if summed, give zero, as the displayed formulas also show. After this operation identify the placeholders for each cut vertex and sum its common guessed bit. This representation in particular expresses $h$ as the XOR of at most $2^E$ read-once functions on $k$ formal variables.
+
+Suppose $g\le n-1+e$, $e\le k$ and $h\ne0$. If $l$ retained variables were inessential in $f$, then $E\le e+l\le2k$. The representative read-once formula before identification has at most $7k$ remaining leaves. After identification each leaf has one of at most $3k+2$ labels (raw or guessed bits or constants); the number of guessed bits is separately encoded. Thus for $k\ge2$ the total number of candidate marginals, including zero, is at most $2^{100k\log(k+2)}$: use the Catalan bound $4^{7k}$ for ordered tree shapes, a factor $16^{7k}$ for gate types, and $(3k+2)^{7k}$ for labels. Constants and smaller trees fit with room to spare. Constant original functions are either annihilated by a nonempty marginal or already represented by a constant formula.
+
+\section{A missed affine flat}
+Choose $K_0=\lceil8/\tau\rceil$, $k=\lceil K_0(e+1)\rceil\le n$, $\eta=\tau/4$, and $c_1=\min\{\tau/2,\eta\log(3/2)\}$. For every candidate marginal the probability of odd random face parity is at most $2^{-c_1k}$. If $l\ge\eta k$ this follows because the face must fix all $l$ dummy variables. Otherwise the $2^E$ terms above give a union bound $2^{e+l-\tau k}\le2^{-\tau k/2}$ by Lemma~\ref{ro}.
+
+Independently choose $r_0=\lceil(1600/c_1)\log(k+2)\rceil$ random faces on these $k$ variables. For any marginal the probability that at least $r_0/4$ of the answers equal one is at most $2^{r_0}2^{-c_1kr_0/4}\le2^{-c_1kr_0/8}$ for $k\ge8/c_1$. The marginal census gives failure probability $o(1)$ upon a union bound. The face indicator vectors are also linearly independent with probability $1-o(1)$, since at step $j$ the previous span has at most $2^{j-1}$ vectors among $3^k$ equiprobable distinct face indicators. Lifting faces by making all other $n-k$ coordinates free preserves independence. Thus for some rank-$r_0$ system every small circuit has fewer than a quarter ones in its syndrome. In particular the all-ones right-hand side, although consistent, has no small solution.
+
+For the universal upper bound, the multilinear monomials $\prod_{i\in T}x_i$ form a basis of all Boolean tables over $\F$. Choose at most $r$ monomials whose syndromes sum to the desired vector. Group raw variables by their identical membership vector in these monomials. Computing each nonempty group's conjunction costs at most $n$ gates in total; forming each of the at most $r$ outputs from group conjunctions costs at most $r2^r$ additional gates. Their XOR costs $O(r)$ more in the counted basis. This proves $L(n,r)\le n+2^{O(r)}$. Conversely take $e=\lfloor2^{a r}\rfloor$ for small enough fixed $a>0$ so that $r_0\le r$ and $k\le n$, extending the independent constraints by arbitrary independent rows if needed. This proves Theorem~\ref{main}. The argument concerns synthesis under parity constraints and supplies no worst-case decision-tree upper bound for MCSP.
+
+\paragraph{Bias of a generator with small address circuits.}
+Apply the same fixed-function argument without marginalizing, using $k=n$ and $e\le\tau n/8$. Thus for every size-$(n-1+e)$ function, a uniformly random face has odd parity with probability $2^{-\Omega(n)}$ or less. Every law on those functions consequently has at least one nonempty face parity with absolute bias at least $1-2^{-\Omega(n)}$. For $s<n-1$ full-table parity is identically even because at least one raw variable is inessential.
+\end{document}

@@ -1,0 +1,77 @@
+\section{The last partially filled layer and the nearest zero}
+Here \(k=k(n)\to\infty\), \(k^2 8^k=o(n)\), \(N=2^n\), and \(C_k\) denotes the minimum gate count of a uniformly chosen truth table of weight \(k\). Put
+\[
+ \mu=n2^{1-k},\qquad \sigma^2=\mu(1-2^{1-k}).
+\]
+For these assertions it suffices to have the sparse-support bounds \(2n-Z-O(k+\log k)\le C\le2n-Z+O(k2^k)\), where \(Z\) counts constant raw columns of the \(k\) support addresses. The full binary basis and counted De Morgan basis obey these inequalities by the sparse-support lower bound and repeated-column construction used above. Red'kin's \href{https://www.mathnet.ru/eng/dm172}{2004 theorem} analyzes the Finikov synthesis method over the binary basis with XOR and XNOR excluded.
+
+For independent random rows, \(Z\) is binomial with mean \(\mu\). Conditioning them to be distinct has total-variation cost at most \(\binom{k}{2}/N\). The binomial Berry--Esseen inequality, applied to \(-Z+\mu\), and the two deterministic shifts of size \(O(k2^k)\) therefore give
+\[
+ \sup_x\left|\Pr\!\left[\frac{C_k-(2n-\mu)}{\sigma}\le x\right]
+        -\Phi_{\rm G}(x)\right|
+ \ \le O\!\left(\frac{k2^k+1}{\sigma}+\frac{k^2}{N}\right)=o(1),
+\]
+where \(\Phi_{\rm G}\) is the standard normal distribution function. Translating the Gaussian argument costs at most the shift times its bounded density.
+
+Take \(s=\lfloor2n-\mu+x_n\sigma\rfloor\), with \(|x_n|=o(\sqrt\mu)\), and let \(\lambda_k=\Pr[C_k\le s]\) be the \emph{actual} accepted fraction on layer \(k\). Write \(r=W(1/e)\), \(b=r/(1+r)\), \(\lambda_*=1/(1+r)\) and \(a=r/(1+r)^2\). Let \(R_N\) be the least modulus of a zero of \(P_0\) at this budget.
+\begin{theorem}
+If \(\sqrt{k}\,|\lambda_k-\lambda_*|\to\infty\), then
+\[
+ NR_N=rk+b\left[\tfrac12\log(2\pi k)-\log|\lambda_k-\lambda_*|\right]+o(1).
+\]
+Every nearest zero \(\zeta\) satisfies \(\sqrt{k}\,|\arg(-\zeta)|\to0\) in this case; \(\arg\) is the principal argument. If \(\sqrt{k}(\lambda_k-\lambda_*)\to h\in\mathbb R\), put
+\[
+ B_h(t)=\frac{r t^2}{2}-\frac12\log(h^2+a^2t^2),\qquad
+ t_h=\sqrt{\max(1/r-h^2/a^2,0)} ,
+\]
+interpreting a zero logarithm argument as \(B_h(t)=+\infty\). Then
+\[
+ NR_N=rk+b\left[\log k+\tfrac12\log(2\pi)
+                       +B_h(t_h)\right]+o(1),\qquad
+       \sqrt{k}\,|\arg(-\zeta)|\longrightarrow t_h .
+\]
+For instance the Gaussian approximation can be used in place of \(\lambda_k\) at the critical precision if \(k^3 8^k=o(n)\).
+\end{theorem}
+
+\begin{proof}
+Let \(E_j(u)=\sum_{i=0}^j u^i/i!\) and \(G_k(w)=P_0(kw/N)\). On each fixed disk \(|w|\le R\), for every fixed \(A>0\),
+\[
+  G_k(w)=E_{k-1}(kw)+\lambda_k(kw)^k/k!+O_{A,R}(e^{-Ak}).
+\]
+Indeed the constant-column mean is at least \(2\mu\) below layer \(k\) and at most \(\mu/2\) above it. In any range \(1\le j\le Dk\), for fixed \(D\), the lower-layer upper synthesis error is \(O(k2^k)=o(\mu)\) and the upper-layer gate lower-bound error is \(O_D(k+\log k)=o(\mu)\). Chernoff bounds and distinctness conditioning thus make the incorrect fraction \(O(e^{-\Omega(\mu)}+(Dk)^2/N)\) outside layer \(k\). Layer zero is complete. The binomial-to-Poisson coefficient error through \(Dk\) is \(O_D(k^2/N)\) relative to the corresponding exponential-series coefficient before thinning. These errors are multiplied by at most \(e^{Rk}\). For the farther terms use the full exponential-series majorant and take \(D\) large enough that \(D(1+\log(R/D))<-A-1\).
+
+On closed annuli \(0<\eta\le|w|\le R<1\) write exactly
+\[
+ G_k(w)=e^{kw}-\frac{(kw)^k}{k!}A_k(w),\qquad
+ A_k(w)=\frac1{1-w}-\lambda_k+O_{\eta,R}(1/k).
+\]
+The same error estimate holds after one or two differentiations on smaller annuli. Indeed the normalized exponential tail is
+\(\sum_{j\ge0}w^j\prod_{i=1}^j(1+i/k)^{-1}\), whose difference from \((1-w)^{-1}\) is bounded by \(\sum_{j\ge0}R^jj(j+1)/(2k)\). The preceding arbitrarily small exponential error remains negligible on the annulus after normalization. Cauchy's inequality gives the derivative bounds. The nonvanishing of \(e^{kw}\) and the same tail estimate exclude every disk \(|w|\le r-\eta\) from the zeros for large \(k\): there \(|w|e^{1+|w|}<1\) uniformly.
+
+Write \(w=-\rho e^{i\theta}\) near \(-r\), \(d=k(\rho-r)\), and \(t=\sqrt k\,|\theta|\). For a zero, Stirling's formula gives the exact modulus equation up to a uniform \(O(k^{-1})\),
+\[
+ k(\Re w-1-\log\rho)=\log|A_k(w)|-\tfrac12\log(2\pi k)+O(k^{-1}).
+\]
+For \(|d|=O(\log k)\) and \(t=O(\sqrt{\log k})\) it becomes
+\[
+ b^{-1}d=\tfrac12\log(2\pi k)-\log|A_k(w)|+\tfrac12 rt^2+o(1).
+ \tag{*}
+\]
+The error is uniform because \(k\theta^4+ d^2/k+|d|\theta^2=o(1)\) and \(-r-1=\log r\).
+
+We first verify that the modulus equation really locates zeros to \(o(1)\) in \(d\). In the noncritical regime take \(\theta=0\); in the critical regime take \(\theta=t_h/\sqrt k\). In the latter case \(h^2+a^2t_h^2>0\). Uniformly through \(|d|\le C\log k\), the corresponding tail magnitude is asymptotic respectively to \(|\lambda_*-\lambda_k|\) or to \(k^{-1/2}\sqrt{h^2+a^2t_h^2}\): Taylor expansion of \((1-w)^{-1}\) gives the imaginary linear term \(-ia\theta\), with error \(O(\theta^2+|d|/k+1/k)\). Consequently the exact modulus equation has a solution \(w_0\) at the asserted value of \(d\) up to \(o(1)\), by the intermediate value theorem. More explicitly, insert into (*) the asserted expression for \(d\) plus and minus any fixed positive tolerance; the two residuals have opposite signs.
+
+Choose analytic logarithms near \(w_0\) and write
+\[
+ T_k(w)=kw-k\log w-\log A_k(w)+\log k!-k\log k.
+\]
+The exact modulus equation is \(\Re T_k(w_0)=0\). A zero results whenever \(T_k(w)\in2\pi i\mathbb Z\). At \(w_0\), \(T'_k(w_0)=k(1+1/r)+O(\sqrt k+\log k)\), since \(|A_k(w_0)|\gtrsim k^{-1/2}\). Throughout a disk of radius \(C'/k\) for any fixed \(C'\) we have \(T''_k=O(k)\). Take \(2\pi i m\) nearest to \(T_k(w_0)\). The linearized root differs from \(w_0\) by \((2\pi i m-T_k(w_0))/T'_k(w_0)\), of magnitude \(O(1/k)\) and real part \(O(k^{-3/2})\). Taylor's theorem and Rouch\'e's theorem on a circle of radius \(C''/k^2\) about this linearized root, with sufficiently large \(C''\), give an exact root there. Its radial displacement from \(w_0\) is \(o(1/k)\), since \(\theta=O(k^{-1/2})\). This proves the stated expressions as upper bounds for \(NR_N\).
+
+For a nearest zero these upper bounds give \(\rho\le r+O(\log k/k)\). The small-disk exclusion and the modulus equation, using \(\Re w\ge-\rho\) and boundedness of \(A_k\), now give \(d\ge-O(1)\) and \(k(1-\cos\theta)=O(\log k)\). Thus (*) applies to every nearest zero. Put \(H_k=\sqrt k\,(\lambda_k-\lambda_*)\). In this range
+\[
+ \sqrt k\,|A_k(w)|\le |H_k|+O(1+t).
+\]
+If \(|H_k|\to\infty\), comparison with the obtained upper bound shows \(rt^2/2\le\log(1+O(1+t)/|H_k|)+o(1)\). This first bounds \(t\) and then forces \(t\to0\), proving the matching radius by (*). For bounded \(H_k\), the same comparison yields \(rt^2/2\le\log(1+t)+O(1)\), so \(t\) is bounded again. A subsequential limit \(t'\) cannot satisfy \(h=t'=0\), since \(\sqrt k|A_k|\) would tend to zero in (*) in contradiction with the upper bound. Otherwise \(\sqrt k|A_k|\to\sqrt{h^2+a^2t'^2}\). Equation (*) now gives the correction \(B_h(t')\). Differentiation shows its unique minimum on \(t\ge0\) occurs at \(t_h\), also when \(h^2=a^2/r\). The upper bound forces this minimum for every subsequential limit, as claimed.
+\end{proof}
+
+For ordinary exponential sections, logarithmic corrections and the locations of individual zeros relative to the Szeg\H{o} curve have been studied by \href{https://doi.org/10.1216/rmjm/1181072998}{Carpenter, Varga and Waldvogel} and \href{https://www.math.kent.edu/~varga/pub/paper_178.pdf}{Varga and Carpenter}. Here the last coefficient can cancel the leading tail at the negative extremum, producing the critical scaling in the theorem.

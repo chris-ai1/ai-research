@@ -1,0 +1,151 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,mathtools,microtype,hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newcommand{\MC}{\mathsf{MCSP}}
+\newcommand{\sen}{\operatorname{sens}}
+\newcommand{\dist}{\operatorname{dist}}
+\title{Square-root quantum query complexity for Boolean circuit minimization at small linear budgets}
+\author{Research manuscript}
+\date{22 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+A truth table of length $N=2^n$ is presented as a quantum oracle. We prove that testing whether it has an $s$-gate De Morgan circuit requires and suffices to use order $\sqrt N$ queries for every $0\le s\le(1+c)n$, for an absolute constant $c>0$. Fanout is unrestricted and each NOT is charged. The square-root cost holds on the entire input cube. The algorithm first identifies the essential variables and a small circuit whose truth table has polynomially many discrepancies. We show that almost every input of a circuit only slightly larger than its essential variable count has low sensitivity. An argument about paths before their first fanout then puts one representative from every unresolved discrepancy component in a single small Hamming ball. A related result allows sparse perturbations of any affine center at all budgets below $(2-\eta)n$. Splitting by algebraic degree yields the same square-root total query bound and matching ordinary approximate degree with all binary Boolean gates.
+\end{abstract}
+
+\section{Problem and bounds}
+Let $C(f)$ denote the minimum number of gates in a circuit on $n$ Boolean inputs with binary AND and OR, unary NOT, free constants and unrestricted fanout. The oracle returns $f(x)$ at the supplied $n$-bit address $x$, allowing the usual queries in quantum superposition. The computation between queries is unrestricted. Write $N=2^n$ and $Q$ for worst-case query complexity with error at most $1/3$.
+\begin{theorem}\label{th:main}
+There exists an absolute $c>0$ such that, uniformly for every integer $0\le s\le(1+c)n$,
+\[
+                   Q(\MC_{n,s})=\Theta(\sqrt N).
+\]
+\end{theorem}
+The lower bound in fact holds through $s=2n-3$. The constant $c$ supplied by the proof is small. The proof for all binary gates, including XOR, is given in Theorem~\ref{th:fullbasis}.
+
+For a set of variables $I$, a coordinate is \emph{essential} if some edge along it has different endpoint values. At any address $x$, its sensitivity $\sen_f(x)$ counts such incident edges. The cube edge-isoperimetric inequality gives average internal degree at most $\log_2 t$ in every nonempty set of $t$ cube vertices \cite{harper}. We use this inequality both for finding essential variables and for analyzing components of a discrepancy set. All logarithms below are base two unless marked otherwise.
+
+\section{Oracle identification on smaller address sets}
+For a known family of $M$ Boolean strings on $D$ addresses, Kothari's quantum oracle identification algorithm uses
+\[
+ O\!\left(\sqrt{\frac{D\log M}{1+\log(D/\log M)}}\right)
+\]
+queries when $D\le M\le 2^D$ \cite{kothari}. If $M<D$, pad the known list to $D$ distinct strings, with trivial cases of tiny $D$ treated directly. We can apply identification to the projections of a family onto a list of addresses, including lists containing repetitions. If the input violates the promise we cap the algorithm at its promised cost. Independent repetitions reduce any fixed failure probability to a smaller fixed constant.
+
+There are $2^{O(n\log(n+2))}$ circuits of size $O(n)$ on at most $n$ inputs, by specifying the predecessors and type of each gate in topological order. On an address set of size $D\ge 2^{n/8}$ the cost of identifying its projection in this census is therefore $O(\sqrt{D\log(n+2)})$; smaller sets may simply be read. All hardwired circuit families, breadth-first traversals and acceptance tests below may be computed without any time bound.
+
+\begin{lemma}\label{lem:essential}
+On any $n$-variable Boolean function, $O(\sqrt N)$ bounded-error queries suffice to recover every essential variable and one witnessing edge for each.
+\end{lemma}
+\begin{proof}
+Maintain the set $I$ of certified variables. Let $g(x)=f(x_I,0)$ and let $E=\{x:f(x)\ne g(x)\}$, of size $t$. Search for an address in $E$; on a successful search the address is uniform in $E$. If $t=0$, the set $I$ is complete. At a found point $x$, query all neighbors obtained by changing a variable outside $I$. Every such edge leaving $E$ is bichromatic for $f$, since $g$ is constant along it. Record all newly witnessed variables. Also consider the path from $x$ to $(x_I,0)$ resetting the previously unknown coordinates. Its endpoints had different $f$-values, and a binary search finds an edge with different values in $O(\log(n+2))$ queries. Consequently at least one previously unknown essential coordinate is always discovered.
+
+After a uniform successful search the expected number of remaining essential variables is at most $\log t$. Indeed each remaining variable corresponds to an internal neighbor of $x$ in $E$. For visits with $2^j\le t<2^{j+1}$, the probability the number of unknown essential variables falls to at most $2(j+1)$ is at least $1/2$ by Markov's inequality. Once it does, there are at most $2(j+1)$ more successful visits in total. The expected number of visits to this bucket is $O(j+1)$, since the number of visits before reaching this state has a geometric tail even with intervening visits to other buckets. A failed search terminates the process and adds at most one visit.
+
+For precision, unknown-count search \cite{bbht} can be made to cost $O(\sqrt{N/t})$ conditional expected queries for $t>0$, with miss probability at most $c_0/(1+t)^3$, where $c_0>0$ is any prescribed small constant. On $t=0$ it costs $O(\sqrt N)$. Try a fixed number of iterations of the following trial at each geometrically increasing Grover iteration range up to $C\sqrt N$: test a uniform address, or use a uniformly random number of Grover iterations in that range, and verify the measured address. Starting at ranges of order $\sqrt{N/t}$ the success probability per trial is bounded below by an absolute constant, including $t>N/2$ by direct sampling. Constant repetitions per range give the inverse-cube miss bound, including $t=1$, and make the expected cost of ranges past the first effective one a convergent geometric sum. Symmetry gives uniform output conditional on success. Across nonempty buckets the expected query cost is at most
+\[
+ O\!\left(\sqrt N\sum_{j\ge0}(j+1)2^{-j/2}\right),
+\]
+and the probability of premature termination is $O(c_0\sum_{j\ge0}(j+1)2^{-3j})$. There is at most one empty search and $O(n^2)$ classical neighbor queries. A large constant multiple of the expected-cost bound is a worst-case cap by Markov's inequality.
+\end{proof}
+
+\section{Two structural properties of small De Morgan circuits}
+In a trimmed circuit computing a nonconstant function of $m\ge2$ essential variables, fix any inessential raw inputs and propagate constants. Every remaining vertex reaches the output. Let $v$ be the number of gates, $a$ the number of NOT gates, and $u$ the sum of $\operatorname{outdeg}(w)-1$ over all nonoutput vertices. Counting incoming and outgoing wires gives
+\[
+                 a+u=v-m+1.
+\]
+Thus if $v\le s$, these two quantities share a budget of $e=s+1-m$. In particular $m\le s+1$.
+
+\begin{lemma}\label{lem:paths}
+If $T$ raw variables are sensitive at every point of a set $W$ and each takes both values on $W$, then $T\le e+1$.
+\end{lemma}
+\begin{proof}
+Trace the path from each such input to the first vertex of outdegree other than one, counting that vertex as the endpoint. A path may end at its initial input, at a gate of fanout at least two, or at the circuit output. Before any branching, the other input to a gate on the path cannot depend on the chosen variable. At a sensitizing assignment each AND or OR on the path therefore passes the current bit unchanged; a NOT complements it. The bit at each stage is the raw variable with a sign fixed by the path. If two paths first meet at a binary gate, both of its ports must be enabled at every point of $W$. For AND both incoming bits must be one, and for OR both must be zero. This contradicts the variation of either signed raw bit on $W$. Thus the endpoints are distinct, and all but possibly the output contribute to $u$.
+\end{proof}
+
+\begin{lemma}\label{lem:tail}
+There exist absolute constants $\gamma,b>0$ such that every $m$-essential function $h$ with $C(h)\le m-1+\gamma m$ satisfies
+\[
+  \Pr_{x\text{ uniform}}[\sen_h(x)>m/32]\le \exp(-b m)
+\]
+for all sufficiently large $m$.
+\end{lemma}
+\begin{proof}
+Remove every NOT and every vertex of fanout at least two. At most $e$ vertices are removed, with at most $2e$ incoming and $2e$ outgoing wires in total. The remaining undirected components are rooted trees oriented toward their unique exit: their vertices have outdegree at most one, and a finite connected acyclic directed graph with this property cannot contain an undirected cycle. An incoming external port cannot depend on a private raw variable of the same tree, since its dependence would have to leave through the exit and then return to that exit. There are at most $1+4e$ trees.
+
+Subdivide the trees using a fixed integer $L$. Work from leaves to root, detaching the accumulated connected piece at a vertex as soon as its size reaches $L$. Each child had residual size at most $L-1$, so every detached piece has size at most $2L-1$, with at most one remaining smaller piece per tree. Let $P$ be the number of pieces. Their private raw counts $b_i$ sum to at most $m$, and their counts $d_i$ of incoming external ports satisfy
+\[
+     P\le(m+v)/L+1+4e,\qquad \sum_i d_i\le P+4e.
+\]
+Each piece still has a unique exit and its output is a monotone function of its $b_i$ private raw variables when the port values are fixed. The port values are independent of changes to those private raws for the same acyclicity reason as before.
+
+Let $Y_i$ be the maximum sensitivity in the private raw variables of piece $i$ over assignments to its $d_i$ external ports, evaluated at its actual private raw input. Then $\sen_h\le e+\sum_iY_i$ pointwise. The $Y_i$ are independent at a uniform input, because the private raw sets are disjoint. A monotone function on $b$ unbiased bits has average sensitivity at most $\sqrt b$: in the sign convention its individual influences equal the absolute values of its first-level Fourier coefficients, whose squares sum to at most one by Parseval. Thus $\mathbb E Y_i\le 2^D\sqrt{b_i}$ when $d_i\le D$. The pieces with $d_i>D$ contain in total at most $2L(P+4e)/D$ private raws. We obtain
+\[
+  \mathbb E[e+\textstyle\sum_iY_i]\le e+2^D\sqrt{mP}+ 2L(P+4e)/D.
+\]
+For example take $D=10^4$, $L=4^{D+20}$ and $\gamma=1/L$. Then $v\le2m$ and $P/m\le 8/L$ for sufficiently large $m$. The right side is less than $m/64$. Finally $0\le Y_i\le b_i$ and $\sum_i b_i^2\le2Lm$. Hoeffding's inequality yields the claimed bound.
+\end{proof}
+
+\section{Completing the total algorithm}
+Use Lemma~\ref{lem:essential} and write $m$ for the number of certified variables. On the intended success event this identifies the actual essential set. Reject if $m>s+1$. Compute on the restricted $m$-variable table by fixing the other variables to zero. If $m<n/2$, read that table. If $n/2\le m\le n-\log\log(n+2)$, ordinary oracle identification on its $2^m$ entries costs $O(\sqrt{2^m\log(n+2)})=O(\sqrt N)$. In either case the resulting candidate is checked at the end.
+
+In the remaining case $m=n-O(\log\log n)$. Set $c=\gamma/4$ using Lemma~\ref{lem:tail}. Every $m$-essential member of the candidate family $\mathcal A$ of size-$s$ tables obeys $e\le\gamma m$ for all sufficiently large $n$. If the family is empty, reject. Let $M=|\mathcal A|$, $H=2^m$, and $t=n^6$. On a positive input, first find a known $h\in\mathcal A$ with at most $t$ discrepancies. Sample independently and uniformly
+\[
+       D=\left\lceil 4H\ln(M+2)/t\right\rceil
+\]
+addresses. The chance that any member at distance greater than $t$ agrees at them all is at most $M\exp(-Dt/H)$. Identify the restriction of the input to this list in the projected family and select any representative of its recovered projection. This costs $o(\sqrt H)$ by Section~2. On a positive successful run its discrepancy set $E=\{x:f(x)\ne h(x)\}$ has size at most $t$.
+
+Form the known set $U=\{x:\sen_h(x)>m/32\}$. By Lemma~\ref{lem:tail}, its size is at most $H\exp(-bm)$. Identify $f$ on $U$ in the projected family, using $o(\sqrt H)$ queries. Starting at every discovered discrepancy, find its entire connected component in $E$ by checking the $m$ neighbors of each newly discovered vertex. Keep a record of all visited vertices to avoid repeating work. Abort if more than $t$ discrepancies are recorded. The cost of all such expansions in the algorithm is $O(mt)$.
+
+Let $E'$ be the remaining errors. If a uniform quantum search for one finds none, output the current predicted table for final verification. Otherwise let $x$ be the returned point. No remaining error has a neighbor in an already removed component. Call a remaining point good if its number of internal neighbors in $E'$ is at most $m/32$. The uniform search returns a good point except with probability at most $32\log(t)/m$ by cube edge isoperimetry and Markov's inequality. Moreover every remaining component contains a good point, by the same average-degree bound on that component. All remaining points lie outside $U$.
+
+At a good point the unknown $f$ is sensitive in all but at most $m/16$ directions. Indeed for every neighbor where $h$ stays fixed and the neighbor is outside $E$, the change from discrepancy to agreement flips $f$. For two good points $x,y$, at least $\dist(x,y)-m/8$ coordinates differ and are sensitive at both. Lemma~\ref{lem:paths} implies
+\[
+                \dist(x,y)\le e+1+m/8<m/3.
+\]
+The ball of radius $\lfloor m/3\rfloor$ about a good anchor therefore meets every remaining component. Its size is at most $2^{H_2(1/3)m}$, where $H_2$ is binary entropy. Identify $f$ on this ball using $o(\sqrt H)$ queries and again expand the error components from the recovered seeds. This reconstructs $f$ on all its essential inputs.
+
+In every branch, test offline that the returned table, extended by ignoring uncertified coordinates, has circuit size at most $s$. Also verify it against the original $n$-variable oracle by searching for a disagreement. Both checks are needed for unrestricted inputs. All searches and identifications can have suitably small fixed error probability and worst-case caps. On a negative input an incorrect acceptance requires a failed verification; on a positive input the preceding analysis bounds the probability that the true table is missed. Thus $O(\sqrt N)$ queries suffice.
+
+For the lower bound, compare zero with the indicator of one antipodal pair of addresses. On the latter table all $n$ raw axes differ and are sensitive at its two positive entries for $n\ge2$. Lemma~\ref{lem:paths} gives $C(f)\ge2n-2$. Hence throughout $s\le2n-3$, deciding MCSP separates the two cases. Treat the $N/2$ antipodal pairs as the addresses of a promise search problem with zero or one marked address. One input query simulates one query to the duplicated table. The search lower bound \cite{bbbv} completes the proof of Theorem~\ref{th:main}.
+
+\section{Sparse perturbations of an affine center}
+The argument can also control dense tables at larger linear budgets when the background is affine.
+\begin{theorem}\label{th:affine}
+Fix $0<\eta<1$ and $A>0$. Suppose a specified affine function $h$ is given, and the input table differs from $h$ in at most $n^A$ entries. Deciding $C(f)\le s$ at every $s\le(2-\eta)n$ uses $O_{\eta,A}(\sqrt N)$ bounded-error queries.
+\end{theorem}
+\begin{proof}
+Recover essential variables and handle $m\le n-\log\log(n+2)$ as above. If $h$ used any inessential variable of $f$, their distance would be exactly $N/2$ by pairing inputs along that axis. Thus $h$ descends to the same $m$-variable table; write $t=n^A$ for the discrepancy bound. We prove that a positive input can be reconstructed. For negative inputs the final size test and oracle comparison suffice.
+
+In an optimal circuit pair up the raw inputs within each cluster of common critical endpoints, leaving at most one unpaired variable per cluster. There are at most $e+1$ clusters, hence at least $m-e-1\ge \eta m/2$ paired sites for all sufficiently large $n$. Consider any such pair $i,j$. For fixed exterior inputs their private paths first meet at an AND or OR gate. The preprocessors on the two ports are either constant or signed identities: side inputs cannot depend on either variable before merger, and the signs of surviving identities depend only on the NOT gates of their paths. Postprocessing is unary. Consequently each nonlinear restriction has one exceptional corner (one true or one false point), at the same signed address for every exterior setting.
+
+Let $D_i h$ be the constant affine derivative on axis $i$. If $x$ is the only error on its $i,j$ face, the resulting function is nonlinear with exceptional corner
+\[
+                     (x_i\mathbin\oplus D_jh,\ x_j\mathbin\oplus D_ih).
+\]
+Indeed on the two offsets from $x$, the affine face up to a constant is $D_i h\cdot u\mathbin\oplus D_jh\cdot v$, and changing its origin adds $(1\mathbin\oplus u)(1\mathbin\oplus v)$ over $\mathbb F_2$. Completing the product gives the displayed corner. It follows that the two raw inputs of each such clean pair take fixed values at all clean discrepancy anchors.
+
+This time remove error components using adjacency at distance one or two, at cost $O(m^2t)$. Suppose $F$ is the remaining set of errors and a uniform point $x$ of $F$ is found. The expected number of matched pairs whose faces contain another error is at most $2\log t$. For single-axis neighbors this is the cube edge inequality. For two-axis neighbors the directions $e_i+e_j$ of disjoint matched pairs are linearly independent. On each coset of their span, those directions are the axes of a Boolean cube, so the same average-degree inequality applies; average with weights proportional to the error counts in the cosets. No previously removed error is at distance at most two from $F$.
+
+Choose a constant integer $k$ so large that $(3/4)^{k-1}<\eta/4$. Call a sampled anchor good when at most $\eta m/(8k)$ pairs are contaminated. Its conditional failure probability is $O_{\eta,k}(\log(t)/m)$. For any sequence of at most $k$ good anchors there are at least $\eta m/4$ paired input axes constant throughout: discard the two axes of each contaminated pair at each observation. Maintain the set $J$ of axes agreeing across the observed anchors, relative to the first anchor $a$. After each discovery, identify $f$ on the cylinder
+\[
+       \{y:\dist(y|_J,a|_J)<|J|/4\}.
+\]
+As long as $|J|\ge\eta m/4$ its relative size is $\exp(-\Omega_\eta(m))$. Expand all error components discovered in this cylinder, then search for any remaining error. The next anchor is outside the preceding cylinder and decreases $|J|$ by a factor of at least $4/3$. Thus $k$ good anchors are impossible; an empty search finishes the reconstruction earlier. Abort if these bounds are exceeded. A constant number of quantum searches and identifications, each with sufficiently small fixed error, suffices. Confirm membership and equality of the reconstructed table as before.
+\end{proof}
+
+\input{full-binary.tex}
+
+\begin{thebibliography}{9}
+\bibitem{bbbv} C. H. Bennett, E. Bernstein, G. Brassard and U. Vazirani.
+\href{https://arxiv.org/abs/quant-ph/9701001}{Strengths and weaknesses of quantum computing}. SIAM J. Comput. 26 (1997), 1510--1523.
+\bibitem{bbht} M. Boyer, G. Brassard, P. H\o yer and A. Tapp.
+\href{https://arxiv.org/abs/quant-ph/9605034}{Tight bounds on quantum searching}. Fortschritte der Physik 46 (1998), 493--505.
+\bibitem{harper} L. H. Harper.
+\href{https://doi.org/10.1016/S0021-9800(66)80059-5}{Optimal numberings and isoperimetric problems on graphs}. J. Combin. Theory 1 (1966), 385--393.
+\bibitem{kothari} R. Kothari.
+\href{https://doi.org/10.4230/LIPIcs.STACS.2014.482}{An optimal quantum algorithm for the oracle identification problem}. STACS 2014, 482--493.
+\end{thebibliography}
+\end{document}
