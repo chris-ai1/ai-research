@@ -10,6 +10,7 @@ Summary of a research session that ended on 22 November 2026, together with a li
 - [`formal/`](formal/): Lean files for the row-marginal, teaching-projection, pivot/overlap and disjoint-copy counting lemmas.
 - [`isolation.md`](isolation.md): isolating prescribed patterns on arbitrary blocks by translating a periodic table.
 - [`communication.md`](communication.md): the interactive-communication proof that the sign-rank manuscript cites.
+- [One flipped entry distinguishes cores of identical size](core-faults.md) gives exact costs for a family at the quadratic threshold.
 - [`FAILED-ATTEMPTS.md`](FAILED-ATTEMPTS.md): approaches that did not work, and why.
 - [Four flips in a parity extension](four-flips.md) gives exact pair costs through distance four and a lower bound for two pairs with disjoint direction supports or three separating coordinates.
 
