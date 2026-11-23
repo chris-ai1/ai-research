@@ -1,6 +1,6 @@
 # Failed attempts and dead ends
 
-These are the approaches from the 22 November 2026 MCSP session that did not work, along with the reason each one failed. As with the results, all of these are unrefereed, AI-written arguments. Several of the "failures" are themselves proved barrier statements, and are marked as such. N = 2ⁿ is the truth-table length and s the gate budget.
+These are the approaches from the 22 November 2026 MCSP session that did not work, along with the reason each one failed. A follow-up section records two attempts from Samuel Schlesinger's *Structure from optimality* notes. As with the results, all of these are unrefereed, AI-written arguments. Several of the "failures" are themselves proved barrier statements, and are marked as such. N = 2ⁿ is the truth-table length and s the gate budget.
 
 ## Aimed at a breakthrough
 
@@ -50,6 +50,16 @@ These are the approaches from the 22 November 2026 MCSP session that did not wor
 
 **Ordinary approximate degree for gap MCSP (s = N^a versus t = N^b).** The aim was degree of order s√(N/t), matching the quantum query bound.
 *Why it is still open:* the replicated-mask construction proves only Ω(max{s, max(1, s²/t)·√(N/t)}). Threshold, rational and postselected degrees are all Θ(s), but none of these arguments controls bounded polynomials at the quantum scale.
+
+## Follow-up on isolating blocks
+
+**Inferring superlinear size from sparse acceptance and isolated minterms.** Suppose that on every block of at most $q$ bits, each labeling is the unique accepted assignment for some fixing of the other bits. Every $q$-bit block then exposes an identity matrix of order $2^q$, even if the entire class of accepted words is small.
+
+For every polynomially bounded $q\ge1$, a complement-closed language can have this property, log-cardinality $q+O(\log(nq))$, and an $O(N)$-gate membership circuit. At $q\ge n^2$ the example can also accept every affine table and all tables within distance $n$ of a constant. A single sparse linear map is shared across the whole recognizer. The proof leaves open what follows from the full YES set of MCSP. [Construction and proof](isolation-barrier.md)
+
+**Charging the same gates at many block sizes.** Let $m=2^d$, put $g_i=y_i\oplus t$, and compute the AND of the $m$ tests $[x_i=g_i]$ in a balanced tree. The circuit uses $3m-1$ gates. On each dyadic block $B$ of the $x$ inputs, the corresponding subtree has $|B|$ incoming context signals $g_i$. Every minterm occurs on that block by choosing the $y_i$ and satisfying the tests outside it.
+
+Summing the context counts over block sizes $2,4,\ldots,m$ gives $md$. Each of the same $m$ source gates supplies one signal at each of the $d$ scales. Even with arbitrary nonnegative block weights, the total charge is the sum over those $m$ gates of their individual charges, hence at most $m$ times the maximum load. A superlinear charge on paper needs a separate theorem controlling how often a gate is counted in an actual MCSP circuit.
 
 ## Priority corrections (claims that turned out not to be new)
 
