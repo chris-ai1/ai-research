@@ -1,6 +1,6 @@
 # Average-case frontier lower bounds for nondeterministic circuits
 
-[Note v1: the one-sided bound](nondet-average-case.md) · [Note v2: removing the witness factor](nondet-average-case-v2.md) · [Note v3: lifting theorems and the restated target](nondet-average-case-v3.md) · [Checks](checks/)
+[Note v1: the one-sided bound](nondet-average-case.md) · [Note v2: removing the witness factor](nondet-average-case-v2.md) · [Note v3: lifting theorems and the restated target](nondet-average-case-v3.md) · [Note v4: one witness bit](nondet-average-case-v4.md) · [Checks](checks/)
 
 The frontier method of McGuire, Schlesinger and Williams (STOC 2027 submission 1432) proves explicit lower bounds of about $(L-\varepsilon)n$ gates for fan-in-two circuits. It works as follows:
 - the circuit is compiled into a constraint network;
@@ -9,7 +9,7 @@ The frontier method of McGuire, Schlesinger and Williams (STOC 2027 submission 1
 
 For deterministic circuits the branching program is unambiguous, and that gives average-case bounds. For nondeterministic circuits only the worst-case bound was known (`Nondeterministic.lean` in [cslib-frontier](https://github.com/cslib-community/cslib-frontier)). These notes ask how far the average-case bound extends to nondeterministic circuits.
 
-The target is that, for every ε > 0, every nondeterministic circuit with at most (L−ε)n gates agrees with an explicit S_n on at most a 1/2 + O(b) + 2^(−γn) fraction of inputs. **This target is not proved, and v3 gives reasons to think it is false at the full constant L.** The notes prove restricted versions, identify barriers, and restate the target.
+The target is that, for every ε > 0, every nondeterministic circuit with at most (L−ε)n gates agrees with an explicit S_n on at most a 1/2 + O(b) + 2^(−γn) fraction of inputs. **This target is not proved.** v3 restates it with a smaller constant and reduces the first open case, one witness bit, to a deterministic question; v4 narrows that case. Whether the full constant L can be reached is open. The notes prove restricted versions and identify barriers.
 
 ## Results
 
@@ -30,12 +30,16 @@ The target is that, for every ε > 0, every nondeterministic circuit with at mos
 | Single cut is not enough | S = g(q,b) ⊕ g′(q′,b) has small bias on all large rectangles of one cut, yet agrees on 3/4 of inputs with g(q,b) ∨ g′(q′,b), a union of few large rectangles at that cut. | v3 §5 |
 | One witness bit | For one witness bit the nondeterministic statement is equivalent to a deterministic one about h(y,0) ⊕ h(y,1). The method proves it up to 2.79n. Between 2.79n and Ln it is open, and a positive answer to question (Q) would make the target false. | v3 §6 |
 | Restated target | For k witness bits the bound holds up to (1 + (L−1)/2^k)n (Theorem P); conjecturally the constant L is not reachable for all sets with small bias at all cuts. | v3 §8 |
+| Few nonlinear gates (A) | One witness bit. The difference between the two runs on any wire is a fixed XOR of the differences at the m AND-type gates of the witness cone. The bound holds when A(s−n) + min(A(s−n), m) ≤ (1−δ)n: the full constant for m = o(n), 3.68n for m = n/4. | v4 §2 |
+| Entropy of the difference (H) | One witness bit. If the pattern of differences takes at most 2^H values on all but an η fraction of inputs and A(s−n) + H ≤ (1−δ)n, the bound holds with extra error O(η). | v4 §5 |
+| Deaths and copies (H1) | The pattern is determined by the gates where the difference dies. If it dies at o(n) gates on average, or the cycle rank weighted by the probability of a difference is o(n), the bound holds at the full constant L. A counterexample needs Ω(n) of both. | v4 §6 |
+| Bottleneck criterion | A predecessor-closed set containing almost all inputs whose outgoing edges carry fewer than n bits (counted for the pair of runs) gives the bound without any layout. | v4 §7 |
 
 Lemma 0 of v1 (accepting paths correspond to witnesses restricted to the *used* witness inputs) is stated in its precise form in both notes; `checks/reach_vs_used.py` shows why the restriction to used inputs matters. v2 also logs eleven failed approaches.
 
 ## Status
 
-The notes were written with AI assistance at the request of Christian Reitwiessner. They were produced by AI working from the cslib-frontier Lean sources and the literature. The paper's PDF was not accessible. **v3 was checked by one independent AI review, and its corrections are incorporated; v1 and v2 (including Theorems F, W and M) have not been independently reviewed. No human has reviewed any of it, and nothing is formalized in Lean.** Theorems T, P and L also rely on a version of the Lean deterministic theorem with binary inputs and a larger wire alphabet, which is not formalized. Every claim in the notes is labelled *proved here*, *verified from source*, or *speculation*.
+The notes were written with AI assistance at the request of Christian Reitwiessner. They were produced by AI working from the cslib-frontier Lean sources and the literature. The paper's PDF was not accessible. **v3 was checked by one independent AI review, and its corrections are incorporated; v1 and v2 (including Theorems F, W and M) have not been independently reviewed. No human has reviewed any of it, and nothing is formalized in Lean.** Theorems T, P and L also rely on a version of the Lean deterministic theorem with binary inputs and a larger wire alphabet, which is not formalized. **v4 has not been independently reviewed.** It also contains one small search experiment (v4 §4), which is weak evidence only. Every claim in the notes is labelled *proved here*, *verified from source*, *experiment* or *speculation*.
 
 The scripts in `checks/` are brute-force checks of the bookkeeping on tiny instances, where the residual terms dominate. They do not test the asymptotic statements. All of them were rerun from this folder before publishing.
 
@@ -72,3 +76,12 @@ python3 xor_or_strong.py          # the single-cut example (needs numpy; several
 ```
 
 The first three were rerun from this folder before publishing. `xor_or_strong_output.txt` is the review's recorded output and was not rerun.
+
+From `checks/v4/`:
+
+```
+python3 few_ands_check.py         # the linear-span claim behind Theorem A (few_ands_output.txt)
+PY=python3 ./run_search.sh 12 6000 6 "2 4 6 8 10 12 16 20 26 32"   # the search of v4 §4 (needs numpy; about 7 minutes on 18 cores)
+```
+
+`few_ands_check.py` was rerun from this folder before publishing. `search_n12.txt` is the recorded output of the search and was not rerun.
