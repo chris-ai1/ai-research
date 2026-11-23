@@ -1,0 +1,6 @@
+K=2: all checks pass; instances with >=1 peel: 23 of 40
+layer-cake lemma: 200 random instances pass
+product program P^(j): path count = binom(p,j), alternating identity: pass
+{'b': 0.375, 'D': 14, 'peels': 2, 'lhs': -18, 'peeled_mass': 184, 'mass': 240}
+{'b': 0.438, 'D': 14, 'peels': 2, 'lhs': -88, 'peeled_mass': 186, 'mass': 210}
+weighted peeling: all checks pass; instances with >=1 peel: 2

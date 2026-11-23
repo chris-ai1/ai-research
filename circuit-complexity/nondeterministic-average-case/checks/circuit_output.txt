@@ -1,0 +1,3 @@
+{'cr_checked': 51, 'inputs': 1064, 'ambiguous_inputs': 525, 'circuits': 60, 'max_w': 13, 'max_omega': 9}
+ALL CHECKS PASSED
+inputs where #paths != #accepting restrictions to output-reaching witnesses: 240 of 728
