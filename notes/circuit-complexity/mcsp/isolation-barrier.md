@@ -8,7 +8,7 @@ Suppose that on every specified block of at most $q$ bits, each labeling occurs 
 * closure under bitwise complement and $\log_2|C|\le q+O(\log(nq))$, and
 * a deterministic, nonuniform membership circuit of $O(N)$ full binary gates.
 
-Thus even isolation within an additive $O(\log(nq))$ of the counting limit is compatible with linear circuit size. In fact the repository's [deterministic membership bound](papers/deterministic/main.pdf) gives at least $2N-2\lfloor\log_2|C|\rfloor-1$ gates for the same example. The obstruction concerns superlinear growth. The leading constant in the upper bound leaves room for stronger linear lower bounds.
+Thus even isolation within an additive $O(\log(nq))$ of the counting limit is compatible with linear circuit size. In fact the repository's [deterministic membership bound](../../../results/circuit-complexity/mcsp/papers/deterministic/main.pdf) gives at least $2N-2\lfloor\log_2|C|\rfloor-1$ gates for the same example. The obstruction concerns superlinear growth. The leading constant in the upper bound leaves room for stronger linear lower bounds.
 
 ## One sparse map shared by many small linear spaces
 
@@ -60,6 +60,6 @@ One can recognize $S$ with $O(N)$ gates. Recover the affine coefficients from th
 
 ## Finite check and provenance
 
-The [finite checker](experiments/check_isolation_barrier.py) exhausts a 16-bit example with two spaces, a 12-bit prefix and four shared output rows. It tests membership on every input, including both shared constant words, and all 480 choices of a pair of coordinates and a labeling. It repeats the isolation check after adjoining the radius-one balls. These small parameters illustrate the decoder and the added words. The existence argument for growing $q$ is the one above.
+The [finite checker](check_isolation_barrier.py) exhausts a 16-bit example with two spaces, a 12-bit prefix and four shared output rows. It tests membership on every input, including both shared constant words, and all 480 choices of a pair of coordinates and a labeling. It repeats the isolation check after adjoining the radius-one balls. These small parameters illustrate the decoder and the added words. The existence argument for growing $q$ is the one above.
 
 Samuel Schlesinger's *Structure from optimality* notes posed this obstruction and constructed a linear-size recognizer using reversible recurrences, sparse expansion and the finite-field small-bias construction of Alon, Goldreich, Håstad and Peralta. The proof here uses the sparse expansion with a short list of random linear spaces and a shared decoder to obtain the additive log-cardinality estimate. The use of unique neighbors for independence in sparse maps goes back to Siegel and is developed by Christiani and Pagh. [Alon et al., §5](https://www.wisdom.weizmann.ac.il/~oded/PSX/aghp.pdf) · [Siegel (2004)](https://doi.org/10.1137/S0097539701386216) · [Christiani and Pagh, §§III–IV](https://arxiv.org/abs/1408.2157)
