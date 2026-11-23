@@ -1,0 +1,2 @@
+{'circuits': 3000, 'inputs': 28500, 'bad_L': 0, 'bad_P': 0, 'max_live': 3, 'max_rel': 6, 'nontree': 956}
+circuits by max number of live branch points: {0: 2345, 1: 546, 2: 90, 3: 19}

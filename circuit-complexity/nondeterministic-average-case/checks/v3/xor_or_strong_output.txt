@@ -1,0 +1,47 @@
+M=128 rows=16384 cols=4096 K=64  (ln m)^2=69  M>=K: True  M>=2K: True
+  generic alt+ILS      S: 0.5361   iid: 0.5347
+  biclique |Q|=   1 |Qp|=  64: 0.3838   polished by alt: 0.4980
+  biclique |Q|=   2 |Qp|=  32: 0.4824   polished by alt: 0.5498
+  biclique |Q|=   4 |Qp|=  16: 0.5098   polished by alt: 0.5464
+  biclique |Q|=   8 |Qp|=   8: 0.5205   polished by alt: 0.5679
+  biclique |Q|=  16 |Qp|=   4: 0.5176   polished by alt: 0.5508
+  biclique |Q|=  32 |Qp|=   2: 0.4844   polished by alt: 0.5312
+  biclique |Q|=  64 |Qp|=   1: 0.3799   polished by alt: 0.5024
+  best structured S: 0.5679   ratio to iid: 1.062
+  cut ({q,b}|{q'}) and its mirror, the PREFIX cut ({q}|{q',b}): S constant on a 56 x 65 rectangle (large iff >= K=64)
+
+M=160 rows=25600 cols=2048 K=80  (ln m)^2=58  M>=K: True  M>=2K: True
+  generic alt+ILS      S: 0.4691   iid: 0.4678
+  biclique |Q|=   1 |Qp|=  80: 0.3194   polished by alt: 0.4384
+  biclique |Q|=   2 |Qp|=  40: 0.3962   polished by alt: 0.4641
+  biclique |Q|=   4 |Qp|=  20: 0.3900   polished by alt: 0.4675
+  biclique |Q|=   8 |Qp|=  10: 0.3431   polished by alt: 0.4509
+  biclique |Q|=  10 |Qp|=   8: 0.3656   polished by alt: 0.4553
+  biclique |Q|=  20 |Qp|=   4: 0.3887   polished by alt: 0.4553
+  biclique |Q|=  40 |Qp|=   2: 0.3950   polished by alt: 0.4625
+  biclique |Q|=  80 |Qp|=   1: 0.3181   polished by alt: 0.4456
+  best structured S: 0.4675   ratio to iid: 1.003
+  cut ({q,b}|{q'}) and its mirror, the PREFIX cut ({q}|{q',b}): S constant on a 70 x 75 rectangle (large iff >= K=80)
+
+M=128 rows=16384 cols=4096 K=128  (ln m)^2=69  M>=K: True  M>=2K: False
+  generic alt+ILS      S: 0.3617   iid: 0.3599
+  biclique |Q|=   1 |Qp|= 128: 0.2031   polished by alt: 0.3396
+  biclique |Q|=   2 |Qp|=  64: 0.2922   polished by alt: 0.3521
+  biclique |Q|=   4 |Qp|=  32: 0.3093   polished by alt: 0.3687
+  biclique |Q|=   8 |Qp|=  16: 0.2988   polished by alt: 0.3517
+  biclique |Q|=  11 |Qp|=  11: 0.2964   polished by alt: 0.3477
+  biclique |Q|=  16 |Qp|=   8: 0.2786   polished by alt: 0.3516
+  biclique |Q|=  32 |Qp|=   4: 0.3210   polished by alt: 0.3586
+  biclique |Q|=  64 |Qp|=   2: 0.2981   polished by alt: 0.3527
+  biclique |Q|= 128 |Qp|=   1: 0.2040   polished by alt: 0.3446
+  best structured S: 0.3687   ratio to iid: 1.024
+  cut ({q,b}|{q'}) and its mirror, the PREFIX cut ({q}|{q',b}): S constant on a 56 x 65 rectangle (large iff >= K=128)
+
+M=64 rows=4096 cols=8192 K=1024  (ln m)^2=81  M>=K: False  M>=2K: False
+  generic alt+ILS      S: 0.0866   iid: 0.0863
+  biclique |Q|=  16 |Qp|=  64: 0.0549   polished by alt: 0.0835
+  biclique |Q|=  32 |Qp|=  32: 0.0552   polished by alt: 0.0829
+  biclique |Q|=  64 |Qp|=  16: 0.0544   polished by alt: 0.0839
+  best structured S: 0.0839   ratio to iid: 1.003
+  cut ({q,b}|{q'}) and its mirror, the PREFIX cut ({q}|{q',b}): S constant on a 32 x 33 rectangle (large iff >= K=1024)
+
