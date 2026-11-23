@@ -38,7 +38,7 @@ $$
 \le 2^{-\varepsilon T+o(T)}.
 $$
 
-Together with the uniform lower estimate this proves the theorem. [Rooted circuit census](../../../results/circuit-complexity/mcsp/papers/deterministic/main.tex)
+Together with the uniform lower estimate this proves the theorem. [Rooted circuit census](../../results/mcsp/papers/deterministic/main.tex)
 
 ## A sharp limit on the signed-merge estimate
 

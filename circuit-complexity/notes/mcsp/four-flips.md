@@ -4,7 +4,7 @@ Two changes to an easy truth table can together stay within the gate budget even
 
 ## Setup
 
-Write $C(f)$ for the gate count over the full binary basis with free signs and constants. Use the baseline $B_m=h(y)\oplus\operatorname{Par}_m(z)$ from the [odd-error manuscript](../../../results/circuit-complexity/mcsp/papers/probabilistic/main.tex). It ignores $l\ge1$ selector bits $q$. Fix one fiber $(y,q)=(u,1^l)$. For $E\subseteq\{0,1\}^m$, write $B_m[E]$ for the result of flipping exactly the entries in $E$ in this fiber. Write $A_m$ for the minimum cost of an odd number of flips there, at the specified $h,l,u$.
+Write $C(f)$ for the gate count over the full binary basis with free signs and constants. Use the baseline $B_m=h(y)\oplus\operatorname{Par}_m(z)$ from the [odd-error manuscript](../../results/mcsp/papers/probabilistic/main.tex). It ignores $l\ge1$ selector bits $q$. Fix one fiber $(y,q)=(u,1^l)$. For $E\subseteq\{0,1\}^m$, write $B_m[E]$ for the result of flipping exactly the entries in $E$ in this fiber. Write $A_m$ for the minimum cost of an odd number of flips there, at the specified $h,l,u$.
 
 The manuscript proves that a singleton attains $A_m$, that its position in the fiber is arbitrary, and that $A_m=A_{m-1}+2$ for $m\ge2$. We use the threshold $s=A_m-1$. Fixing a selector of a singleton circuit to its inactive value shows $C(B_m)\le s$ when $m\ge2$.
 
@@ -71,7 +71,7 @@ For $t=1$, the parity of these distances is the original cross-pair parity diffe
 
 ## Consequences at a quadratic budget
 
-One can realize $s=n^2$ for all sufficiently large $n$, with $m=n-O(\log n)$ parity coordinates in the same baseline. Use the [threshold interpolation in the odd-error manuscript](../../../results/circuit-complexity/mcsp/papers/probabilistic/main.tex) with $r=\lceil4\log_2 n\rceil$ core bits. The path of cores starts with $A_1(1)=O(r)$, ends with $A_1(1)=\Omega(2^r/r)$, and has upward steps bounded by an absolute constant. Here $A_1(1)$ is minimized over $u$ with one selector. At each core, varying $l$ over the integers from 3 to a sufficiently large absolute constant gives a consecutive interval of budgets
+One can realize $s=n^2$ for all sufficiently large $n$, with $m=n-O(\log n)$ parity coordinates in the same baseline. Use the [threshold interpolation in the odd-error manuscript](../../results/mcsp/papers/probabilistic/main.tex) with $r=\lceil4\log_2 n\rceil$ core bits. The path of cores starts with $A_1(1)=O(r)$, ends with $A_1(1)=\Omega(2^r/r)$, and has upward steps bounded by an absolute constant. Here $A_1(1)$ is minimized over $u$ with one selector. At each core, varying $l$ over the integers from 3 to a sufficiently large absolute constant gives a consecutive interval of budgets
 
 $$
   A_1(1)+2(n-r)-l-4,\qquad m=n-r-l .

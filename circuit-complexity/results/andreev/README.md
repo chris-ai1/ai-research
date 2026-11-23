@@ -26,7 +26,7 @@ The main open objective is an exact **subquadratic** depth-two threshold circuit
 
 ## Quick start
 
-Run the following commands from `results/circuit-complexity/andreev/`. The manifest covers files in this topic directory. Its [pre-move version](https://github.com/chris-ai1/ai-research/blob/5fe941ddd800c5270959fc98bb5e60c1108883be/MANIFEST.json) preserves the earlier checksums.
+Run the following commands from `circuit-complexity/results/andreev/`. The manifest covers files in this topic directory. Its [pre-move version](https://github.com/chris-ai1/ai-research/blob/5fe941ddd800c5270959fc98bb5e60c1108883be/MANIFEST.json) preserves the earlier checksums.
 
 ```bash
 python3 tools/verify_archive.py

@@ -1,6 +1,6 @@
 # Quadratic elimination paths can contain no affine plane
 
-The MCSP affine synthesis theorem supplies a small circuit for a truth table in every affine space of sufficiently small codimension. One way to try to extend gate elimination to quadratic substitutions would be to find a large affine space inside each surviving path. A path with $2^{\lfloor N/10\rfloor}$ tables can already contain no affine plane. We give the construction, a version with a small circuit for path membership, and a sufficient condition under which affine synthesis still applies. [Affine synthesis](../../../results/circuit-complexity/mcsp/papers/affine/main.tex)
+The MCSP affine synthesis theorem supplies a small circuit for a truth table in every affine space of sufficiently small codimension. One way to try to extend gate elimination to quadratic substitutions would be to find a large affine space inside each surviving path. A path with $2^{\lfloor N/10\rfloor}$ tables can already contain no affine plane. We give the construction, a version with a small circuit for path membership, and a sufficient condition under which affine synthesis still applies. [Affine synthesis](../../results/mcsp/papers/affine/main.tex)
 
 ## The substitution model
 

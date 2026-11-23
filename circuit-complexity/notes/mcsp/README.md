@@ -1,6 +1,6 @@
 # Boolean MCSP: notes, barriers and minor results
 
-Exploratory material from the MCSP project. The potentially publishable results and their manuscripts are in [`results/circuit-complexity/mcsp/`](../../../results/circuit-complexity/mcsp/), which also defines the notation (N = 2ⁿ, threshold s, T = s log₂ s).
+Exploratory material from the MCSP project. The potentially publishable results and their manuscripts are in [`circuit-complexity/results/mcsp/`](../../results/mcsp/), which also defines the notation (N = 2ⁿ, threshold s, T = s log₂ s).
 
 Everything here is an unrefereed, AI-written proof. These notes explain why certain approaches fail, record small exact computations, or give results that the literature check judged minor.
 

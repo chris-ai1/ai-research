@@ -14,7 +14,7 @@ Summary of a research session that ended on 22 November 2026, together with a li
 - [`formal/`](formal/): Lean files for the row-marginal, teaching-projection and pivot/overlap lemmas.
 - [`communication.md`](communication.md): the interactive-communication proof that the sign-rank manuscript cites.
 
-Exploratory notes, barriers, failed attempts and the weaker manuscripts (joint types, zeros of the acceptance polynomial, isolation of patterns) are in [`notes/circuit-complexity/mcsp/`](../../../notes/circuit-complexity/mcsp/).
+Exploratory notes, barriers, failed attempts and the weaker manuscripts (joint types, zeros of the acceptance polynomial, isolation of patterns) are in [`circuit-complexity/notes/mcsp/`](../../notes/mcsp/).
 
 ## Claimed results (written proofs, not independently checked)
 
