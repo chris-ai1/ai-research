@@ -57,15 +57,15 @@ for fan-in 2 (`size_branchingProgram_le` with `d = 3`, `m = 1`) [verified from s
 
 **Lemma 0 (paths = witnesses)** [proved here; an informal reading of the Lean definitions].
 Let `x` be an input. Its accepting paths in the NBP of the hidden network are in bijection with
-`W(x) := {w|_reach : C(x,w) ∈ Acc}`, where `reach` is the set of witness inputs that reach the
-output. In particular `#paths(x) ≤ #{w ∈ U^k : C(x,w) ∈ Acc}`.
+`W(x) := {w|_used : C(x,w) ∈ Acc}`, where `used` is the set of witness inputs that feed at least
+one gate. In particular `#paths(x) ≤ #{w ∈ U^k : C(x,w) ∈ Acc}`.
 
 *Proof.* There are three steps.
 1. `satisfies_hide_iff` says that an edge assignment `α` satisfies the hidden network on `x` iff
    `α` satisfies the full network on `(x,w)` for some `w`.
 2. `satisfies_unique` says that on the full network `α` is determined by `(x,w)`: it is the trace of
-   the circuit, and it records `w_j` on the out-edge of each reachable witness input. So the
-   satisfying `α` for `x` correspond bijectively to `w|_reach` with `C(x,w) ∈ Acc`.
+   the circuit, and it records `w_j` on the out-edge of each used witness input. So the
+   satisfying `α` for `x` correspond bijectively to `w|_used` with `C(x,w) ∈ Acc`.
 3. Paths are the sequences of frontier values of satisfying assignments
    (`accepted_branchingProgram`). The map from assignments to paths is injective, because every
    edge of the loopless graph lies on the frontier between the positions of its two endpoints. ∎
@@ -207,7 +207,7 @@ In normalized form: `Pr_x[x ∈ A_C∩S] ≤ ρ·E_x[1_{x∉S}·W(x)] + |U|^{−
 
 **Corollary 4b (two-sided, unambiguous on false positives)** [proved here]. Suppose `S_n`
 satisfies `Bias(K_n, b_n)` and every false positive of `C` has exactly one accepting witness on
-`reach`. Then
+`used`. Then
 `agreement(S_n, A_C) ≤ 1/2 + b + 4b/(1−2b) + |U|^{−γn}`.
 In general,
 `agreement ≤ 1/2 + b + (ρ−1)Pr[A∖S] + ρ·E[1_{x∉S}(W(x)−1)] + |U|^{−γn}`, with `ρ = (1+2b)/(1−2b)`.

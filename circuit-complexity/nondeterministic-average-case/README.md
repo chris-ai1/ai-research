@@ -1,6 +1,6 @@
 # Average-case frontier lower bounds for nondeterministic circuits
 
-[Note v1: the one-sided bound](nondet-average-case.md) · [Note v2: removing the witness factor](nondet-average-case-v2.md) · [Checks](checks/)
+[Note v1: the one-sided bound](nondet-average-case.md) · [Note v2: removing the witness factor](nondet-average-case-v2.md) · [Note v3: lifting theorems and the restated target](nondet-average-case-v3.md) · [Checks](checks/)
 
 The frontier method of McGuire, Schlesinger and Williams (STOC 2027 submission 1432) proves explicit lower bounds of about $(L-\varepsilon)n$ gates for fan-in-two circuits. It works as follows:
 - the circuit is compiled into a constraint network;
@@ -9,7 +9,7 @@ The frontier method of McGuire, Schlesinger and Williams (STOC 2027 submission 1
 
 For deterministic circuits the branching program is unambiguous, and that gives average-case bounds. For nondeterministic circuits only the worst-case bound was known (`Nondeterministic.lean` in [cslib-frontier](https://github.com/cslib-community/cslib-frontier)). These notes ask how far the average-case bound extends to nondeterministic circuits.
 
-The target is that, for every ε > 0, every nondeterministic circuit with at most (L−ε)n gates agrees with an explicit S_n on at most a 1/2 + O(b) + 2^(−γn) fraction of inputs. **This target is not proved.** The notes prove several restricted versions and identify barriers that any full proof must get past.
+The target is that, for every ε > 0, every nondeterministic circuit with at most (L−ε)n gates agrees with an explicit S_n on at most a 1/2 + O(b) + 2^(−γn) fraction of inputs. **This target is not proved, and v3 gives reasons to think it is false at the full constant L.** The notes prove restricted versions, identify barriers, and restate the target.
 
 ## Results
 
@@ -23,12 +23,19 @@ The target is that, for every ε > 0, every nondeterministic circuit with at mos
 | Probability gap (M) | If every accepted input is accepted by at least an α fraction of witnesses, the bound holds at size (L−ε)n/d with d ≈ 1/√α. | v2 |
 | Exact reformulation (D) | By LP duality, the target holds for an accepted set A iff 1_A is close to a signed combination of large rectangles with bounded total mass. This condition does not involve S. | v2 |
 | Barriers B1–B4 | An argument that uses only the width of the branching program would give an explicit Arthur–Merlin communication lower bound (B1). Narrow programs simulate unions of boxes over a few blocks (B2). An argument uniform in the alphabet would give number-in-hand multiparty NP lower bounds for Li's sumset extractor (B3). Hashing reduces to the linear statements, and moment methods need degree about √(range of witness counts), beyond what the size budget allows (B4). | v1, v2 |
+| Tree-like cones (T) | If no witness-dependent wire is used twice, the circuit is simulated exactly by a deterministic circuit over a three-letter alphabet. Two-sided bound for s − k_u ≤ (1 + (L−1)/log₂3 − ε)n ≈ 3.26n, with no limit on witnesses. | v3 §1 |
+| Few entry wires (E) | If m input-determined wires feed the witness cone, the bound holds when s_det + (n − n_det) + c + m/A ≤ (L−ε)n. | v3 §2 |
+| Profiles (P) | Run all witnesses in parallel. With k witness bits, two-sided bound for s − k_u ≤ (1 + (L−1)/2^k − ε)n: 2.79n, 1.89n, 1.45n for k = 1, 2, 3. | v3 §7 |
+| Live branch points (L) | Each wire carries the relation between its value and the reused witness-dependent wires still live there: at most 2^(r+1) bits for r live points, whatever the number of witnesses. T is the case r = 0. | v3 §7 |
+| Single cut is not enough | S = g(q,b) ⊕ g′(q′,b) has small bias on all large rectangles of one cut, yet agrees on 3/4 of inputs with g(q,b) ∨ g′(q′,b), a union of few large rectangles at that cut. | v3 §5 |
+| One witness bit | For one witness bit the nondeterministic statement is equivalent to a deterministic one about h(y,0) ⊕ h(y,1). The method proves it up to 2.79n. Between 2.79n and Ln it is open, and a positive answer to question (Q) would make the target false. | v3 §6 |
+| Restated target | For k witness bits the bound holds up to (1 + (L−1)/2^k)n (Theorem P); conjecturally the constant L is not reachable for all sets with small bias at all cuts. | v3 §8 |
 
-v2 also corrects v1's Lemma 0. Accepting paths correspond to witnesses restricted to the *used* witness inputs, not to those reaching the output. The two readings differ on 240 of 728 test inputs (`checks/reach_vs_used.py`). The inequalities v1 uses are unaffected. v2 also logs eleven failed approaches.
+Lemma 0 of v1 (accepting paths correspond to witnesses restricted to the *used* witness inputs) is stated in its precise form in both notes; `checks/reach_vs_used.py` shows why the restriction to used inputs matters. v2 also logs eleven failed approaches.
 
 ## Status
 
-The notes were written with AI assistance at the request of Christian Reitwiessner. Each was produced by one AI agent working from the cslib-frontier Lean sources and the literature. The paper's PDF was not accessible. **No independent review, human or AI, has been done, and nothing here is formalized in Lean.** Every claim in the notes is labelled *proved here*, *verified from source*, or *speculation*.
+The notes were written with AI assistance at the request of Christian Reitwiessner. They were produced by AI working from the cslib-frontier Lean sources and the literature. The paper's PDF was not accessible. **v3 was checked by one independent AI review, and its corrections are incorporated; v1 and v2 (including Theorems F, W and M) have not been independently reviewed. No human has reviewed any of it, and nothing is formalized in Lean.** Theorems T, P and L also rely on a version of the Lean deterministic theorem with binary inputs and a larger wire alphabet, which is not formalized. Every claim in the notes is labelled *proved here*, *verified from source*, or *speculation*.
 
 The scripts in `checks/` are brute-force checks of the bookkeeping on tiny instances, where the residual terms dominate. They do not test the asymptotic statements. All of them were rerun from this folder before publishing.
 
@@ -52,5 +59,16 @@ python3 nbp_check.py              # layer-cake lemma, product programs, weighted
 python3 peel_k2.py .              # weighted peeling at K = 2
 python3 cheb_check.py             # Chebyshev polynomial for F2 and M (cheb_output.txt)
 python3 binom_basis_check.py .    # binomial-basis coefficients (binom_output.txt)
-python3 reach_vs_used.py .        # the 240-of-728 correction
+python3 reach_vs_used.py .        # used versus output-reaching witness inputs
 ```
+
+From `checks/v3/`:
+
+```
+python3 tree_cone_check.py        # Theorem T, with a control that reuses one witness
+python3 live_profile_check.py     # Theorems P and L against brute force
+python3 live_adversarial.py 2000  # the review's independent check of L and P on adversarial families
+python3 xor_or_strong.py          # the single-cut example (needs numpy; several minutes)
+```
+
+The first three were rerun from this folder before publishing. `xor_or_strong_output.txt` is the review's recorded output and was not rerun.

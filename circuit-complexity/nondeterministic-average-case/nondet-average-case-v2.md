@@ -16,7 +16,7 @@ agrees with an explicit `S_n` on at most a `1/2 + O(b_n) + |U|^{−γn}` fractio
 
 | # | Statement | Status |
 |---|---|---|
-| C0 | Correction to v1, Lemma 0: accepting paths ↔ accepting restrictions of `w` to the **used** witness inputs (those with an out-edge), not those reaching the output. They agree when dead gates are pruned. | proved here + brute force (240 of 728 test inputs differ under the "reach" reading) |
+| C0 | Lemma 0, precise form: accepting paths ↔ accepting restrictions of `w` to the **used** witness inputs (those with an out-edge), not those reaching the output. They agree when dead gates are pruned. | proved here + brute force (the count over output-reaching witness inputs differs on 240 of 728 test inputs) |
 | C1 | Witness-adjusted size. Every frontier statement for ND circuits holds with `s − k_u ≤ (L−ε)n` in place of `s ≤ (L−ε)n` (`k_u` = number of used witness inputs), provided `s ≤ c₀n`. | proved here from the Compiler cycle-rank count [verified from source] |
 | P1 | v1's T4 main term `ρ·Σ_{x∉S} W(x)` is exactly the union bound over witnesses. The hidden-network proof only improves the residual. | proved here |
 | P2 | Linear (witness-weighted) statements are free: `|E_x[(2·1_S−1)·Pr_w C(x,w)]| ≤ 4b + 2e^{−γn}`. | proved here from the Lean average-case theorem |
@@ -61,7 +61,7 @@ The *witness cone* `Z` is the set of edges whose source is a witness input or a 
 
 ## 2. Verified and corrected facts
 
-**C0 (Lemma 0, corrected)** [proved here; brute force]. The accepting paths of `x` in `P_π` are in bijection with
+**C0 (Lemma 0, precise form)** [proved here; brute force]. The accepting paths of `x` in `P_π` are in bijection with
 `{w|_used : C(x,w) ∈ Acc}`.
 
 *Proof.* Accepting paths correspond to satisfying assignments of the hidden network on `x`. Each one is the trace of
@@ -69,9 +69,9 @@ The *witness cone* `Z` is the set of edges whose source is a witness input or a 
 records `w_j` on the out-edges of every used witness, and nothing about unused ones. Every edge lies in some frontier, so
 distinct assignments give distinct paths. ∎
 
-If a used witness feeds only dead gates (gates not reaching the output), its value still changes the trace. So v1's
-"reaching the output" reading is wrong unless dead gates are pruned first; pruning never changes `A`. The inequality
-`p(x) ≤ #{w : C(x,w) ∈ Acc}` used in v1 is unaffected. `checks/reach_vs_used.py` finds 240 of 728 test inputs where the "reach"
+If a used witness feeds only dead gates (gates not reaching the output), its value still changes the trace. So counting only
+witness inputs that reach the output is wrong unless dead gates are pruned first; pruning never changes `A`. The inequality
+`p(x) ≤ #{w : C(x,w) ∈ Acc}` used in v1 holds either way. `checks/reach_vs_used.py` finds 240 of 728 test inputs where the "reach"
 count differs from the path count, and `checks/circuit_check.py` confirms the "used" count on 1064 inputs.
 
 **C1 (cycle rank with witnesses)** [verified from source + proved here].
@@ -450,7 +450,7 @@ fixed (e.g. binary) alphabet, where such box unions need exponential size.
   - C0: path count = number of accepting used-witness restrictions;
   - W: `P'` is unambiguous, accepts the same set and obeys the width bound;
   - C1: `cr = s + 1 − |used inputs|` on 51 connected graphs.
-* `reach_vs_used.py`: the "reach the output" reading of v1's Lemma 0 fails on 240 of 728 inputs.
+* `reach_vs_used.py`: counting only output-reaching witness inputs fails on 240 of 728 inputs.
 * `nbp_check.py`, `peel_k2.py` → `peel_output.txt`. Checked:
   - Lemma L on 200 random matrices;
   - `P^{(j)}` path counts `= binom(p,j)` for `j ≤ 3`, and the alternating identity;

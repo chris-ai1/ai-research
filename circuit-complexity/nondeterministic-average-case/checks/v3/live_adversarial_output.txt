@@ -1,0 +1,6 @@
+random    circuits=20000 inputs=93468 mismatches: A=0 B=1116 C=2656 D=1186 P=0  max-live hist(A)={0: 63766, 1: 22306, 2: 6040, 3: 1182, 4: 150, 5: 24}
+window    circuits=20000 inputs=60144 mismatches: A=0 B=1757 C=5227 D=396 P=0  max-live hist(A)={0: 8722, 1: 9958, 2: 12560, 3: 11130, 4: 7764, 5: 5140, 6: 2932, 7: 1342, 8: 434, 9: 112, 10: 48, 11: 2}
+ladder    circuits=20000 inputs=80000 mismatches: A=0 B=1430 C=7657 D=481 P=0  max-live hist(A)={0: 84, 1: 4596, 2: 15548, 3: 20392, 4: 17404, 5: 11096, 6: 6276, 7: 2816, 8: 1200, 9: 456, 10: 92, 11: 40}
+nested    circuits=20000 inputs=80000 mismatches: A=0 B=0 C=5319 D=4794 P=0  max-live hist(A)={1: 45924, 2: 33052, 3: 1024}
+exhaustive wiring m=3 n=1 k=2, 2 random gate tables each: inputs=14400 mismatches A=0
+exhaustive wiring m=4 n=1 k=2, 1 random gate tables each: inputs=259200 mismatches A=0

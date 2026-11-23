@@ -1,0 +1,2 @@
+tree-like cone   : {'inputs': 7496, 'ambiguous_inputs': 5263, 'mismatches': 0, 'strict_overapprox': 0}
+one reused witness: {'inputs': 7496, 'ambiguous_inputs': 5197, 'mismatches': 322, 'strict_overapprox': 322}
