@@ -1,0 +1,314 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=1.05in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,xcolor}
+\usepackage[colorlinks=true,linkcolor=teal!60!black,citecolor=teal!60!black,urlcolor=teal!60!black]{hyperref}
+\hypersetup{pdftitle={LogCFL is unambiguous: Hoza's isolation for proof trees}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\N}{\mathbb N}
+\newcommand{\LogCFL}{\mathrm{LogCFL}}
+\newcommand{\UAux}{\mathrm{UAuxPDA}}
+\newcommand{\Cert}{\mathrm{Cert}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt minus 1pt}
+\raggedbottom
+\emergencystretch=3em
+\title{\bfseries LogCFL is unambiguous:\\Hoza's isolation for proof trees}
+\author{A research note extending Hoza's proof of NL = UL}
+\date{November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Hoza recently proved $\mathrm{NL}=\mathrm{UL}$ by giving a logspace generator
+with an $O(\log n)$-bit seed whose weights make the minimum-weight path between
+every pair of vertices of a layered digraph unique, for some seed. We observe
+that the same construction isolates minimum-weight \emph{proof trees} in
+layered semi-unbounded circuits of logarithmic depth. The 2-adic valuation of the layer
+index in Hoza's weights is replaced by the AND-level of the gate, and the
+analysis goes through almost verbatim. Combined with the unambiguous
+certificate machines of van Melkebeek and Prakriya, this gives
+\[
+ \LogCFL \;=\; \UAux(\log n,\,n^{O(1)}) \;=\; \mathrm{co}\UAux(\log n,\,n^{O(1)}).
+\]
+Previously this was known with $O(\log^{3/2} n)$ space, or with polynomial advice.
+\end{abstract}
+
+\section{Introduction}
+$\LogCFL$ is the class of languages logspace-reducible to context-free
+languages. It equals $\mathrm{AuxPDA}(\log n,n^{O(1)})$, the languages accepted
+by nondeterministic machines with $O(\log n)$ work space, an unbounded stack
+and polynomial running time \cite{Sudborough}. It also equals
+logspace-uniform $\mathrm{SAC}^1$ \cite{Venkateswaran}. $\UAux(\log
+n,n^{O(1)})$ is the subclass accepted by such machines that have at most one
+accepting computation on every input.
+
+Reinhardt and Allender combined the isolation lemma with double inductive
+counting and proved $\LogCFL/\mathrm{poly}=\UAux/\mathrm{poly}$, alongside
+$\mathrm{NL}/\mathrm{poly}=\mathrm{UL}/\mathrm{poly}$ \cite{RA}. Van Melkebeek and Prakriya derandomized
+the isolation step partially and obtained $\LogCFL\subseteq\UAux$ in space
+$O(\log^{3/2}n)$ \cite{vMP}. Hoza's weight assignment generator \cite{Hoza}
+removes the remaining loss for layered digraphs and proves $\mathrm{NL}=\mathrm{UL}$.
+
+\begin{theorem}\label{thm:main}
+$\LogCFL = \UAux(\log n,n^{O(1)}) = \mathrm{co}\UAux(\log n,n^{O(1)})$.
+\end{theorem}
+
+The new ingredient is Theorem~\ref{thm:generator}, an explicit
+weight assignment generator for proof trees. Its proof follows
+Hoza~\cite[\S2]{Hoza} closely. In a layered digraph, Hoza uses the
+2-adic valuation of the layer index to single out one dominant internal
+layer of every interval, and to ensure that a path meets at most $2^\Delta$ layers of
+valuation $M-\Delta$. A proof tree of a circuit of logarithmic depth has
+this structure natively: below an AND gate at AND-level $k$ it contains at
+most $2^m$ copies of AND gates at AND-level $k-m$. So we can scale the
+weights by the AND-level itself. The rest of the argument, including the
+constant $6$, carries over. Section~\ref{sec:machines} then plugs the
+generator into the machinery of \cite{vMP}, in the same way that Hoza plugs
+his into that of \cite{RA}.
+
+\section{Circuits and proof trees}
+
+\begin{definition}[Normal form]\label{def:normal}
+A \emph{normal-form circuit} of AND-depth $K$ has layers $V_0,V_1,\dots,V_{2K}$, each
+of size at most $w$; the gates of $V_i$ are indexed by $[w]$.
+\begin{itemize}
+\item Layer $V_0$ consists of leaves labeled by literals or constants.
+\item Each odd layer $V_{2k-1}$ consists of AND gates of fan-in $1$ or $2$, with
+ inputs in $V_{2k-2}$. Both inputs may be the same gate.
+\item Each even layer $V_{2k}$ with $k\ge 1$ consists of OR gates of arbitrary
+ positive fan-in, with inputs in $V_{2k-1}$.
+\end{itemize}
+An AND gate in $V_{2k-1}$ has \emph{AND-level} $k$. Let $n$ denote the
+number of gates.
+\end{definition}
+
+The important feature is that the layer next to the leaves consists of AND
+gates, so every OR gate has only AND gates as inputs. Without it,
+isolation fails: in $x_1\vee x_2$ with both inputs true, the gate has two proof
+trees, each of weight zero, whatever the weights of the gates are.
+
+\begin{definition}[Proof trees]\label{def:cert}
+Fix an input $z$. For a gate $g$ define a finite set $\Cert(g)$ of labeled
+trees inductively. The tree $\langle g\rangle$ stands for $g$ alone, and
+$\langle g;F_1,\dots\rangle$ for $g$ with subtrees $F_1,\dots$.
+\begin{itemize}
+\item A leaf that is true on $z$ has $\Cert(g)=\{\langle g\rangle\}$. A false
+ leaf has $\Cert(g)=\emptyset$.
+\item An AND gate with inputs $a,b$ has $\Cert(g)=\{\langle g;F,F'\rangle: F\in\Cert(a),\,F'\in\Cert(b)\}$.
+ This applies also when $a=b$, in which case $F$ and $F'$ are chosen independently.
+ With a single input $a$, $\Cert(g)=\{\langle g;F\rangle:F\in\Cert(a)\}$.
+\item An OR gate with inputs $h_1,\dots,h_r$ has $\Cert(g)=\bigcup_i \{\langle g;F\rangle: F\in\Cert(h_i)\}$.
+\end{itemize}
+Gate $g$ evaluates to $1$ on $z$ if and only if $\Cert(g)\neq\emptyset$.
+Given a weight $\rho\colon V\to\N$, the weight $\rho(F)$ of a tree is the sum
+of $\rho$ over all of its nodes, with multiplicity. Let
+$\mu^\rho(g)=\min_{F\in\Cert(g)}\rho(F)$. We say that $\rho$ is
+\emph{min-isolating} for $(C,z)$ if every gate $g$ with $\Cert(g)\ne\emptyset$
+has exactly one $F\in\Cert(g)$ with $\rho(F)=\mu^\rho(g)$.
+\end{definition}
+
+This agrees with the notion of certificates and their weights in
+\cite[Definition~6]{vMP}. Proof trees of a gate are trees over the unfolding
+of the circuit, so a gate may occur in one proof tree several times.
+
+\begin{lemma}[Level profile]\label{lem:profile}
+Let $u$ be an AND gate at AND-level $k$ and $F\in\Cert(u)$. For every $m\ge1$, $F$
+contains at most $2^m$ nodes labeled by AND gates of AND-level $k-m$, and it contains exactly one
+node of AND-level $k$, namely its root.
+\end{lemma}
+\begin{proof}
+Below an AND node at layer $2k'-1$ there are at most two OR nodes at
+layer $2k'-2$, if $k'\ge2$, and each OR node has exactly one child, an AND node at layer
+$2k'-3$. Induction on $m$.
+\end{proof}
+
+\section{The generator}
+
+Let $\mathcal C\colon[w]\to\{0,1\}^\ell$ be a code with minimum distance $d$,
+computable in space $O(\log(wK))$, with $\ell=O(\log(wK))$. Justesen codes
+\cite{Justesen} achieve $d=\Theta(\log(wK))$ with these parameters, as used in
+\cite{Hoza}. For a gate $g$ write $\mathcal C(g)$ for the codeword of its index
+within its layer.
+
+\begin{definition}[Weights]\label{def:weights}
+For a seed $x\in\{0,1\}^\ell$, let an AND gate $g$ at AND-level $k$ have weight
+\[
+ \rho_x(g)=\sum_{j=1}^{\ell} 6^{\,k+\ell-j}\cdot\mathcal C(g)_j\cdot x_j ,
+\]
+and let OR gates and leaves have weight $0$.
+\end{definition}
+
+This is Hoza's Eq.~(1) \cite{Hoza}, with $\nu_2(i)$ replaced by $k$. Weights are at
+most $6^{K+\ell}$, and by Lemma~\ref{lem:profile} every proof tree weighs less than
+$6^{K+\ell}$. For $K,\ell=O(\log n)$ this is $n^{O(1)}$. Given $x$ and $g$, the
+weight is computable in space $O(\log n)$.
+
+\begin{theorem}\label{thm:generator}
+Let $C$ be a normal-form circuit with $n$ gates, and let $z$ be an input. If $x$ is
+uniformly random, then
+\[
+ \Pr_x[\rho_x \text{ is not min-isolating for }(C,z)]\ \le\ 2^{-d}\cdot n\,w^2 .
+\]
+In particular, if $d\ge 3\log_2 n+1$, then some seed is min-isolating.
+\end{theorem}
+
+Fix an AND gate $u$ at AND-level $k$ with $\Cert(u)\ne\emptyset$, and put
+$B_j=6^{k+\ell-j}$. For $f\colon\{0,1\}^\ell\to\mathbb R$ write $\partial_j
+f(x)=f(x^{j\leftarrow1})-f(x^{j\leftarrow0})$.
+
+\begin{lemma}[Derivatives; cf.\ {\cite[Lemma~2.3]{Hoza}}]\label{lem:deriv}
+For every $j\in[\ell]$ and every seed $x$,
+\[
+ \partial_j\mu^{\rho_x}(u)\in\bigl[B_j\,\mathcal C(u)_j,\ B_j\,(\mathcal C(u)_j+\tfrac12)\bigr].
+\]
+\end{lemma}
+\begin{proof}
+First fix $F\in\Cert(u)$ and let $f_F(x)=\rho_x(F)$. Flipping $x_j$ from $0$ to
+$1$ increases the root's weight by exactly $B_j\mathcal C(u)_j$. It increases
+the weight of each AND node at level $k-m$ by at most $6^{-m}B_j$, and by
+Lemma~\ref{lem:profile} there are at most $2^m$ such nodes. All increases are
+nonnegative. Hence
+\[
+ \partial_j f_F(x)\in\Bigl[B_j\mathcal C(u)_j,\ B_j\mathcal C(u)_j+B_j\sum_{m\ge1}2^m6^{-m}\Bigr]
+ =\bigl[B_j\mathcal C(u)_j,\ B_j(\mathcal C(u)_j+\tfrac12)\bigr].
+\]
+Now let $F_0$ and $F_1$ be minimizers for the seeds $x^{j\leftarrow0}$ and
+$x^{j\leftarrow1}$. Then
+\[
+ \partial_j\mu(u)=\bigl(f_{F_1}(x^{j\leftarrow1})-f_{F_0}(x^{j\leftarrow1})\bigr)+\partial_jf_{F_0}(x)\le\partial_jf_{F_0}(x)
+\]
+and
+\[
+ \partial_j\mu(u)=\partial_jf_{F_1}(x)+\bigl(f_{F_1}(x^{j\leftarrow0})-f_{F_0}(x^{j\leftarrow0})\bigr)\ge\partial_jf_{F_1}(x),
+\]
+since the first bracket is at most $0$ and the second at least $0$. Both bounds then lie in the interval.
+\end{proof}
+
+The exchange argument uses only that $\mu$ is a pointwise minimum of functions with the
+stated derivative bounds. It does not depend on the objects being paths or trees.
+
+\begin{lemma}[Collisions; cf.\ {\cite[Theorem~2.4]{Hoza}}]\label{lem:collide}
+Let $u\ne v$ be AND gates in the same layer with $\Cert(u),\Cert(v)\neq\emptyset$, and let
+$A=\{j:\mathcal C(u)_j=\mathcal C(v)_j\}$. Then the set
+$E=\{x:\mu^{\rho_x}(u)=\mu^{\rho_x}(v)\}$ has $|E|\le 2^{|A|}\le 2^{\ell-d}$.
+\end{lemma}
+\begin{proof}
+Both gates have the same AND-level, so they share the scales $B_j$. Let $x\in
+E$, and let $y\ne x$ agree with $x$ on $A$. Let $j^*$ be the first coordinate in
+which $x$ and $y$ differ, so $j^*\notin A$. Flip the differing coordinates one at a
+time in increasing order. By Lemma~\ref{lem:deriv}, the first flip changes the
+value of the gate with codeword bit $1$ at $j^*$ by at least $B_{j^*}$, and the other by at most
+$B_{j^*}/2$, both in the same direction. So afterwards $|\mu(u)-\mu(v)|\ge
+B_{j^*}/2$. Every later flip at a coordinate $j>j^*$ moves both values in the same direction
+by amounts in $[0,\frac32B_j]$, so it changes the difference by at most $\frac32B_j$. In
+total, these flips change the difference by less than
+$\frac32B_{j^*}\sum_{t\ge1}6^{-t}=\frac3{10}B_{j^*}<\frac12B_{j^*}$. Hence
+$y\notin E$. So distinct elements of $E$ differ somewhere in $A$, and $|E|\le
+2^{|A|}$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:generator}]
+Call $x$ \emph{bad} if some OR gate $g$ has two distinct inputs $u,v$ with
+$\Cert(u),\Cert(v)\ne\emptyset$ and $\mu(u)=\mu(v)$. The inputs of an OR gate
+are AND gates of one layer, so Lemma~\ref{lem:collide} and a union bound over at most $n$ OR
+gates and $\binom w2$ pairs bound the probability of a bad seed by $2^{-d}nw^2/2$.
+
+Let $x$ be good. We show by induction on the layer that every gate $g$ with
+$\Cert(g)\ne\emptyset$ has a unique minimizer.
+\begin{itemize}
+\item For a true leaf, this holds trivially.
+\item For an AND gate, $\rho(\langle g;F,F'\rangle)=\rho(g)+\rho(F)+\rho(F')$
+ with independent choices, so the minimizers are exactly the pairs of minimizers,
+ and there is one.
+\item For an OR gate, $\rho(\langle g;F\rangle)=\rho(F)$. By goodness, exactly
+ one satisfied input $h$ attains $\min_h\mu(h)$, and $h$ has a unique minimizer. \qedhere
+\end{itemize}
+\end{proof}
+
+\begin{remark}
+The base $6$ is the smallest integer for which both steps work: the derivative bound needs
+$\sum_m(2/b)^m\le\frac12$, that is, $b\ge6$, and the flip step needs
+$\frac12>\frac32\cdot\frac1{b-1}$, that is, $b>4$. Exhaustive checks on small circuits
+find violations of Lemma~\ref{lem:deriv} for bases $2$ to $5$; see the accompanying
+script.
+\end{remark}
+
+\section{Unambiguous machines}\label{sec:machines}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+The inclusion $\UAux\subseteq\mathrm{AuxPDA}=\LogCFL$ is trivial, so let $L\in\LogCFL$.
+\begin{enumerate}
+\item \emph{Reduction.} By \cite[Proposition~2]{vMP}, a logspace mapping reduction sends an
+ input of $L$ to a layered alternating semi-unbounded circuit of logarithmic depth
+ and an input $z$, whose output gate evaluates to $1$ exactly when the original
+ input is in $L$. The transformation in its proof (\cite[Claim~6]{vMP}) produces
+ exactly the normal form of Definition~\ref{def:normal}, padded with fan-in-1 AND
+ gates where necessary \cite[footnotes~10 and~11]{vMP}. In particular $K=O(\log n)$,
+ and Theorem~\ref{thm:generator} applies with $\ell=O(\log n)$ and $d\ge3\log_2n+1$.
+\item \emph{Certificate machines.} By \cite[Lemma~3]{vMP}, there are unambiguous
+ machines $\mathrm{WeightCheck}$ and $\mathrm{WeightEval}$, each with a stack not charged to
+ the space bound, such that for every layered semi-unbounded circuit $C$ of depth
+ $D$ with $n$ gates, input $z$, gate weights $\rho$ and gate $g$:
+ $\mathrm{WeightCheck}(C,z,\rho)$ decides whether $\rho$ is min-isolating for
+ $(C,z)$, and $\mathrm{WeightEval}(C,z,\rho,g)$ computes $\mu^\rho(g)$, with
+ the value $\infty$ when $g$ is false, provided $\rho$ is min-isolating. Both run in time
+ $\mathrm{poly}(2^D,\log W,n)$ and space $O(D+\log W+\log n)$. Here $D=2K=O(\log n)$ and
+ $W<6^{K+\ell}=n^{O(1)}$. The weights $\rho_x$ are computed on demand in logspace.
+\item \emph{Seed search.} For the seeds $x\in\{0,1\}^\ell$ in lexicographic order, run
+ $\mathrm{WeightCheck}(C,z,\rho_x)$. Stop at the first $x$ it accepts, which exists by
+ Theorem~\ref{thm:generator}. Then accept if and only if
+ $\mathrm{WeightEval}(C,z,\rho_x,\mathrm{out})<\infty$.
+\end{enumerate}
+There are $2^\ell=n^{O(1)}$ seeds, so the total time is polynomial and the space is
+$O(\log n)$. Every call is unambiguous in the sense of \cite{vMP,RA}: exactly one
+computation path returns, and it returns the correct answer, while all other paths reject.
+The calls run sequentially with the stack empty between them. So the
+composed machine has exactly one surviving path, and that path outputs the
+correct answer. This gives $L\in\UAux\cap\mathrm{co}\UAux$.
+\end{proof}
+
+This is the same scheme as Hoza's application of \cite{RA} to $\mathrm{NL}$. The
+prefix-by-prefix seed construction of \cite[Algorithm~1]{vMP} is unnecessary here,
+because the whole seed has $O(\log n)$ bits.
+
+\section{Remarks}
+
+\paragraph{Consequences.} With count-preserving translations between AuxPDAs
+and $\mathrm{SAC}^1$ circuits \cite{Vinay,vMP}, Theorem~\ref{thm:main} says that
+every language in logspace-uniform $\mathrm{SAC}^1$ has such a circuit whose output gate
+has at most one proof tree. As with $\mathrm{NL}\subseteq\oplus\mathrm{L}$,
+it follows that $\LogCFL\subseteq\oplus\mathrm{SAC}^1$ and
+$\LogCFL\subseteq\mathrm{Mod}_p\mathrm{SAC}^1$, uniformly. Reinhardt and
+Allender list the question whether $\LogCFL$ reduces to an
+\emph{unambiguous context-free language} \cite[\S4]{RA}. That stronger form of
+unambiguity is not addressed here.
+
+\paragraph{Novelty.} The argument is a direct adaptation and needs no new technique.
+To our knowledge it has not been stated before. We have not seen any revision of
+\cite{Hoza} or follow-up that mentions $\LogCFL$.
+
+\paragraph{Verification and disclosure.} This note was written with AI assistance at
+the request of Christian Reitwiessner. The proof was found by an AI agent and
+checked step by step by a second, independent AI review. That review found that the
+AND-first-layer condition is necessary, and that the level profile is an upper bound
+rather than an equality. Both corrections are incorporated here. Exhaustive seed
+enumeration on small adversarial circuits confirms Lemmas~\ref{lem:deriv}
+and~\ref{lem:collide}; see \texttt{check.py}. The appendix machinery of
+\cite{vMP} (Lemma~3) and the logspace computability of Justesen codes are used as
+published. \textbf{The note has not been reviewed by a human expert.}
+
+\begin{thebibliography}{9}
+\bibitem{Hoza} W.~M.~Hoza. NL = UL. ECCC TR26-323, 2026. \url{https://eccc.weizmann.ac.il/report/2026/323/}
+\bibitem{Justesen} J.~Justesen. A class of constructive asymptotically good algebraic codes. \emph{IEEE Trans.\ Inform.\ Theory} 18(5):652--656, 1972.
+\bibitem{RA} K.~Reinhardt and E.~Allender. Making nondeterminism unambiguous. \emph{SIAM J.\ Comput.} 29(4):1118--1131, 2000. \url{https://people.cs.rutgers.edu/~allender/papers/nlul.pdf}
+\bibitem{Sudborough} I.~H.~Sudborough. On the tape complexity of deterministic context-free languages. \emph{J.\ ACM} 25(3):405--414, 1978.
+\bibitem{vMP} D.~van Melkebeek and G.~Prakriya. Derandomizing isolation in space-bounded settings. \emph{SIAM J.\ Comput.} 48(3):979--1021, 2019; ECCC TR17-052. \url{https://pages.cs.wisc.edu/~dieter/Papers/r-ul-eccc.pdf}
+\bibitem{Venkateswaran} H.~Venkateswaran. Properties that characterize LOGCFL. \emph{J.\ Comput.\ System Sci.} 43(2):380--404, 1991.
+\bibitem{Vinay} V.~Vinay. Counting auxiliary pushdown automata and semi-unbounded arithmetic circuits. In \emph{Proc.\ 6th Structure in Complexity Theory Conference}, 270--284, 1991.
+\end{thebibliography}
+\end{document}
