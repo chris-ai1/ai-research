@@ -38,7 +38,7 @@ $$
 (1+o(1))\frac{q}{\log_2 q}+O(r)=(1-\delta+o(1))s.
 $$
 
-Here $r=O(\log q)$, $\log q\sim\log s$, and the synthesis bound holds on an arbitrary domain of size $q\ge r$ for every choice of labels. Thus the composite table $h(Mx)$ belongs to $A_s$. The rooted circuit census gives $\log_2|A_s|\le (s+1)\log_2(n+s+2)+O(s+\log(s+2))=(1+o(1))T$. [Deterministic manuscript, Theorem 1](papers/deterministic/main.pdf)
+Here $r=O(\log q)$, $\log q\sim\log s$, and the synthesis bound holds on an arbitrary domain of size $q\ge r$ for every choice of labels. Thus the composite table $h(Mx)$ belongs to $A_s$. The rooted circuit census gives $\log_2|A_s|\le (s+1)\log_2(n+s+2)+O(s+\log(s+2))=(1+o(1))T$. [Deterministic manuscript, Theorem 1](../../../results/circuit-complexity/mcsp/papers/deterministic/main.pdf)
 
 The hash leaves enough disjoint copies for the isolation argument, since
 
