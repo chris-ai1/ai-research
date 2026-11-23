@@ -8,7 +8,7 @@ Suppose that on every specified block of at most $q$ bits, each labeling occurs 
 * closure under bitwise complement and $\log_2|C|\le q+O(\log(nq))$, and
 * a deterministic, nonuniform membership circuit of $O(N)$ full binary gates.
 
-Thus even isolation within an additive $O(\log(nq))$ of the counting limit is compatible with linear circuit size. In fact the repository's [deterministic membership bound](../../../results/circuit-complexity/mcsp/papers/deterministic/main.pdf) gives at least $2N-2\lfloor\log_2|C|\rfloor-1$ gates for the same example. The obstruction concerns superlinear growth. The leading constant in the upper bound leaves room for stronger linear lower bounds.
+Thus even isolation within an additive $O(\log(nq))$ of the counting limit is compatible with linear circuit size. In fact the repository's [deterministic membership bound](../../results/mcsp/papers/deterministic/main.pdf) gives at least $2N-2\lfloor\log_2|C|\rfloor-1$ gates for the same example. The obstruction concerns superlinear growth. The leading constant in the upper bound leaves room for stronger linear lower bounds.
 
 ## One sparse map shared by many small linear spaces
 

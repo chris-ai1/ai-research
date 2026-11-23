@@ -2,23 +2,28 @@
 
 Research papers, proofs, and reproducible experiments. Each result is an unrefereed, AI-assisted proof unless the project says otherwise.
 
-- [`results/`](results/): potentially publishable results, each with a manuscript.
-- [`notes/`](notes/): exploratory notes, barriers, partial results, failed attempts and open problems.
+The repository is organized by topic. Each topic has up to two subdirectories:
 
-Inside both, projects are grouped by topic.
+- `results/`: potentially publishable results, each with a manuscript.
+- `notes/`: exploratory notes, barriers, partial results, failed attempts and open problems.
 
-## Results
+## Circuit complexity
 
-| Topic | Project | Paper |
+| | Project | Paper or contents |
 | --- | --- | --- |
-| Circuit complexity | [Andreev’s function and depth-two threshold circuits](results/circuit-complexity/andreev/) | [Threshold-circuit paper (PDF)](results/circuit-complexity/andreev/workspace/eccc_draft/paper.pdf) |
-| Circuit complexity | [Boolean MCSP: results and literature check](results/circuit-complexity/mcsp/) | [Summary and literature check](results/circuit-complexity/mcsp/README.md) · [15 manuscripts](results/circuit-complexity/mcsp/papers/) |
-| Space complexity | [LogCFL = UAuxPDA via Hoza's isolation for proof trees](results/space-complexity/logcfl-unambiguous/) | [LogCFL is unambiguous (PDF)](results/space-complexity/logcfl-unambiguous/paper.pdf) |
+| Result | [Andreev’s function and depth-two threshold circuits](circuit-complexity/results/andreev/) | [Threshold-circuit paper (PDF)](circuit-complexity/results/andreev/workspace/eccc_draft/paper.pdf) |
+| Result | [Boolean MCSP: results and literature check](circuit-complexity/results/mcsp/) | [Summary and literature check](circuit-complexity/results/mcsp/README.md) · [15 manuscripts](circuit-complexity/results/mcsp/papers/) |
+| Notes | [Boolean MCSP: notes, barriers and minor results](circuit-complexity/notes/mcsp/) | Barriers, exploratory computations, two minor manuscripts, failed attempts |
+| Notes | [Average-case frontier lower bounds for nondeterministic circuits](circuit-complexity/notes/nondeterministic-average-case/) | Partial results and barriers; the target is not proved |
 
-## Notes
+## Space complexity
 
-| Topic | Project | Contents |
+| | Project | Paper |
 | --- | --- | --- |
-| Circuit complexity | [Boolean MCSP: notes, barriers and minor results](notes/circuit-complexity/mcsp/) | Barriers, exploratory computations, two minor manuscripts, failed attempts |
-| Circuit complexity | [Average-case frontier lower bounds for nondeterministic circuits](notes/circuit-complexity/nondeterministic-average-case/) | Partial results and barriers; the target is not proved |
-| Algebraic complexity | [The Shub–Smale conjecture and integer roots](notes/algebraic-complexity/shub-smale/) | [Expository note with an exponential upper bound (PDF)](notes/algebraic-complexity/shub-smale/paper.pdf) |
+| Result | [LogCFL = UAuxPDA via Hoza's isolation for proof trees](space-complexity/results/logcfl-unambiguous/) | [LogCFL is unambiguous (PDF)](space-complexity/results/logcfl-unambiguous/paper.pdf) |
+
+## Algebraic complexity
+
+| | Project | Paper |
+| --- | --- | --- |
+| Result | [The Shub–Smale conjecture and integer roots](algebraic-complexity/results/shub-smale/) | [How many integer roots can a short arithmetic program have? (PDF)](algebraic-complexity/results/shub-smale/paper.pdf) |

@@ -13,7 +13,7 @@ $$
 
 The selectors $q$ are unused. The sign makes $K_\pi$ equal to full parity at $1^p$ and at every neighbor of $1^p$, for every partition. Write $B_\pi^\star$ for the result of flipping just $(u,1^p,1^l,0^m)$.
 
-Let $A_m(g,l,u)$ be the minimum size of the table $g(w)\oplus\operatorname{Par}_m(z)$ with one flip at $(u,1^l,0^m)$, using no $y$ inputs. The odd-error lemma gives $A_{m+b}(g,l,u)=A_m(g,l,u)+2b$. The same size applies at any parity address, by signs on inputs and output. [Odd-error manuscript, Section 2](../../../results/circuit-complexity/mcsp/papers/probabilistic/main.tex)
+Let $A_m(g,l,u)$ be the minimum size of the table $g(w)\oplus\operatorname{Par}_m(z)$ with one flip at $(u,1^l,0^m)$, using no $y$ inputs. The odd-error lemma gives $A_{m+b}(g,l,u)=A_m(g,l,u)+2b$. The same size applies at any parity address, by signs on inputs and output. [Odd-error manuscript, Section 2](../../results/mcsp/papers/probabilistic/main.tex)
 
 **Theorem.** For every partition $\pi$ as above,
 
@@ -45,7 +45,7 @@ $$
  A_1(g)+2(n-a)-p-l+b_0-3 .
 $$
 
-Varying $l$ from 3 through a sufficiently large fixed constant gives an integer interval wider than the maximum upward step. The first interval is below $n^2$ and the last is above it. Choose a core, selector count, and minimizing $u$ at which the displayed cost equals $n^2$. The core is nonconstant because constant cores have $A_1=O(a)$. This is an existence argument. [Odd-error manuscript, threshold interpolation](../../../results/circuit-complexity/mcsp/papers/probabilistic/main.tex)
+Varying $l$ from 3 through a sufficiently large fixed constant gives an integer interval wider than the maximum upward step. The first interval is below $n^2$ and the last is above it. Choose a core, selector count, and minimizing $u$ at which the displayed cost equals $n^2$. The core is nonconstant because constant cores have $A_1=O(a)$. This is an existence argument. [Odd-error manuscript, threshold interpolation](../../results/mcsp/papers/probabilistic/main.tex)
 
 All unflipped centers are accepted. Indeed fixing an essential selector to its inactive value in a size-$n^2$ example with $b=b_0$ saves a gate and returns its clean center. The formula gives the same clean cost for all partitions. Taking $b_0$ near $p/2$ gives a linear-in-$p$ separation between the extreme perturbed costs. With $p=\Theta(\log n)$ the two examples already have a common layout with $O(\log n)$ core and selector bits. With $p=\lfloor n/2\rfloor$ the separation is $\Theta(n)$.
 
