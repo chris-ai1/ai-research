@@ -2,12 +2,13 @@
 
 Summary of a research session that ended on 22 November 2026, together with a literature-priority search run the same day. MCSP asks whether a truth table of N = 2ⁿ entries can be computed by a circuit with at most s gates. Below, T = s log₂ s.
 
-**Status.** Every result here is an unrefereed, AI-written proof. The internal "referee" notes came from the same agent team. Three Lean files formalize only small combinatorial lemmas. The manuscripts are in this directory; see [Files](#files). No result here is a breakthrough.
+**Status.** Every result here is an unrefereed, AI-written proof. The internal "referee" notes came from the same agent team. Four Lean files formalize only small combinatorial lemmas. The manuscripts are in this directory; see [Files](#files). No result here is a breakthrough.
 
 ## Files
 
 - [`papers/`](papers/): the 17 manuscripts, each as LaTeX source and PDF.
-- [`formal/`](formal/): Lean files for the row-marginal, teaching-projection and pivot/overlap lemmas.
+- [`formal/`](formal/): Lean files for the row-marginal, teaching-projection, pivot/overlap and disjoint-copy counting lemmas.
+- [`isolation.md`](isolation.md): isolating prescribed patterns on arbitrary blocks by translating a periodic table.
 - [`communication.md`](communication.md): the interactive-communication proof that the sign-rank manuscript cites.
 - [`FAILED-ATTEMPTS.md`](FAILED-ATTEMPTS.md): approaches that did not work, and why.
 
@@ -19,6 +20,7 @@ Conventions throughout: N = 2ⁿ is the truth-table length and s the gate budget
 | --- | --- | --- | --- |
 | 1 | Deterministic B₂ circuits deciding MCSP | Every nonempty set A of N-bit strings that is closed under bitwise complement needs at least 2N − 2⌊log\|A\|⌋ − 1 gates to decide membership. Consequently exact MCSP[s] needs (2−o(1))N gates for every threshold 0 ≤ s = o(N/n). For n = o(s) below the Shannon scale, the smallest teaching set of the accepted class has (1+o(1)) s log s entries. A promise version with an additive gap between the two thresholds has the same leading bound. | [deterministic](papers/deterministic/main.pdf) |
 | 1b | Randomized B₂ circuits with small pointwise error | For each fixed ε > 0 and every integer threshold n − 2 ≤ s ≤ cN/n (for an absolute c > 0), any distribution over circuits that decides exact MCSP[s] with error at most N^(−1−ε) on every input has size at least 2N − O(N/n). | [probabilistic](papers/probabilistic/main.pdf) |
+| 1c | Restrictions of exact B₂ MCSP | If n = o(s) and T³ = o(N), arbitrary blocks admit every isolated pattern up to size (1+o(1))T. After t signed identifications, this holds on any k remaining representatives with t+k ≤ (1−ε)T. On every eligible p-bit block the communication matrix has rank 2ᵖ over every field. | [local isolation](isolation.md) · [signed restrictions](signed-isolation.md) |
 | 2a | Approximate degree and quantum queries | For fixed ε, η > 0, uniformly in (2+η)n ≤ s ≤ (1−ε)N/n: the 1/3-approximate degree and the bounded-error quantum query complexity of MCSP[s] are both Θ(√(NT/(1+log(N/T)))). For error δ ∈ (0, 1/3] both are Θ(min{N, √(N(K + log(1/δ)))}), where K = T/(1+log(N/T)). The upper bound follows from Kothari's oracle identification. | [degree](papers/degree/main.pdf), [queries](papers/queries/main.pdf) |
 | 2b | Quantum queries at very small budgets | For s ≤ n − log n − 2 log log(n+2), the bounded-error quantum query complexity is Θ(√N). For circuits over AND/OR/NOT with every NOT counted and unrestricted fanout, it is Θ(√N) for all 0 ≤ s ≤ (1+c)n, for an absolute constant c > 0, on the whole input cube. | [queries](papers/queries/main.pdf), [low-budget](papers/low-budget/main.pdf) |
 | 3 | Gap MCSP with polynomially separated thresholds | Promise: the circuit size is at most s = Θ(N^a) or greater than t = Θ(N^b), with fixed 0 < a < b < 1. Bounded-error randomized query complexity is Θ(Ns/t) and quantum query complexity is Θ(s√(N/t)), and both upper bounds have perfect completeness. Threshold degree, globally bounded rational approximate degree and bounded-error postselected quantum query complexity are all Θ(s). | [gap](papers/gap/main.pdf) |
