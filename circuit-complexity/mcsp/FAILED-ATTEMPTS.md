@@ -67,6 +67,8 @@ For every polynomially bounded $q\ge1$, a complement-closed language can have th
 
 Summing the context counts over block sizes $2,4,\ldots,m$ gives $md$. Each of the same $m$ source gates supplies one signal at each of the $d$ scales. Even with arbitrary nonnegative block weights, the total charge is the sum over those $m$ gates of their individual charges, hence at most $m$ times the maximum load. A superlinear charge on paper needs a separate theorem controlling how often a gate is counted in an actual MCSP circuit.
 
+**Choosing the sign that deletes two gates at every merge.** For a matching of address pairs with a common difference, both constant sign patterns retain $2^{(1+o(1))s\log_2s}$ easy tables when $n=o(s)$ and $s=o(2^n/n)$. Optimizing the signs with exact fiber counts still gives the same $0.45689339\ldots$ deficit coefficient as the signed-merge proof when the favorable sign is constant. The obstruction concerns the gate savings and the terminal population estimate used in that proof. [Fiber counts and the sharp coefficient](papers/deterministic/parallel-derivatives.md)
+
 ## Priority corrections (claims that turned out not to be new)
 
 - **Testing the whole size-s circuit class.** Alon–Blais–Chakraborty–García-Soriano–Matsliah already prove Ω(s^(1/c)) directly. The degree manuscript first credited them only for isomorphism testing and was corrected.
