@@ -1,0 +1,9 @@
+lib/
+*.bin
+*.pkl
+*.json
+*.out
+enum5
+d5
+d4n5
+__pycache__/
