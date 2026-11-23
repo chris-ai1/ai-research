@@ -4,6 +4,8 @@ These are the approaches from the 22 November 2026 MCSP session that did not wor
 
 ## Aimed at a breakthrough
 
+**Charging more branching gates with bounded changes to parity extensions.** For fixed $k$, even the complete radius-$k$ neighborhoods of all signed coordinate permutations of a parity extension with $O(\log n)$ core and unused address bits admit a deterministic $2N+O(N^{1-\eta_k})$-gate circuit agreeing with exact MCSP on the promise. The construction also covers $N^{o(1)}$ such cores. It recovers the changed addresses from graph incidence parities shared across the centers. For all orientations of one core, this obstruction extends to $\lfloor\log_2 n\rfloor-1$ flips with additive overhead $N\,2^{-\Omega(n/(\log n)^2)}$. For the distance and address-XOR labels, the circuit can even recover an arbitrary unknown core from the input. These tests alone cannot force a $2N+\Omega(N/\log\log N)$ lower bound. [Proof and scope](bounded-flips.md)
+
 **Hardness magnification from the 2N bounds.** Chen–Li–Yang (CCC 2022) show that a lower bound above 2N + O(N/log log N) for probabilistic circuits deciding MCSP[s] at small s would separate P from exponential size. The session proved (2−o(1))N for deterministic circuits and 2N − O(N/n) at error N^(−1−ε) ([probabilistic](papers/probabilistic/main.pdf)).
 *Why it failed:* both bounds fall short of the threshold by a lower-order additive term, so magnification never applies. No step of the argument suggests how to cross 2N.
 
