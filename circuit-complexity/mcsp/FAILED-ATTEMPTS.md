@@ -44,6 +44,8 @@ These are the approaches from the 22 November 2026 MCSP session that did not wor
 
 ## Parity constraints and degree
 
+**Counting all three outcomes at private gates using only affine tests.** Fix $h$ table entries and exclude one pattern from each of $k$ disjoint pairs. The path has uniform information cost $h+k\log_2(4/3)$. A sparse set of size $2^{h+k+o(N)}$ can nevertheless miss the whole path while assigning near-uniform mass to every affine test up to rank $h+k-o(N)$. A second construction gives the same obstruction for near-full-rank linear encoders. A stronger MCSP bound needs additional information about small address circuits or about the path. [Extremum and counterexamples](papers/tilted/ternary-flats.md)
+
 **A universal n + O(r/log r) upper bound for r parity constraints.**
 *Why it failed (proved):* 3k+1 suitable algebraic-normal-form constraints on disjoint variable triples force size at least n − 1 + (k−2)/18. So the conjectured bound fails as r → ∞, even for r = o(n). The correct answer for r ≤ c log n is n + 2^Θ(r) ([parity-excess](papers/parity-excess/main.pdf)).
 
